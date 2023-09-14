@@ -30,6 +30,7 @@
 		A0EC994B2AB3552500EE777B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = A0EC994A2AB3552500EE777B /* FirebaseStorage */; };
 		A0EC994D2AB3552500EE777B /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = A0EC994C2AB3552500EE777B /* FirebaseStorageCombine-Community */; };
 		A0EC994F2AB357C000EE777B /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC994E2AB357C000EE777B /* DataManager.swift */; };
+		A0EC99542AB3829900EE777B /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC99532AB3829900EE777B /* ItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		A0EC99312AB2474100EE777B /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
 		A0EC99332AB2491500EE777B /* AddItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemViewModel.swift; sourceTree = "<group>"; };
 		A0EC994E2AB357C000EE777B /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		A0EC99532AB3829900EE777B /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,14 +91,10 @@
 		A0EC99182AB22E3100EE777B /* InventoryApp */ = {
 			isa = PBXGroup;
 			children = (
+				A0EC99522AB37F2E00EE777B /* View Models */,
+				A0EC99512AB37F0F00EE777B /* Models */,
+				A0EC99502AB37EF700EE777B /* Views */,
 				A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */,
-				A0EC991B2AB22E3100EE777B /* ContentView.swift */,
-				A0EC992B2AB2357A00EE777B /* ItemModel.swift */,
-				A0EC994E2AB357C000EE777B /* DataManager.swift */,
-				A0EC99292AB2343800EE777B /* InventoryView.swift */,
-				A0EC99312AB2474100EE777B /* AddItemView.swift */,
-				A0EC992F2AB2459300EE777B /* InventoryViewModel.swift */,
-				A0EC99332AB2491500EE777B /* AddItemViewModel.swift */,
 				A0EC992D2AB238C900EE777B /* GoogleService-Info.plist */,
 				A0EC991D2AB22E3200EE777B /* Assets.xcassets */,
 				A0EC991F2AB22E3200EE777B /* Preview Content */,
@@ -110,6 +108,35 @@
 				A0EC99202AB22E3200EE777B /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		A0EC99502AB37EF700EE777B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A0EC99312AB2474100EE777B /* AddItemView.swift */,
+				A0EC991B2AB22E3100EE777B /* ContentView.swift */,
+				A0EC99292AB2343800EE777B /* InventoryView.swift */,
+				A0EC99532AB3829900EE777B /* ItemView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A0EC99512AB37F0F00EE777B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A0EC994E2AB357C000EE777B /* DataManager.swift */,
+				A0EC992B2AB2357A00EE777B /* ItemModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A0EC99522AB37F2E00EE777B /* View Models */ = {
+			isa = PBXGroup;
+			children = (
+				A0EC99332AB2491500EE777B /* AddItemViewModel.swift */,
+				A0EC992F2AB2459300EE777B /* InventoryViewModel.swift */,
+			);
+			path = "View Models";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -204,6 +231,7 @@
 				A0EC994F2AB357C000EE777B /* DataManager.swift in Sources */,
 				A0EC99322AB2474100EE777B /* AddItemView.swift in Sources */,
 				A0EC992A2AB2343800EE777B /* InventoryView.swift in Sources */,
+				A0EC99542AB3829900EE777B /* ItemView.swift in Sources */,
 				A0EC991C2AB22E3100EE777B /* ContentView.swift in Sources */,
 				A0EC99342AB2491500EE777B /* AddItemViewModel.swift in Sources */,
 				A0EC992C2AB2357A00EE777B /* ItemModel.swift in Sources */,

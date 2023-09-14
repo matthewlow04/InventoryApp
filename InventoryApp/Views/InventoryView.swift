@@ -10,8 +10,11 @@ import SwiftUI
 struct InventoryView: View {
     @EnvironmentObject var dataManager: DataManager
     var body: some View {
-        List(dataManager.inventory, id: \.self){ item in
-            Text(item.name)
+        NavigationStack{
+            List(dataManager.inventory, id: \.self){ item in
+                NavigationLink(item.name, destination: ItemView())
+            }
+            
         }.onAppear{
             dataManager.fetchItems()
         }

@@ -54,6 +54,18 @@ class DataManager: ObservableObject{
         }
     }
     
+    func updateItem(itemName: String, itemStock: Int){
+        let db = Firestore.firestore()
+        let ref = db.collection("Items").document(itemName)
+        ref.updateData(["amountInStock":itemStock]){ error in
+            if let error = error{
+                print(error.localizedDescription)
+            }
+            
+        }
+        fetchItems()
+    }
+    
     func checkIfExists(name: String) -> Bool{
         let results = inventory.filter {$0.name == name}
         return results.isEmpty

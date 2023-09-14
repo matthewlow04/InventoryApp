@@ -12,12 +12,20 @@ struct InventoryView: View {
     var body: some View {
         NavigationStack{
             List(dataManager.inventory, id: \.self){ item in
-                NavigationLink(item.name, destination: ItemView(selectedItem: item))
-            }
-            
-        }.onAppear{
+                NavigationLink(destination: ItemView(selectedItem: item)) {
+                    HStack {
+                        Text(item.name)
+                            .bold()
+                        Spacer()
+                        Text("\(item.amountInStock)/\(item.amountTotal)")
+                    }
+                }
+            }.navigationTitle("Inventory")
+        }
+        .onAppear{
             dataManager.fetchItems()
         }
+        
     }
     
     

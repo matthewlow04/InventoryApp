@@ -13,55 +13,58 @@ struct AddItemView: View {
     @State var showingAlert = false
     @State var alertMessage = "Item added"
     var body: some View {
-        Form{
-            Section{
-                HStack{
-                    Text("Name: ")
-                    TextField("Name", text: $avm.name)
+        NavigationStack{
+            Form{
+                Section{
+                    HStack{
+                        Text("Name: ")
+                        TextField("Name", text: $avm.name)
+                    }
                 }
-            }
-            Section{
-                HStack{
-                    Text("Notes: ")
-                    TextField("Add custom notes", text: $avm.notes)
+                Section{
+                    HStack{
+                        Text("Notes: ")
+                        TextField("Add custom notes", text: $avm.notes)
+                    }
                 }
-            }
-            
-            Section{
-                HStack{
-                    Text("Amount: ")
-                    TextField("Number of items", text: $avm.numberInStock)
+                
+                Section{
+                    HStack{
+                        Text("Amount: ")
+                        TextField("Number of items", text: $avm.numberInStock)
+                    }
                 }
-            }
-            
-            Section{
-                Button("Add Item"){
-                    if(avm.name != ""){
-                        if(dataManager.checkIfExists(name: avm.name)){
-                            dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemTotal: avm.numberInStock)
-                            dataManager.fetchItems()
-                            alertMessage = "Item added"
-                            showingAlert = true
+                
+                Section{
+                    Button("Add Item"){
+                        if(avm.name != ""){
+                            if(dataManager.checkIfExists(name: avm.name)){
+                                dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemTotal: avm.numberInStock)
+                                dataManager.fetchItems()
+                                alertMessage = "Item added"
+                                showingAlert = true
+                            }
+                            else{
+                                alertMessage = "Item with name '\(avm.name)' already exists!"
+                                showingAlert = true
+                            }
+                               
+                           
                         }
                         else{
-                            alertMessage = "Item with name '\(avm.name)' already exists!"
+                            alertMessage = "You must enter a name"
                             showingAlert = true
                         }
-                           
-                       
+                        
+                        avm.clearFields()
                     }
-                    else{
-                        alertMessage = "You must enter a name"
-                        showingAlert = true
+                    .alert(alertMessage, isPresented: $showingAlert){
+                        Button("OK", role: .cancel){}
                     }
-                    
-                    avm.clearFields()
                 }
-                .alert(alertMessage, isPresented: $showingAlert){
-                    Button("OK", role: .cancel){}
-                }
-            }
+            }.navigationTitle("Add Items")
         }
+        
     }
 }
 

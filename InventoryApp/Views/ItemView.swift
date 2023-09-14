@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ItemView: View {
+    @EnvironmentObject var dataManager: DataManager
     var selectedItem: Item
     @State private var amountInStock: Double
         
@@ -38,7 +39,7 @@ struct ItemView: View {
 
         }.toolbar{
             Button("Save"){
-                
+                dataManager.updateItem(itemName: selectedItem.name, itemStock: Int(amountInStock))
             }
         }
         

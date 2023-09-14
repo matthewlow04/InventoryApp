@@ -18,8 +18,8 @@ class InventoryViewModel: ObservableObject{
     }
     
     
-    func addItem(name: String, notes: String){
-        let item = Item(name:name, notes:notes)
+    func addItem(name: String, notes: String, total: String){
+        let item = Item(name:name, notes:notes, amountTotal: Int(total)!,amountInStock: Int(total)!)
         localInventory.append(item)
     }
     

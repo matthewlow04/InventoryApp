@@ -10,6 +10,6 @@ import Foundation
 struct Item: Hashable{
     var name: String
     var notes: String
-    var amountTotal = 0
-    var amountInStock = 0
+    var amountTotal: Int
+    var amountInStock: Int
 }

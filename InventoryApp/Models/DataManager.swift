@@ -30,7 +30,9 @@ class DataManager: ObservableObject{
                     let data = document.data()
                     let notes = data["notes"] as? String ?? ""
                     let name = data["name"] as? String ?? ""
-                    let item = Item(name: name, notes:notes)
+                    let amountInStock = data["amountInStock"] as? Int ?? 0
+                    let amountTotal = data["amountTotal"] as? Int ?? 0
+                    let item = Item(name: name, notes:notes, amountTotal: amountTotal, amountInStock: amountInStock)
                     self.inventory.append(item)
                 }
             }
@@ -41,10 +43,10 @@ class DataManager: ObservableObject{
         return inventory
     }
     
-    func addItem(itemName: String, itemNotes: String){
+    func addItem(itemName: String, itemNotes: String, itemTotal: String){
         let db = Firestore.firestore()
         let ref = db.collection("Items").document(itemName)
-        ref.setData(["name":itemName, "notes":itemNotes]){ error in
+        ref.setData(["name":itemName, "notes":itemNotes, "amountTotal":Int(itemTotal), "amountInStock":Int(itemTotal)]){ error in
             if let error = error{
                 print(error.localizedDescription)
             }

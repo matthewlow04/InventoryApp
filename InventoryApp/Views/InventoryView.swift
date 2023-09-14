@@ -12,7 +12,7 @@ struct InventoryView: View {
     var body: some View {
         NavigationStack{
             List(dataManager.inventory, id: \.self){ item in
-                NavigationLink(item.name, destination: ItemView())
+                NavigationLink(item.name, destination: ItemView(selectedItem: item))
             }
             
         }.onAppear{

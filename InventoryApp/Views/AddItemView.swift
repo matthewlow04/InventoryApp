@@ -28,10 +28,17 @@ struct AddItemView: View {
             }
             
             Section{
+                HStack{
+                    Text("Amount: ")
+                    TextField("Number of items", text: $avm.numberInStock)
+                }
+            }
+            
+            Section{
                 Button("Add Item"){
                     if(avm.name != ""){
                         if(dataManager.checkIfExists(name: avm.name)){
-                            dataManager.addItem(itemName: avm.name, itemNotes: avm.notes)
+                            dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemTotal: avm.numberInStock)
                             dataManager.fetchItems()
                             alertMessage = "Item added"
                             showingAlert = true

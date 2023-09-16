@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A06BEF3F2AB4B02000D7A3AF /* Button Styling.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06BEF3E2AB4B02000D7A3AF /* Button Styling.swift */; };
 		A0EC991A2AB22E3100EE777B /* InventoryAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */; };
 		A0EC991C2AB22E3100EE777B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC991B2AB22E3100EE777B /* ContentView.swift */; };
 		A0EC991E2AB22E3200EE777B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0EC991D2AB22E3200EE777B /* Assets.xcassets */; };
@@ -34,6 +35,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A06BEF3E2AB4B02000D7A3AF /* Button Styling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Button Styling.swift"; sourceTree = "<group>"; };
 		A0EC99162AB22E3100EE777B /* InventoryApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InventoryApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAppApp.swift; sourceTree = "<group>"; };
 		A0EC991B2AB22E3100EE777B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -72,6 +74,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A06BEF3D2AB4AFEB00D7A3AF /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				A06BEF3E2AB4B02000D7A3AF /* Button Styling.swift */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
 		A0EC990D2AB22E3100EE777B = {
 			isa = PBXGroup;
 			children = (
@@ -91,10 +101,11 @@
 		A0EC99182AB22E3100EE777B /* InventoryApp */ = {
 			isa = PBXGroup;
 			children = (
-				A0EC99522AB37F2E00EE777B /* View Models */,
+				A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */,
 				A0EC99512AB37F0F00EE777B /* Models */,
 				A0EC99502AB37EF700EE777B /* Views */,
-				A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */,
+				A0EC99522AB37F2E00EE777B /* View Models */,
+				A06BEF3D2AB4AFEB00D7A3AF /* Tools */,
 				A0EC992D2AB238C900EE777B /* GoogleService-Info.plist */,
 				A0EC991D2AB22E3200EE777B /* Assets.xcassets */,
 				A0EC991F2AB22E3200EE777B /* Preview Content */,
@@ -236,6 +247,7 @@
 				A0EC99342AB2491500EE777B /* AddItemViewModel.swift in Sources */,
 				A0EC992C2AB2357A00EE777B /* ItemModel.swift in Sources */,
 				A0EC991A2AB22E3100EE777B /* InventoryAppApp.swift in Sources */,
+				A06BEF3F2AB4B02000D7A3AF /* Button Styling.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

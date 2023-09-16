@@ -66,6 +66,18 @@ class DataManager: ObservableObject{
         fetchItems()
     }
     
+    func deleteItem(itemName: String){
+        let db = Firestore.firestore()
+        let ref = db.collection("Items").document(itemName)
+        ref.delete(){ error in
+            if let error = error{
+                print(error.localizedDescription)
+            }
+            
+        }
+    }
+    
+    
     func checkIfExists(name: String) -> Bool{
         let results = inventory.filter {$0.name == name}
         return results.isEmpty

@@ -8,18 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+
     var body: some View {
         TabView{
+            
+            
+            
             InventoryView().environmentObject(DataManager())
                 .tabItem{
                     Label("Inventory", systemImage: "archivebox")
                 }
-                
+            
+            
             AddItemView().environmentObject(DataManager())
                 .tabItem{
                     Label("Add New Item", systemImage: "plus")
                 }
+            
             Text("Coming Soon")
                 .tabItem{
                     Label("Inventory History", systemImage: "books.vertical")
@@ -28,6 +33,7 @@ struct ContentView: View {
                 .tabItem{
                     Label("Alerts", systemImage: "bell")
                 }
+           
             
         }
     }

@@ -9,23 +9,31 @@ import SwiftUI
 
 struct InventoryView: View {
     @EnvironmentObject var dataManager: DataManager
+    
+//    @ObservedObject var ivm = InventoryViewModel()
     var body: some View {
-        NavigationStack{
-            List(dataManager.inventory, id: \.self){ item in
-                NavigationLink(destination: ItemView(selectedItem: item)) {
-                    HStack {
-                        Text(item.name)
-                            .bold()
-                        Spacer()
-                        Text("\(item.amountInStock)/\(item.amountTotal)")
+        VStack{
+            NavigationStack{
+                List(dataManager.inventory, id: \.self){ item in
+                    NavigationLink(destination: ItemView(selectedItem: item)) {
+                        HStack {
+                            Text(item.name)
+                                .bold()
+                            Spacer()
+                            Text("\(item.amountInStock)/\(item.amountTotal)")
+                        }
                     }
-                }
-            }.navigationTitle("Inventory")
+                }.navigationTitle("Inventory")
+            }
+//            .searchable(text: $ivm.searchText)
+            .onAppear{
+//                ivm.updateFilteredResults()
+//                print("Hi")
+                dataManager.fetchItems()
+            }
+            
         }
-        .onAppear{
-            dataManager.fetchItems()
-        }
-        
+       
     }
     
     

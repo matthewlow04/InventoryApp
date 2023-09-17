@@ -9,12 +9,16 @@ import SwiftUI
 import Firebase
 
 class DataManager: ObservableObject{
+    
     @Published var inventory: [Item] = []
-    
+    var hasLoadedData = false
+
+//
 //    init(){
-//        fetchItems()
+//       hasLoadedData = true
+//
 //    }
-    
+//    
     func fetchItems(){
         inventory.removeAll()
         let db = Firestore.firestore()
@@ -37,7 +41,10 @@ class DataManager: ObservableObject{
                 }
             }
         }
+        print("Fetch request")
+        hasLoadedData = true
     }
+    
     
     func copyArray() -> [Item]{
         return inventory
@@ -52,6 +59,7 @@ class DataManager: ObservableObject{
             }
             
         }
+  
     }
     
     func updateItem(itemName: String, itemStock: Int){
@@ -64,6 +72,7 @@ class DataManager: ObservableObject{
             
         }
         fetchItems()
+       
     }
     
     func deleteItem(itemName: String){
@@ -75,6 +84,10 @@ class DataManager: ObservableObject{
             }
             
         }
+        fetchItems()
+   
+        
+
     }
     
     
@@ -83,6 +96,7 @@ class DataManager: ObservableObject{
         return results.isEmpty
     }
     
+        
     
     
 }

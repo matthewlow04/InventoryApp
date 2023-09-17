@@ -13,6 +13,7 @@ struct ItemView: View {
     @State private var amountInStock: Double
     @State var isPresentingConfirm = false
     @State var isShowingAlert = false
+    @Environment(\.dismiss) var dismiss
         
     init(selectedItem: Item) {
         self.selectedItem = selectedItem
@@ -47,6 +48,7 @@ struct ItemView: View {
                              isPresented: $isPresentingConfirm) {
                             Button("Delete '\(selectedItem.name.lowercased())' from inventory?", role: .destructive) {
                                  dataManager.deleteItem(itemName: selectedItem.name)
+                                dismiss()
                              }
                         }
                 }

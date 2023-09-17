@@ -27,8 +27,7 @@ struct InventoryView: View {
             }
 //            .searchable(text: $ivm.searchText)
             .onAppear{
-//                ivm.updateFilteredResults()
-//                print("Hi")
+//              
                 dataManager.fetchItems()
             }
             

@@ -17,7 +17,8 @@ struct InventoryAppApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            ContentView().environmentObject(dataManager)
+            LoginView()
+                .environmentObject(dataManager)
         }
     }
 }

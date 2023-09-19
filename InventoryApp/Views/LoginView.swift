@@ -16,6 +16,7 @@ struct LoginView: View {
     
     @AppStorage("uid") var userID: String = ""
     @ObservedObject var lvm = LoginViewModel()
+    @EnvironmentObject var dataManager: DataManager
     
     var body: some View {
         if lvm.isLoggedIn{

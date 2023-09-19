@@ -39,7 +39,7 @@ struct AddItemView: View {
                     Button("Add Item"){
                         if(avm.name != ""){
                             if(dataManager.checkIfExists(name: avm.name)){
-                                dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemTotal: avm.numberInStock)
+                                dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemAmount: avm.numberInStock)
                                 dataManager.fetchItems()
                                 alertMessage = "Item added"
                                 showingAlert = true

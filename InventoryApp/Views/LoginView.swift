@@ -27,23 +27,38 @@ struct LoginView: View {
     }
     
     var loginView: some View{
-        
-        VStack(spacing: 20){
-            Text("Generis Inventory")
-            TextField("Email", text: $email)
-            SecureField("Password", text: $password)
-            loginButton
-            signUpButton
-            
-        }
-        .sheet(isPresented: $lvm.showingSheet){
-            SheetView
-        }
-        .alert(lvm.errorMessage, isPresented: $lvm.errorShowing, actions: {
-            Button("OK", role: .cancel){
+        ZStack{
+            BackgroundView()
+            VStack(spacing: 20){
+                //Text("Generis Inventory")
+                TextField("Email", text: $email)
+                Rectangle()
+                    .frame(width: 300, height: 1)
+                    .foregroundColor(CustomColor.aquamarine)
+                    .padding(.bottom)
+                SecureField("Password", text: $password)
+                Rectangle()
+                    .frame(width: 300, height: 1)
+                    .foregroundColor(CustomColor.aquamarine)
+                    .padding(.bottom)
+                loginButton
+                    .bold()
+                signUpButton
+                    .bold()
                 
             }
-        })
+            .frame(width:300)
+            .foregroundColor(CustomColor.textBlue)
+            .sheet(isPresented: $lvm.showingSheet){
+                SheetView
+            }
+            .alert(lvm.errorMessage, isPresented: $lvm.errorShowing, actions: {
+                Button("OK", role: .cancel){
+                    
+                }
+            })
+        }
+       
     }
     
     var SheetView: some View{

@@ -14,6 +14,8 @@ class AddItemViewModel: ObservableObject{
     @Published var numberInStock = ""
     @Published var showingAlert = false
     @Published var alertMessage = "Item added"
+    @Published var selectedCategory = "Office"
+    @Published var categories = ["Office", "Tech", "Stationaries", "Entertainment", "Other"]
     
     func clearFields(){
         name = ""

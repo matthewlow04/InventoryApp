@@ -58,7 +58,7 @@ class DataManager: ObservableObject{
         return inventory
     }
     
-    func addItem(itemName: String, itemNotes: String, itemAmount: String){
+    func addItem(itemName: String, itemNotes: String, itemAmount: String, category: String){
         if let currentUser = Auth.auth().currentUser{
             let userID = currentUser.uid
             let db = Firestore.firestore()
@@ -66,7 +66,7 @@ class DataManager: ObservableObject{
             let ref = db.document(fullPath)
     
           
-            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount), "amountInStock": Int(itemAmount)]){ error in
+            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount), "amountInStock": Int(itemAmount), "category": category]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }

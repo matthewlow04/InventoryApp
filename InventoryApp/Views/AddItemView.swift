@@ -36,10 +36,18 @@ struct AddItemView: View {
                 }
                 
                 Section{
+                    Picker("Category: ", selection: $avm.selectedCategory, content: {
+                        ForEach(avm.categories, id: \.self){
+                            Text($0)
+                        }
+                    })
+                }
+                
+                Section{
                     Button("Add Item"){
                         if(avm.name != ""){
                             if(dataManager.checkIfExists(name: avm.name)){
-                                dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemAmount: avm.numberInStock)
+                                dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemAmount: avm.numberInStock, category: avm.selectedCategory)
                                 dataManager.fetchItems()
                                 alertMessage = "Item added"
                                 showingAlert = true

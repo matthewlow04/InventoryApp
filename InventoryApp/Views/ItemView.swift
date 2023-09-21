@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct ItemView: View {
     @EnvironmentObject var dataManager: DataManager
@@ -25,6 +26,7 @@ struct ItemView: View {
         VStack{
             Text(selectedItem.name)
                 .font(.largeTitle)
+           
             Text("\(Int(amountInStock)) in stock / \(selectedItem.amountTotal) in total")
             
             Form{
@@ -35,10 +37,15 @@ struct ItemView: View {
                 }header: {
                     Text("Change Amount")
                 }
+                
                 Section{
                     Text(selectedItem.notes)
                 }header: {
                     Text("Notes")
+                }
+                
+                Section(header: Text("Stock History")) {
+                    chartView
                 }
                 
                 Section{
@@ -52,8 +59,11 @@ struct ItemView: View {
                              }
                         }
                 }
+                
+                
             }.scrollContentBackground(.hidden)
             
+           
            
             
         
@@ -61,12 +71,25 @@ struct ItemView: View {
 
         }.toolbar{
             Button("Save"){
-                dataManager.updateItem(itemName: selectedItem.name, itemStock: Int(amountInStock))
+                dataManager.updateItem(itemName: selectedItem.name, itemStock: Int(amountInStock), itemHistory: selectedItem.amountHistory)
                 isShowingAlert = true   
             }
         }.alert("Item Saved", isPresented: $isShowingAlert, actions: {
             Button("OK", role: .cancel){}
         })
+        
+    }
+    
+    var chartView: some View{
+        Chart(0..<selectedItem.amountHistory.count, id: \.self){ nr in
+                    LineMark(
+                        x: .value("X values", nr),
+                        y: .value("Y values", selectedItem.amountHistory[nr])
+                    )
+                    
+        }
+        .frame(width: 300, height: 100)
+        .chartXAxis(.hidden)
         
     }
          
@@ -82,6 +105,6 @@ struct ItemView: View {
 
 struct ItemView_Previews: PreviewProvider {
     static var previews: some View {
-        ItemView(selectedItem: Item(name: "Pencil", notes: "This is a pencil", amountTotal: 0, amountInStock: 0))
+        ItemView(selectedItem: Item(name: "Pencil", notes: "This is a pencil", amountTotal: 0, amountInStock: 0, category: "Stationary", amountHistory: [10]))
     }
 }

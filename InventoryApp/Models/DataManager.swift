@@ -35,13 +35,14 @@ class DataManager: ObservableObject{
                       if let snapshot = snapshot{
                           for document in snapshot.documents{
                               let data = document.data()
-                              let amountInStock = data["amountInStock"] as? Int ?? 50
-                              let amountTotal = data["amountTotal"] as? Int ?? 50
+                              let amountInStock = data["amountInStock"] as? Int ?? 60
+                              let amountTotal = data["amountTotal"] as? Int ?? 60
                               let name = data["name"] as? String ?? ""
                               let notes = data["notes"] as? String ?? ""
-                           
+                              let category = data["category"] as? String ?? ""
+                              let amountHistory = data["amountHistory"] as? [Int] ?? [amountTotal]
                             
-                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock)
+                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: category, amountHistory: amountHistory)
                               self.inventory.append(item)
                             
                           }
@@ -66,7 +67,7 @@ class DataManager: ObservableObject{
             let ref = db.document(fullPath)
     
           
-            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount), "amountInStock": Int(itemAmount), "category": category]){ error in
+            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount), "amountInStock": Int(itemAmount), "category": category, "amountHistory": [Int(itemAmount)]]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -77,13 +78,16 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, itemStock: Int){
+    func updateItem(itemName: String, itemStock: Int, itemHistory: [Int]){
         if let currentUser = Auth.auth().currentUser{
+           
             let userID = currentUser.uid
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
-            ref.updateData(["amountInStock":itemStock]){ error in
+            var newHistory = itemHistory
+            newHistory.append(itemStock)
+            ref.updateData(["amountInStock":itemStock, "amountHistory": newHistory]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }

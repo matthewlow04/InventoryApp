@@ -12,4 +12,6 @@ struct Item: Hashable{
     var notes: String
     var amountTotal: Int
     var amountInStock: Int
+    var category: String
+    var amountHistory: [Int]
 }

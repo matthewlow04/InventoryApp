@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+    @EnvironmentObject var dataManager: DataManager
     var userId: String
 
     var body: some View {
@@ -16,13 +16,13 @@ struct ContentView: View {
             
             
             
-            InventoryView().environmentObject(DataManager())
+            InventoryView()
                 .tabItem{
                     Label("Inventory", systemImage: "archivebox")
                 }
             
             
-            AddItemView().environmentObject(DataManager())
+            AddItemView()
                 .tabItem{
                     Label("Add New Item", systemImage: "plus")
                 }

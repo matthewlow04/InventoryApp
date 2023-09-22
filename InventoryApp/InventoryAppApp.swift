@@ -11,6 +11,7 @@ import Firebase
 @main
 struct InventoryAppApp: App {
     @StateObject var dataManager = DataManager()
+    @StateObject var lvm = LoginViewModel()
     
     init(){
         FirebaseApp.configure()
@@ -19,6 +20,7 @@ struct InventoryAppApp: App {
         WindowGroup {
             LoginView()
                 .environmentObject(dataManager)
+                .environmentObject(lvm)
         }
     }
 }

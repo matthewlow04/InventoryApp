@@ -15,7 +15,7 @@ struct LoginView: View {
     @State private var password = ""
     
     @AppStorage("uid") var userID: String = ""
-    @ObservedObject var lvm = LoginViewModel()
+    @EnvironmentObject var lvm: LoginViewModel
     @EnvironmentObject var dataManager: DataManager
     
     var body: some View {

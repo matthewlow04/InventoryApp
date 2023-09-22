@@ -1,20 +1,14 @@
-//
-//  InventoryView.swift
-//  InventoryApp
-//
-//  Created by Matthew Low on 2023-09-13.
-//
-
 import SwiftUI
+
 
 struct InventoryView: View {
     @EnvironmentObject var dataManager: DataManager
-    
-//    @ObservedObject var ivm = InventoryViewModel()
+    @State private var searchText = ""
+
     var body: some View {
-        VStack{
-            NavigationStack{
-                List(dataManager.inventory, id: \.self){ item in
+        VStack {
+            NavigationView {
+                List(filteredItems, id: \.self) { item in
                     NavigationLink(destination: ItemView(selectedItem: item)) {
                         HStack {
                             Text(item.name)
@@ -23,19 +17,26 @@ struct InventoryView: View {
                             Text("\(item.amountInStock)/\(item.amountTotal)")
                         }
                     }
-                }.navigationTitle("Inventory")
+                }
+                .navigationTitle("Inventory")
+                .searchable(text: $searchText)
             }
-//            .searchable(text: $ivm.searchText)
-            .onAppear{
-//              
+            .onAppear {
                 dataManager.fetchItems()
             }
-            
         }
-       
     }
-    
-    
+
+    var filteredItems: [Item] {
+//        print("filteredItems called")
+//        print(dataManager.inventory)
+        if searchText.isEmpty {
+            return dataManager.inventory
+        } else {
+            return dataManager.inventory
+                .filter { $0.name.lowercased().contains(searchText.lowercased()) }
+        }
+    }
 }
 
 struct InventoryView_Previews: PreviewProvider {

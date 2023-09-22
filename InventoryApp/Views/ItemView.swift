@@ -72,7 +72,8 @@ struct ItemView: View {
         }.toolbar{
             Button("Save"){
                 dataManager.updateItem(itemName: selectedItem.name, itemStock: Int(amountInStock), itemHistory: selectedItem.amountHistory)
-                isShowingAlert = true   
+                isShowingAlert = true
+                dismiss()
             }
         }.alert("Item Saved", isPresented: $isShowingAlert, actions: {
             Button("OK", role: .cancel){}

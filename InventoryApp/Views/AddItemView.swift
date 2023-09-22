@@ -45,26 +45,8 @@ struct AddItemView: View {
                 
                 Section{
                     Button("Add Item"){
-                        if(avm.name != ""){
-                            if(dataManager.checkIfExists(name: avm.name)){
-                                dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemAmount: avm.numberInStock, category: avm.selectedCategory)
-                                dataManager.fetchItems()
-                                alertMessage = "Item added"
-                                showingAlert = true
-                            }
-                            else{
-                                alertMessage = "Item with name '\(avm.name)' already exists!"
-                                showingAlert = true
-                            }
-                               
-                           
-                        }
-                        else{
-                            alertMessage = "You must enter a name"
-                            showingAlert = true
-                        }
-                        
-                        avm.clearFields()
+                        checkErrors()
+                       
                     }
                     .alert(alertMessage, isPresented: $showingAlert){
                         Button("OK", role: .cancel){}
@@ -73,6 +55,36 @@ struct AddItemView: View {
             }.navigationTitle("Add Items")
         }
         
+    }
+    
+    func checkErrors(){
+        if(avm.name != ""){
+            if(dataManager.checkIfExists(name: avm.name)){
+                if(Int(avm.numberInStock) ?? 0 > 0){
+                    dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemAmount: avm.numberInStock, category: avm.selectedCategory)
+                    dataManager.fetchItems()
+                    alertMessage = "Item added"
+                    showingAlert = true
+                }
+                else{
+                    alertMessage = "Amount must be a positive number"
+                    showingAlert = true
+                }
+              
+            }
+            else{
+                alertMessage = "Item with name '\(avm.name)' already exists!"
+                showingAlert = true
+            }
+               
+           
+        }
+        else{
+            alertMessage = "You must enter a name"
+            showingAlert = true
+        }
+        
+        avm.clearFields()
     }
 }
 

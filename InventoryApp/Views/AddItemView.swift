@@ -64,7 +64,7 @@ struct AddItemView: View {
                                             print("Found item: \(item.name)")
                                             let newItemStock = item.amountInStock + (Int(avm.numberInStock) ?? 0)
                                             let newItemTotal = item.amountTotal + (Int(avm.numberInStock) ?? 0)
-                                            dataManager.updateItem(itemName: item.name, itemStock: newItemStock, itemTotal: newItemTotal, itemHistory: item.amountHistory)
+                                            dataManager.updateItem(itemName: item.name, newAmount: newItemStock, itemTotal: newItemTotal, itemHistory: item.amountHistory)
                                             alertMessage = "\(avm.numberInStock) were added"
                                             showingAlert = true
                                             avm.clearFields()

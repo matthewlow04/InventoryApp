@@ -11,6 +11,7 @@ import Firebase
 class DataManager: ObservableObject{
     
     @Published var inventory: [Item] = []
+    @Published var inventoryHistory: [History] = []
     var hasLoadedData = false
 
 //
@@ -54,6 +55,34 @@ class DataManager: ObservableObject{
         
     }
     
+//    func fetchInventoryHistory(){
+//        let fullPath = "Users/\(Auth.auth().currentUser?.uid)/History"
+//        let db = Firestore.firestore()
+//        let ref = db.collection(fullPath)
+//              ref.getDocuments { snapshot, error in
+//                  guard error == nil else{
+//                      print(error!.localizedDescription)
+//                      return
+//                  }
+//                  
+//                  if let snapshot = snapshot{
+//                      for document in snapshot.documents{
+//                          let data = document.data()
+//                          let amountInStock = data["amount"] as? Int ?? 60
+//                          let amountTotal = data["added"] as? Int ?? 60
+//                          let name = data["name"] as? String ?? ""
+//                          let notes = data["notes"] as? String ?? ""
+//                          let category = data["category"] as? String ?? ""
+//                          let amountHistory = data["amountHistory"] as? [Int] ?? [amountTotal]
+//                        
+//                          let historyItem = History(itemName: <#T##String#>, date: <#T##Date#>, addedItem: <#T##Bool#>, amount: <#T##Int#>)
+//                          self.inventoryHistory.append(historyItem)
+//                        
+//                      }
+//                  }
+//              }
+//    }
+    
     
     func copyArray() -> [Item]{
         return inventory
@@ -78,7 +107,7 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, itemStock: Int, itemTotal: Int, itemHistory: [Int]){
+    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int]){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -86,8 +115,21 @@ class DataManager: ObservableObject{
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
             var newHistory = itemHistory
-            newHistory.append(itemStock)
-            ref.updateData(["amountInStock":itemStock, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
+            newHistory.append(newAmount)
+            
+            let oldAmount = getItemByName(name: itemName)?.amountInStock
+            let difference = newAmount - oldAmount!
+            var added: Bool
+            
+            if difference > 0{
+                added = true
+            }else{
+                added = false
+            }
+            
+            createHistory(name: itemName, amount: difference, added: added)
+            
+            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -127,6 +169,11 @@ class DataManager: ObservableObject{
         return inventory.first { $0.name.lowercased() == name.lowercased() }
     }
     
+    func createHistory(name: String, amount: Int, added: Bool){
+        
+        let newHistory = History(itemName: name, date: Date.now, addedItem: added, amount: abs(amount))
+        inventoryHistory.append(newHistory)
+    }
         
     
     

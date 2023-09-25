@@ -23,7 +23,7 @@ struct InventoryView: View {
 
     var body: some View {
         VStack {
-            NavigationView {
+            NavigationStack {
                 List(filteredItems, id: \.self) { item in
                     NavigationLink(destination: ItemView(selectedItem: item)) {
                         HStack {

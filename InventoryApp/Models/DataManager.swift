@@ -78,7 +78,7 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, itemStock: Int, itemHistory: [Int]){
+    func updateItem(itemName: String, itemStock: Int, itemTotal: Int, itemHistory: [Int]){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -87,7 +87,7 @@ class DataManager: ObservableObject{
             let ref = db.document(fullPath)
             var newHistory = itemHistory
             newHistory.append(itemStock)
-            ref.updateData(["amountInStock":itemStock, "amountHistory": newHistory]){ error in
+            ref.updateData(["amountInStock":itemStock, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -119,6 +119,12 @@ class DataManager: ObservableObject{
     func checkIfExists(name: String) -> Bool{
         let results = inventory.filter {$0.name == name}
         return results.isEmpty
+    }
+    
+    func getItemByName(name: String) -> Item? {
+        print(inventory.count)
+        print(name)
+        return inventory.first { $0.name.lowercased() == name.lowercased() }
     }
     
         

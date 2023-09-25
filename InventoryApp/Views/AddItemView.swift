@@ -12,6 +12,7 @@ struct AddItemView: View {
     @ObservedObject var avm = AddItemViewModel()
     @State var showingAlert = false
     @State var alertMessage = "Item added"
+    @State var duplicateAlert = false
     var body: some View {
         NavigationStack{
             Form{
@@ -49,8 +50,35 @@ struct AddItemView: View {
                        
                     }
                     .alert(alertMessage, isPresented: $showingAlert){
-                        Button("OK", role: .cancel){}
+                        Button("OK", role: .cancel){
+                            avm.clearFields()
+                        }
                     }
+                    .alert(isPresented:$duplicateAlert) {
+                                Alert(
+                                    title: Text("This item already exists"),
+                                    message: Text("Do you want to add to the existing inventory?"),
+                                    primaryButton: .default(Text("Yes")) {
+                                        print(avm.name)
+                                        if let item = dataManager.getItemByName(name: avm.name) {
+                                            print("Found item: \(item.name)")
+                                            let newItemStock = item.amountInStock + (Int(avm.numberInStock) ?? 0)
+                                            let newItemTotal = item.amountTotal + (Int(avm.numberInStock) ?? 0)
+                                            dataManager.updateItem(itemName: item.name, itemStock: newItemStock, itemTotal: newItemTotal, itemHistory: item.amountHistory)
+                                            alertMessage = "\(avm.numberInStock) were added"
+                                            showingAlert = true
+                                            avm.clearFields()
+                                            
+                                        } else {
+                                            print("Item not found")
+                                            avm.clearFields()
+                                        }
+
+                                       
+                                    },
+                                    secondaryButton: .cancel()
+                                )
+                            }
                 }
             }.navigationTitle("Add Items")
         }
@@ -59,23 +87,24 @@ struct AddItemView: View {
     
     func checkErrors(){
         if(avm.name != ""){
-            if(dataManager.checkIfExists(name: avm.name)){
-                if(Int(avm.numberInStock) ?? 0 > 0){
+            if(Int(avm.numberInStock) ?? 0 > 0){
+                if(dataManager.checkIfExists(name: avm.name)){
                     dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemAmount: avm.numberInStock, category: avm.selectedCategory)
                     dataManager.fetchItems()
                     alertMessage = "Item added"
                     showingAlert = true
                 }
                 else{
-                    alertMessage = "Amount must be a positive number"
-                    showingAlert = true
+                    duplicateAlert = true
+                 
+                    
                 }
-              
             }
             else{
-                alertMessage = "Item with name '\(avm.name)' already exists!"
+                alertMessage = "Amount must be a positive number"
                 showingAlert = true
             }
+            
                
            
         }
@@ -84,7 +113,7 @@ struct AddItemView: View {
             showingAlert = true
         }
         
-        avm.clearFields()
+        
     }
 }
 

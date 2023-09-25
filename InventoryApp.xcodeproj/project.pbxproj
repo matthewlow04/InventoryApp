@@ -37,8 +37,8 @@
 		A0EC994F2AB357C000EE777B /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC994E2AB357C000EE777B /* DataManager.swift */; };
 		A0EC99542AB3829900EE777B /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC99532AB3829900EE777B /* ItemView.swift */; };
 		A0FEE2D52AC2078C008005C0 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FEE2D42AC2078C008005C0 /* HistoryView.swift */; };
-		A0FEE2D72AC20809008005C0 /* HistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FEE2D62AC20809008005C0 /* HistoryModel.swift */; };
 		A0FEE2D92AC208C8008005C0 /* TimeSinceCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FEE2D82AC208C8008005C0 /* TimeSinceCalculator.swift */; };
+		A0FEE2DB2AC2137A008005C0 /* HistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FEE2DA2AC2137A008005C0 /* HistoryModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,8 +61,8 @@
 		A0EC994E2AB357C000EE777B /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		A0EC99532AB3829900EE777B /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 		A0FEE2D42AC2078C008005C0 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
-		A0FEE2D62AC20809008005C0 /* HistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryModel.swift; sourceTree = "<group>"; };
 		A0FEE2D82AC208C8008005C0 /* TimeSinceCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSinceCalculator.swift; sourceTree = "<group>"; };
+		A0FEE2DA2AC2137A008005C0 /* HistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,7 +156,7 @@
 			children = (
 				A0EC994E2AB357C000EE777B /* DataManager.swift */,
 				A0EC992B2AB2357A00EE777B /* ItemModel.swift */,
-				A0FEE2D62AC20809008005C0 /* HistoryModel.swift */,
+				A0FEE2DA2AC2137A008005C0 /* HistoryModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -259,7 +259,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0FEE2D72AC20809008005C0 /* HistoryModel.swift in Sources */,
 				A0EC99302AB2459300EE777B /* InventoryViewModel.swift in Sources */,
 				A0EC994F2AB357C000EE777B /* DataManager.swift in Sources */,
 				A0EC99322AB2474100EE777B /* AddItemView.swift in Sources */,
@@ -272,6 +271,7 @@
 				A0994CDA2ABB5154004D7EAD /* Colors.swift in Sources */,
 				A0774F072AB89A90006DF7C7 /* LoginViewModel.swift in Sources */,
 				A0994CDC2ABB5575004D7EAD /* BackgroundView.swift in Sources */,
+				A0FEE2DB2AC2137A008005C0 /* HistoryModel.swift in Sources */,
 				A06BEF432AB8982D00D7A3AF /* LoginView.swift in Sources */,
 				A0EC991A2AB22E3100EE777B /* InventoryAppApp.swift in Sources */,
 				A0FEE2D92AC208C8008005C0 /* TimeSinceCalculator.swift in Sources */,

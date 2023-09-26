@@ -39,6 +39,8 @@
 		A0FEE2D52AC2078C008005C0 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FEE2D42AC2078C008005C0 /* HistoryView.swift */; };
 		A0FEE2D92AC208C8008005C0 /* TimeSinceCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FEE2D82AC208C8008005C0 /* TimeSinceCalculator.swift */; };
 		A0FEE2DB2AC2137A008005C0 /* HistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FEE2DA2AC2137A008005C0 /* HistoryModel.swift */; };
+		A0FEE2DD2AC33725008005C0 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FEE2DC2AC33725008005C0 /* AlertView.swift */; };
+		A0FEE2DF2AC33751008005C0 /* AlertModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FEE2DE2AC33751008005C0 /* AlertModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +65,8 @@
 		A0FEE2D42AC2078C008005C0 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		A0FEE2D82AC208C8008005C0 /* TimeSinceCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSinceCalculator.swift; sourceTree = "<group>"; };
 		A0FEE2DA2AC2137A008005C0 /* HistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryModel.swift; sourceTree = "<group>"; };
+		A0FEE2DC2AC33725008005C0 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
+		A0FEE2DE2AC33751008005C0 /* AlertModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +151,7 @@
 				A06BEF422AB8982D00D7A3AF /* LoginView.swift */,
 				A0994CDB2ABB5575004D7EAD /* BackgroundView.swift */,
 				A0FEE2D42AC2078C008005C0 /* HistoryView.swift */,
+				A0FEE2DC2AC33725008005C0 /* AlertView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -157,6 +162,7 @@
 				A0EC994E2AB357C000EE777B /* DataManager.swift */,
 				A0EC992B2AB2357A00EE777B /* ItemModel.swift */,
 				A0FEE2DA2AC2137A008005C0 /* HistoryModel.swift */,
+				A0FEE2DE2AC33751008005C0 /* AlertModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -270,6 +276,8 @@
 				A0EC992C2AB2357A00EE777B /* ItemModel.swift in Sources */,
 				A0994CDA2ABB5154004D7EAD /* Colors.swift in Sources */,
 				A0774F072AB89A90006DF7C7 /* LoginViewModel.swift in Sources */,
+				A0FEE2DF2AC33751008005C0 /* AlertModel.swift in Sources */,
+				A0FEE2DD2AC33725008005C0 /* AlertView.swift in Sources */,
 				A0994CDC2ABB5575004D7EAD /* BackgroundView.swift in Sources */,
 				A0FEE2DB2AC2137A008005C0 /* HistoryModel.swift in Sources */,
 				A06BEF432AB8982D00D7A3AF /* LoginView.swift in Sources */,

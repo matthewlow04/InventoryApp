@@ -31,7 +31,7 @@ struct ContentView: View {
                 .tabItem{
                     Label("Inventory History", systemImage: "books.vertical")
                 }
-            Text("Coming Soon")
+            AlertView()
                 .tabItem{
                     Label("Alerts", systemImage: "bell")
                 }

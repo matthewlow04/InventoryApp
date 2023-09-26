@@ -14,4 +14,7 @@ struct Item: Hashable{
     var amountInStock: Int
     var category: String
     var amountHistory: [Int]
+    var percentInStock: Int{
+        return amountInStock/amountTotal
+    }
 }

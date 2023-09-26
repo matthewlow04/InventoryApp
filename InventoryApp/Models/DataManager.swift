@@ -12,6 +12,7 @@ class DataManager: ObservableObject{
     
     @Published var inventory: [Item] = []
     @Published var inventoryHistory: [History] = []
+    @Published var alerts: [Notification] = []
     var hasLoadedData = false
 
 //
@@ -83,6 +84,36 @@ class DataManager: ObservableObject{
               }
     }
     
+    func fetchAlertHistory(){
+        alerts.removeAll()
+        let fullPath = "Users/\(Auth.auth().currentUser!.uid)/Alert"
+        let db = Firestore.firestore()
+        let ref = db.collection(fullPath)
+        let refSorted = ref.order(by: "date", descending: true)
+              refSorted.getDocuments { snapshot, error in
+                  guard error == nil else{
+                      print(error!.localizedDescription)
+                      return
+                  }
+                  
+                  if let snapshot = snapshot{
+                      for document in snapshot.documents{
+                          let data = document.data()
+                          let date = data["date"] as? Timestamp ?? Timestamp(date: Date.now)
+                          let name = data["name"] as? String ?? "Unknown Alert"
+                          let severity = data["severity"] as? String ?? "Low"
+                          let message = data["message"] as? String ?? ""
+                          let seen = data["seen"] as? Bool ?? false
+                          let id = data["id"] as? String ?? ""
+                        
+                          let alertItem = Notification(alertType: name, alertMessage: message, severity: severity, date: date.dateValue(), seen: seen, id: id)
+                          self.alerts.append(alertItem)
+                        
+                      }
+                  }
+              }
+    }
+    
     
     func copyArray() -> [Item]{
         return inventory
@@ -126,6 +157,35 @@ class DataManager: ObservableObject{
             }else{
                 added = false
             }
+           
+            let decimalInStock = Double(newAmount)/Double(itemTotal)
+            if(newAmount == 0){
+                let id = UUID()
+                let newPath = "Users/\(userID)/Alert/\(id)"
+                let ref = db.document(newPath)
+              
+                ref.setData(["name": "Out of Stock", "date": Timestamp(date: Date.now), "severity": "high", "message": itemName+" is out of stock", "seen": false, "id": id.uuidString]){ error in
+                    if let error = error{
+                        print(error.localizedDescription)
+                    }
+                    
+                }
+            }
+            else if (decimalInStock <= 0.1){
+                let id = UUID()
+                let newPath = "Users/\(userID)/Alert/\(id)"
+                
+                let ref = db.document(newPath)
+             
+              
+                ref.setData(["name": "Low Stock", "date": Timestamp(date: Date.now), "severity": "medium", "message": itemName+" is below 10% in stock", "seen": false, "id" : id.uuidString]){ error in
+                    if let error = error{
+                        print(error.localizedDescription)
+                    }
+                    
+                }
+                
+            }
             
             createHistory(name: itemName, amount: difference, added: added, id: UUID())
             
@@ -136,6 +196,8 @@ class DataManager: ObservableObject{
                 
             }
             fetchItems()
+            fetchAlertHistory()
+           
         }
        
        
@@ -164,8 +226,8 @@ class DataManager: ObservableObject{
     }
     
     func getItemByName(name: String) -> Item? {
-        print(inventory.count)
-        print(name)
+//        print(inventory.count)
+//        print(name)
         return inventory.first { $0.name.lowercased() == name.lowercased() }
     }
     
@@ -185,6 +247,26 @@ class DataManager: ObservableObject{
         }
         let newHistory = History(itemName: name, date: Date.now, addedItem: added, amount: abs(amount))
         inventoryHistory.append(newHistory)
+    }
+    
+    func deleteAlert(alertID: String){
+//        print("Delete alert called")
+//        print(alertID)
+
+        if let currentUser = Auth.auth().currentUser{
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let newPath = "Users/\(userID)/Alert/\(alertID)"
+            let ref = db.document(newPath)
+            
+            ref.delete(){ error in
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+                
+            }
+        }
+        fetchAlertHistory()
     }
         
     

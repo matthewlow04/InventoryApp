@@ -10,50 +10,77 @@ import SwiftUI
 struct AlertView: View {
     @EnvironmentObject var dataManager: DataManager
     
-    let alertArray = [Notification(alertType: "Low Stock", alertMessage: "Your mouse stock is at 1/4", severity: "Medium", date: Date.now, seen: false)]
-    
     var body: some View {
         NavigationStack{
-            List(alertArray, id: \.self){ item in
-                HStack{
-                    VStack(alignment: .leading, spacing: 10){
-                        Text(item.alertType)
-                            .bold()
-                        Text("\(item.alertMessage)")
-                        
-                        
-                        Text(timeSince(date: item.date))
-                            .foregroundColor(.gray)
-                            .italic()
+            NavigationStack {
+                        List {
+                            ForEach(dataManager.alerts, id: \.id) { item in
+                                AlertRow(alert: item)
+                            }
+                            .onDelete { indexSet in
+                                    for index in indexSet {
+                                        let alertToDelete = dataManager.alerts[index]
+                                        deleteAlert(alertID: alertToDelete.id, alert: alertToDelete)
+                                    }
+                                }
+                        }
+                        .navigationTitle("Alerts")
+                        .onAppear {
+//                            dataManager.fetchAlertHistory()
+                        }
                     }
-                    Spacer()
-                    Image(systemName: "exclamationmark.circle")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 30,height: 30)
-                        .foregroundColor(getAlertColour(severity: item.severity))
-                }
-                    
+        }
+    }
+    
+    func deleteAlert(alertID: String, alert: Notification) {
+        if let index = dataManager.alerts.firstIndex(where: { $0.id == alert.id }) {
+            dataManager.alerts.remove(at: index)
+            dataManager.deleteAlert(alertID: alertID)
+                   
+        }
+        
+
+    }
+    
+    
+    
+}
+
+struct AlertRow: View {
+    var alert: Notification
+                                    
+
+    var body: some View {
+        HStack{
+            VStack(alignment: .leading, spacing: 10){
+                Text(alert.alertType)
+                    .bold()
+                Text("\(alert.alertMessage)")
                 
+                Text(timeSince(date: alert.date))
+                    .foregroundColor(.gray)
+                    .italic()
             }
-            .navigationTitle("Alerts")
-            .onAppear{
-              
-            }
+            Spacer()
+            Image(systemName: "exclamationmark.circle")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 30, height: 30)
+                .foregroundColor(getAlertColour(severity: alert.severity))
         }
     }
     
     func getAlertColour(severity: String) -> Color{
-        let severityLevel = severity.lowercased()
-        if severityLevel == "high"{
-            return Color.red
-        }
-        else if severityLevel == "medium"{
-            return Color.yellow
-        }
-        else{
-            return Color.green
-        }
+            let severityLevel = severity.lowercased()
+            if severityLevel == "high"{
+                return Color.red
+            }
+            else if severityLevel == "medium"{
+                return Color.yellow
+            }
+            else{
+                return Color.green
+            }
     }
 }
 

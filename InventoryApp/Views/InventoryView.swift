@@ -39,6 +39,7 @@ struct InventoryView: View {
             }
             .onAppear {
                 dataManager.fetchItems()
+                dataManager.fetchAlertHistory()
             }
         }
     }

@@ -13,6 +13,7 @@ struct Notification: Hashable{
     var severity: String
     var date: Date
     var seen: Bool
+    var id: String
     
 }
 

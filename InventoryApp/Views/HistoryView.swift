@@ -30,7 +30,11 @@ struct HistoryView: View {
                 }
             }
             .navigationTitle("Inventory History")
+            .onAppear{
+                dataManager.fetchInventoryHistory()
+            }
         }
+       
         
     }
 }

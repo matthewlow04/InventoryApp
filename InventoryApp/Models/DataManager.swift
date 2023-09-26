@@ -55,33 +55,33 @@ class DataManager: ObservableObject{
         
     }
     
-//    func fetchInventoryHistory(){
-//        let fullPath = "Users/\(Auth.auth().currentUser?.uid)/History"
-//        let db = Firestore.firestore()
-//        let ref = db.collection(fullPath)
-//              ref.getDocuments { snapshot, error in
-//                  guard error == nil else{
-//                      print(error!.localizedDescription)
-//                      return
-//                  }
-//                  
-//                  if let snapshot = snapshot{
-//                      for document in snapshot.documents{
-//                          let data = document.data()
-//                          let amountInStock = data["amount"] as? Int ?? 60
-//                          let amountTotal = data["added"] as? Int ?? 60
-//                          let name = data["name"] as? String ?? ""
-//                          let notes = data["notes"] as? String ?? ""
-//                          let category = data["category"] as? String ?? ""
-//                          let amountHistory = data["amountHistory"] as? [Int] ?? [amountTotal]
-//                        
-//                          let historyItem = History(itemName: <#T##String#>, date: <#T##Date#>, addedItem: <#T##Bool#>, amount: <#T##Int#>)
-//                          self.inventoryHistory.append(historyItem)
-//                        
-//                      }
-//                  }
-//              }
-//    }
+    func fetchInventoryHistory(){
+        inventoryHistory.removeAll()
+        let fullPath = "Users/\(Auth.auth().currentUser!.uid)/History"
+        let db = Firestore.firestore()
+        let ref = db.collection(fullPath)
+        let refSorted = ref.order(by: "date", descending: true)
+              refSorted.getDocuments { snapshot, error in
+                  guard error == nil else{
+                      print(error!.localizedDescription)
+                      return
+                  }
+                  
+                  if let snapshot = snapshot{
+                      for document in snapshot.documents{
+                          let data = document.data()
+                          let date = data["date"] as? Timestamp ?? Timestamp(date: Date.now)
+                          let name = data["name"] as? String ?? ""
+                          let amount = data["amount"] as? Int ?? 0
+                          let added = data["added"] as? Bool ?? true
+                        
+                          let historyItem = History(itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount))
+                          self.inventoryHistory.append(historyItem)
+                        
+                      }
+                  }
+              }
+    }
     
     
     func copyArray() -> [Item]{
@@ -127,7 +127,7 @@ class DataManager: ObservableObject{
                 added = false
             }
             
-            createHistory(name: itemName, amount: difference, added: added)
+            createHistory(name: itemName, amount: difference, added: added, id: UUID())
             
             ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
                 if let error = error{
@@ -169,8 +169,20 @@ class DataManager: ObservableObject{
         return inventory.first { $0.name.lowercased() == name.lowercased() }
     }
     
-    func createHistory(name: String, amount: Int, added: Bool){
-        
+    func createHistory(name: String, amount: Int, added: Bool, id: UUID){
+        if let currentUser = Auth.auth().currentUser{
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let fullPath = "Users/\(userID)/History/\(id)"
+            let ref = db.document(fullPath)
+          
+            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount)]){ error in
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+                
+            }
+        }
         let newHistory = History(itemName: name, date: Date.now, addedItem: added, amount: abs(amount))
         inventoryHistory.append(newHistory)
     }

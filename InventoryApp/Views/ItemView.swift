@@ -14,6 +14,7 @@ struct ItemView: View {
     @State private var amountInStock: Double
     @State var isPresentingConfirm = false
     @State var isShowingAlert = false
+    @State var alertMessage = "Item saved"
     @Environment(\.dismiss) var dismiss
         
     init(selectedItem: Item) {
@@ -54,20 +55,17 @@ struct ItemView: View {
                         .confirmationDialog("Are you sure?",
                              isPresented: $isPresentingConfirm) {
                             Button("Delete '\(selectedItem.name.lowercased())' from inventory?", role: .destructive) {
-                                 dataManager.deleteItem(itemName: selectedItem.name)
+                                dataManager.deleteItem(itemName: selectedItem.name)
+                                alertMessage = "Item deleted"
+                                isShowingAlert = true
                                 dismiss()
-                             }
+                            }
                         }
                 }
                 
                 
             }.scrollContentBackground(.hidden)
-            
-           
-           
-            
-        
-            
+               
 
         }.toolbar{
             Button("Save"){
@@ -75,7 +73,7 @@ struct ItemView: View {
                 isShowingAlert = true
                 dismiss()
             }
-        }.alert("Item Saved", isPresented: $isShowingAlert, actions: {
+        }.alert(alertMessage, isPresented: $isShowingAlert, actions: {
             Button("OK", role: .cancel){}
         })
         

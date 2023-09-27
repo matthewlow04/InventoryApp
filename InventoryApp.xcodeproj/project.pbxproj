@@ -12,6 +12,9 @@
 		A0774F072AB89A90006DF7C7 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0774F062AB89A90006DF7C7 /* LoginViewModel.swift */; };
 		A0994CDA2ABB5154004D7EAD /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0994CD92ABB5154004D7EAD /* Colors.swift */; };
 		A0994CDC2ABB5575004D7EAD /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0994CDB2ABB5575004D7EAD /* BackgroundView.swift */; };
+		A0B9776B2AC4B2F80042E1DA /* PersonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B9776A2AC4B2F80042E1DA /* PersonModel.swift */; };
+		A0B9776D2AC4C31F0042E1DA /* AddPersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B9776C2AC4C31F0042E1DA /* AddPersonView.swift */; };
+		A0B9776F2AC4C3630042E1DA /* AddPersonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B9776E2AC4C3630042E1DA /* AddPersonViewModel.swift */; };
 		A0EC991A2AB22E3100EE777B /* InventoryAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */; };
 		A0EC991C2AB22E3100EE777B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC991B2AB22E3100EE777B /* ContentView.swift */; };
 		A0EC991E2AB22E3200EE777B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0EC991D2AB22E3200EE777B /* Assets.xcassets */; };
@@ -49,6 +52,9 @@
 		A0774F062AB89A90006DF7C7 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		A0994CD92ABB5154004D7EAD /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		A0994CDB2ABB5575004D7EAD /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
+		A0B9776A2AC4B2F80042E1DA /* PersonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonModel.swift; sourceTree = "<group>"; };
+		A0B9776C2AC4C31F0042E1DA /* AddPersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonView.swift; sourceTree = "<group>"; };
+		A0B9776E2AC4C3630042E1DA /* AddPersonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonViewModel.swift; sourceTree = "<group>"; };
 		A0EC99162AB22E3100EE777B /* InventoryApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InventoryApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAppApp.swift; sourceTree = "<group>"; };
 		A0EC991B2AB22E3100EE777B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -152,6 +158,7 @@
 				A0994CDB2ABB5575004D7EAD /* BackgroundView.swift */,
 				A0FEE2D42AC2078C008005C0 /* HistoryView.swift */,
 				A0FEE2DC2AC33725008005C0 /* AlertView.swift */,
+				A0B9776C2AC4C31F0042E1DA /* AddPersonView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -163,6 +170,7 @@
 				A0EC992B2AB2357A00EE777B /* ItemModel.swift */,
 				A0FEE2DA2AC2137A008005C0 /* HistoryModel.swift */,
 				A0FEE2DE2AC33751008005C0 /* AlertModel.swift */,
+				A0B9776A2AC4B2F80042E1DA /* PersonModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -171,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				A0EC99332AB2491500EE777B /* AddItemViewModel.swift */,
+				A0B9776E2AC4C3630042E1DA /* AddPersonViewModel.swift */,
 				A0EC992F2AB2459300EE777B /* InventoryViewModel.swift */,
 				A0774F062AB89A90006DF7C7 /* LoginViewModel.swift */,
 			);
@@ -274,9 +283,11 @@
 				A0EC99342AB2491500EE777B /* AddItemViewModel.swift in Sources */,
 				A0FEE2D52AC2078C008005C0 /* HistoryView.swift in Sources */,
 				A0EC992C2AB2357A00EE777B /* ItemModel.swift in Sources */,
+				A0B9776F2AC4C3630042E1DA /* AddPersonViewModel.swift in Sources */,
 				A0994CDA2ABB5154004D7EAD /* Colors.swift in Sources */,
 				A0774F072AB89A90006DF7C7 /* LoginViewModel.swift in Sources */,
 				A0FEE2DF2AC33751008005C0 /* AlertModel.swift in Sources */,
+				A0B9776B2AC4B2F80042E1DA /* PersonModel.swift in Sources */,
 				A0FEE2DD2AC33725008005C0 /* AlertView.swift in Sources */,
 				A0994CDC2ABB5575004D7EAD /* BackgroundView.swift in Sources */,
 				A0FEE2DB2AC2137A008005C0 /* HistoryModel.swift in Sources */,
@@ -284,6 +295,7 @@
 				A0EC991A2AB22E3100EE777B /* InventoryAppApp.swift in Sources */,
 				A0FEE2D92AC208C8008005C0 /* TimeSinceCalculator.swift in Sources */,
 				A06BEF3F2AB4B02000D7A3AF /* Button Styling.swift in Sources */,
+				A0B9776D2AC4C31F0042E1DA /* AddPersonView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,6 +432,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -449,6 +462,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

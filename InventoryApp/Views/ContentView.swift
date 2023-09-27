@@ -27,6 +27,12 @@ struct ContentView: View {
                     Label("Add New Item", systemImage: "plus")
                 }
             
+            AddPersonView()
+                .tabItem{
+                    Label("People", systemImage: "person")
+                }
+            
+            
             HistoryView()
                 .tabItem{
                     Label("Inventory History", systemImage: "books.vertical")

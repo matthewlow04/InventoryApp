@@ -13,6 +13,7 @@ class DataManager: ObservableObject{
     @Published var inventory: [Item] = []
     @Published var inventoryHistory: [History] = []
     @Published var alerts: [Notification] = []
+    @Published var people: [Person] = []
     var hasLoadedData = false
 
 //
@@ -112,6 +113,48 @@ class DataManager: ObservableObject{
                       }
                   }
               }
+    }
+    
+    func fetchPeopleData(){
+        people.removeAll()
+        let fullPath = "Users/\(Auth.auth().currentUser!.uid)/People"
+        let db = Firestore.firestore()
+        let ref = db.collection(fullPath)
+        
+        ref.getDocuments { snapshot, error in
+            guard error == nil else{
+                print(error!.localizedDescription)
+                return
+            }
+            
+            if let snapshot = snapshot{
+     
+                for document in snapshot.documents{
+                   
+                    let data = document.data()
+                   
+                    let firstName = data["firstName"] as? String ?? ""
+                    let lastName = data["lastName"] as? String ?? ""
+                    let inventoryData = data["inventory"] as? [[String: Any]] ?? []
+                    
+                    var inventory:[AssignedItem] = []
+                    for itemData in inventoryData {
+                        let assignedFirstName = itemData["firstName"] as? String ?? ""
+                        let assignedLastName = itemData["lastName"] as? String ?? ""
+                        let itemID = itemData["itemID"] as? String ?? UUID().uuidString
+                        let quantity = itemData["quantity"] as? Int ?? 0
+                        
+                        let assignedItem = AssignedItem(firstName: assignedFirstName, lastName: assignedLastName, itemID: itemID, quantity: quantity)
+                        inventory.append(assignedItem)
+                    }
+                    
+                    let person = Person(firstName: firstName, lastName: lastName,inventory: inventory)
+                    self.people.append(person)
+                    
+                  
+                }
+            }
+        }
     }
     
     
@@ -267,6 +310,35 @@ class DataManager: ObservableObject{
             }
         }
         fetchAlertHistory()
+    }
+    
+    func addPerson(firstName: String, lastName: String, inventory: [AssignedItem]){
+        if let currentUser = Auth.auth().currentUser{
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let id = firstName + lastName
+            let newPath = "Users/\(userID)/People/\(id)"
+            
+            let ref = db.document(newPath)
+            
+            let data: [String: Any] = [
+                "firstName": firstName,
+                "lastName": lastName,
+                "inventory": inventory.map{ item in
+                    return[
+                        "firstName": item.firstName,
+                        "lastName": item.lastName,
+                        "itemID": item.itemID,
+                        "quantity": item.quantity
+                    ] as [String : Any]
+                }
+            ]
+            ref.setData(data){ error in
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+            }
+        }
     }
         
     

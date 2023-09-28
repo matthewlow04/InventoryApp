@@ -8,8 +8,7 @@
 import SwiftUI
 import Firebase
 
-struct LoginView: View {
-    
+struct LoginView: View {    
     
     @State private var email = ""
     @State private var password = ""

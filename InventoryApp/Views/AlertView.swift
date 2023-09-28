@@ -38,17 +38,12 @@ struct AlertView: View {
             dataManager.deleteAlert(alertID: alertID)
                    
         }
-        
-
     }
-    
-    
-    
+ 
 }
 
 struct AlertRow: View {
     var alert: Notification
-                                    
 
     var body: some View {
         HStack{

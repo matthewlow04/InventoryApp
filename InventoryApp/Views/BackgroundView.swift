@@ -16,11 +16,6 @@ struct BackgroundView: View {
                 
                 Spacer()
                     .frame(maxWidth: .infinity)
-                
-               
-              
-                    
-                
                 Rectangle()
                     .foregroundColor(CustomColor.lightBlue)
                     .frame(width: 100, height: 25)

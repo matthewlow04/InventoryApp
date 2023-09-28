@@ -96,30 +96,22 @@ struct AddItemView: View {
                 }
                 else{
                     duplicateAlert = true
-                 
-                    
                 }
             }
             else{
                 alertMessage = "Amount must be a positive number"
                 showingAlert = true
             }
-            
-               
-           
         }
         else{
             alertMessage = "You must enter a name"
             showingAlert = true
         }
-        
-        
     }
 }
 
 struct AddItemView_Previews: PreviewProvider {
     static var previews: some View {
-       
         AddItemView()
     }
 }

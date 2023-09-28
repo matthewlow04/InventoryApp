@@ -11,8 +11,6 @@ struct InventoryView: View {
     @EnvironmentObject var dataManager: DataManager
     @State private var searchText = ""
     var filteredItems: [Item] {
-//        print("filteredItems called")
-//        print(dataManager.inventory)
         if searchText.isEmpty {
             return dataManager.inventory
         } else {
@@ -20,7 +18,6 @@ struct InventoryView: View {
                 .filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
     }
-
     var body: some View {
         VStack {
             NavigationStack {
@@ -43,7 +40,6 @@ struct InventoryView: View {
             }
         }
     }
-   
 }
 
 struct InventoryView_Previews: PreviewProvider {

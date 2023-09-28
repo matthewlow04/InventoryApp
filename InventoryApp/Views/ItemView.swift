@@ -22,7 +22,6 @@ struct ItemView: View {
         _amountInStock = State(initialValue: Double(selectedItem.amountInStock))
     }
     
-    
     var body: some View {
         VStack{
             Text(selectedItem.name)
@@ -62,10 +61,7 @@ struct ItemView: View {
                             }
                         }
                 }
-                
-                
             }.scrollContentBackground(.hidden)
-               
 
         }.toolbar{
             Button("Save"){
@@ -97,9 +93,7 @@ struct ItemView: View {
             isPresentingConfirm = true
             
         }
-    }
-         
-         
+    }        
 }
 
 struct ItemView_Previews: PreviewProvider {

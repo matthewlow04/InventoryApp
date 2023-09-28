@@ -23,18 +23,13 @@ struct HistoryView: View {
                     Text(timeSince(date: item.date))
                         .foregroundColor(.gray)
                         .italic()
-                       
                 }
-                    
-                
             }
             .navigationTitle("Inventory History")
             .onAppear{
                 dataManager.fetchInventoryHistory()
             }
-        }
-       
-        
+        }      
     }
 }
 

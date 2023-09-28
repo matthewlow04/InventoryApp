@@ -13,26 +13,18 @@ struct ContentView: View {
 
     var body: some View {
         TabView{
-            
-            
-            
             InventoryView()
                 .tabItem{
                     Label("Inventory", systemImage: "archivebox")
                 }
-            
-            
             AddItemView()
                 .tabItem{
                     Label("Add New Item", systemImage: "plus")
                 }
-            
-            AddPersonView()
+            PersonListView()
                 .tabItem{
                     Label("People", systemImage: "person")
                 }
-            
-            
             HistoryView()
                 .tabItem{
                     Label("Inventory History", systemImage: "books.vertical")
@@ -41,9 +33,7 @@ struct ContentView: View {
                 .tabItem{
                     Label("Alerts", systemImage: "bell")
                 }
-                .badge(dataManager.alerts.count)
-           
-            
+                .badge(dataManager.alerts.count)           
         }
     }
 }

@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct Person{
+struct Person:Hashable{
     var firstName: String
     var lastName: String
     var inventory: [AssignedItem]
 }
 
-struct AssignedItem{
+struct AssignedItem:Hashable{
     var firstName: String
     var lastName: String
     var itemID: String

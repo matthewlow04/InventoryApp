@@ -15,6 +15,8 @@
 		A0B9776B2AC4B2F80042E1DA /* PersonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B9776A2AC4B2F80042E1DA /* PersonModel.swift */; };
 		A0B9776D2AC4C31F0042E1DA /* AddPersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B9776C2AC4C31F0042E1DA /* AddPersonView.swift */; };
 		A0B9776F2AC4C3630042E1DA /* AddPersonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B9776E2AC4C3630042E1DA /* AddPersonViewModel.swift */; };
+		A0B977712AC605FF0042E1DA /* PersonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B977702AC605FF0042E1DA /* PersonListView.swift */; };
+		A0B977732AC606A70042E1DA /* PersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B977722AC606A70042E1DA /* PersonView.swift */; };
 		A0EC991A2AB22E3100EE777B /* InventoryAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */; };
 		A0EC991C2AB22E3100EE777B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC991B2AB22E3100EE777B /* ContentView.swift */; };
 		A0EC991E2AB22E3200EE777B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0EC991D2AB22E3200EE777B /* Assets.xcassets */; };
@@ -55,6 +57,8 @@
 		A0B9776A2AC4B2F80042E1DA /* PersonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonModel.swift; sourceTree = "<group>"; };
 		A0B9776C2AC4C31F0042E1DA /* AddPersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonView.swift; sourceTree = "<group>"; };
 		A0B9776E2AC4C3630042E1DA /* AddPersonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonViewModel.swift; sourceTree = "<group>"; };
+		A0B977702AC605FF0042E1DA /* PersonListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonListView.swift; sourceTree = "<group>"; };
+		A0B977722AC606A70042E1DA /* PersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonView.swift; sourceTree = "<group>"; };
 		A0EC99162AB22E3100EE777B /* InventoryApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InventoryApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAppApp.swift; sourceTree = "<group>"; };
 		A0EC991B2AB22E3100EE777B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -159,6 +163,8 @@
 				A0FEE2D42AC2078C008005C0 /* HistoryView.swift */,
 				A0FEE2DC2AC33725008005C0 /* AlertView.swift */,
 				A0B9776C2AC4C31F0042E1DA /* AddPersonView.swift */,
+				A0B977702AC605FF0042E1DA /* PersonListView.swift */,
+				A0B977722AC606A70042E1DA /* PersonView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -293,7 +299,9 @@
 				A0FEE2DB2AC2137A008005C0 /* HistoryModel.swift in Sources */,
 				A06BEF432AB8982D00D7A3AF /* LoginView.swift in Sources */,
 				A0EC991A2AB22E3100EE777B /* InventoryAppApp.swift in Sources */,
+				A0B977712AC605FF0042E1DA /* PersonListView.swift in Sources */,
 				A0FEE2D92AC208C8008005C0 /* TimeSinceCalculator.swift in Sources */,
+				A0B977732AC606A70042E1DA /* PersonView.swift in Sources */,
 				A06BEF3F2AB4B02000D7A3AF /* Button Styling.swift in Sources */,
 				A0B9776D2AC4C31F0042E1DA /* AddPersonView.swift in Sources */,
 			);

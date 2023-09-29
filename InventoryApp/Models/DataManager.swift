@@ -313,4 +313,31 @@ class DataManager: ObservableObject{
             }
         }
     }
+    func updatePerson(selectedPerson: Person) {
+        if let currentUser = Auth.auth().currentUser {
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let id = selectedPerson.firstName + selectedPerson.lastName
+            let newPath = "Users/\(userID)/People/\(id)"
+            let ref = db.document(newPath)
+
+            let data: [String: Any] = [
+                "firstName": selectedPerson.firstName,
+                "lastName": selectedPerson.lastName,
+                "inventory": selectedPerson.inventory.map { item in
+                    return [
+                        "itemID": item.itemID,
+                        "quantity": item.quantity
+                    ] as [String : Any]
+                }
+            ]
+
+            ref.setData(data) { error in
+                if let error = error {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+
 }

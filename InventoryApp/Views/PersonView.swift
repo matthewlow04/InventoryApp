@@ -12,6 +12,7 @@ struct PersonView: View {
     @State var selectedPerson: Person
     @Environment(\.dismiss) var dismiss
     @State var showingSheet = false
+    @State var showingAlert = false
     @State var selectedItem = ""
     @State var itemAmount = 0.0
     var itemNames: [String] {
@@ -50,6 +51,19 @@ struct PersonView: View {
      
         }.padding()
             .foregroundColor(CustomColor.textBlue)
+            .toolbar{
+                Button("Save"){
+                    dataManager.updatePerson(selectedPerson: selectedPerson)
+                    dismiss()
+                }
+            }
+            .sheet(isPresented: $showingSheet){
+                SheetView
+            }
+          
+            .onAppear{
+                dataManager.fetchPeopleData()
+            }
         Text("Inventory").foregroundColor(Color.gray)
         ForEach(selectedPerson.inventory.indices, id: \.self) { index in
             let item = selectedPerson.inventory[index]
@@ -72,15 +86,7 @@ struct PersonView: View {
             
            
         }.padding(.horizontal, 50)
-            .toolbar{
-                Button("Save"){
-                    dataManager.updatePerson(selectedPerson: selectedPerson)
-                    dismiss()
-                }
-            }
-            .sheet(isPresented: $showingSheet){
-                SheetView
-            }
+            
         Button("Add New Item"){
             showingSheet = true
         }
@@ -101,18 +107,27 @@ struct PersonView: View {
 
            
             if (selectedItem != ""){
-                Slider(value: $itemAmount, in: 0...Double(dataManager.getItemByName(name: selectedItem)!.amountInStock), step:1)
-                Text("\(Int(itemAmount)) / \(dataManager.getItemByName(name: selectedItem)!.amountInStock)")
+                Slider(value: $itemAmount, in: 0...Double(dataManager.getItemByName(name: selectedItem)?.amountInStock ?? 1), step:1)
+                Text("\(Int(itemAmount)) / \(dataManager.getItemByName(name: selectedItem)?.amountInStock ?? 0)")
             }
            
             
             Button("Assign Item"){
-                
-                itemAmount = 0
+                if(selectedItem != ""){
+                    dataManager.addItemToPerson(person: &selectedPerson, itemID: selectedItem, quantity: Int(itemAmount))
+                    itemAmount = 0
+                }else{
+                    print("Showing alert")
+                    showingAlert = true
+                }
+               
             }
         }.padding(.horizontal, 50)
+        .alert("Please select an item", isPresented: $showingAlert, actions: {
+            Button("OK", role: .cancel){}
+        })
       
-    
+        
     }
     
    

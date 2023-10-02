@@ -339,5 +339,16 @@ class DataManager: ObservableObject{
             }
         }
     }
+    
+    func addItemToPerson(person: inout Person, itemID: String, quantity: Int) {
+        let newItem = AssignedItem(firstName: person.firstName,
+                                   lastName: person.lastName,
+                                   itemID: itemID,
+                                   quantity: quantity)
+
+        person.inventory.append(newItem)
+
+        updatePerson(selectedPerson: person)
+    }
 
 }

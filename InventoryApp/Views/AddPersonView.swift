@@ -10,6 +10,9 @@ import SwiftUI
 struct AddPersonView: View {
     @EnvironmentObject var dataManager: DataManager
     @ObservedObject var apvm = AddPersonViewModel()
+    var itemNames: [String]{
+        return ["Pick an item"] + dataManager.inventory.map { $0.name }
+    }
     var body: some View {
         Form{
             Section{
@@ -33,12 +36,14 @@ struct AddPersonView: View {
                 }
             }
             
-            Section{
-                HStack{
-                    Text("Quantity:")
-                    TextField("Quantity", text: $apvm.quantity)
-                }
-            }
+//            Section{
+//                Picker("Item Name: ", selection: $apvm.selectedItem){
+//                    ForEach(itemNames, id: \.self){
+//                        Text($0)
+//                    }
+//                }
+//            }
+//         
             
             Section{
                 Button("Add new person"){
@@ -46,16 +51,6 @@ struct AddPersonView: View {
                     dataManager.addPerson(firstName: apvm.firstName, lastName: apvm.lastName, inventory: [item])
                 }
             }
-            
-            Section{
-                Button("Check fetch"){
-                    dataManager.fetchPeopleData()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                        print(dataManager.people)
-                    }
-                }
-            }
-            
         }
     }
 }

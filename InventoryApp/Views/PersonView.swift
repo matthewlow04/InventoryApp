@@ -15,6 +15,7 @@ struct PersonView: View {
     @State var showingAlert = false
     @State var selectedItem = ""
     @State var itemAmount = 0.0
+    @State var tapImage = false
     var itemNames: [String] {
         let selectedPersonInventoryNames = Set(selectedPerson.inventory.map { $0.itemID })
 
@@ -28,6 +29,13 @@ struct PersonView: View {
        VStack{
            ZStack(alignment: .bottomTrailing){
                CircleImage()
+                   .offset(y: tapImage ? -50 : 0)
+                   .scaleEffect(tapImage ? 1.5 : 1.0)
+                   .onTapGesture {
+                       withAnimation(.spring(response:0.5, dampingFraction: 0.8, blendDuration: 0.4)){
+                           tapImage.toggle()
+                       }
+                   }
                Image(systemName: "plus")
                    .foregroundColor(.white)
                    .frame(width: 50, height: 50)
@@ -35,6 +43,7 @@ struct PersonView: View {
                    .clipShape(Circle())
                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
                    .offset(x: -10, y: 10)
+                   .scaleEffect(tapImage ? 0 : 1.0)
            }
        }
        VStack(alignment: .leading){

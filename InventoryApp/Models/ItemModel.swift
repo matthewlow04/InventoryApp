@@ -12,7 +12,14 @@ struct Item: Hashable{
     var notes: String
     var amountTotal: Int
     var amountInStock: Int
-    var category: String
+    var category: Category
+    enum Category: String, CaseIterable, Codable{
+        case office = "Office"
+        case tech = "Tech"
+        case stationairy = "Stationairies"
+        case entertainment = "Entertainment"
+        case other = "Other"
+    }
     var amountHistory: [Int]
    
 }

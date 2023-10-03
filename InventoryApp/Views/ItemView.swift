@@ -10,6 +10,7 @@ import Charts
 
 struct ItemView: View {
     @EnvironmentObject var dataManager: DataManager
+    @ObservedObject var ivm = ItemViewModel()
     var selectedItem: Item
     @State private var amountInStock: Double
     @State var isPresentingConfirm = false
@@ -29,6 +30,16 @@ struct ItemView: View {
            
             Text("\(Int(amountInStock)) in stock / \(selectedItem.amountTotal) in total")
             
+            Text(selectedItem.category.rawValue)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
+                .background(ivm.getBackgroundColor(for: selectedItem.category))
+                .cornerRadius(20)
+                .foregroundColor(.white)
+            
+            Divider()
+                .padding(.top, 10)
+
             Form{
                 Section{
                     Slider(value: $amountInStock, in: 0...Double(selectedItem.amountTotal), step:1)
@@ -43,6 +54,7 @@ struct ItemView: View {
                 }header: {
                     Text("Notes")
                 }
+                
                 
                 Section(header: Text("Stock History")) {
                     chartView
@@ -61,6 +73,8 @@ struct ItemView: View {
                             }
                         }
                 }
+                
+                
             }.scrollContentBackground(.hidden)
 
         }.toolbar{
@@ -98,6 +112,6 @@ struct ItemView: View {
 
 struct ItemView_Previews: PreviewProvider {
     static var previews: some View {
-        ItemView(selectedItem: Item(name: "Pencil", notes: "This is a pencil", amountTotal: 0, amountInStock: 0, category: "Stationary", amountHistory: [10]))
+        ItemView(selectedItem: Item(name: "Pencil", notes: "This is a pencil", amountTotal: 0, amountInStock: 0, category: Item.Category.stationairy, amountHistory: [10]))
     }
 }

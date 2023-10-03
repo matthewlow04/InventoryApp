@@ -38,8 +38,8 @@ struct AddItemView: View {
                 
                 Section{
                     Picker("Category: ", selection: $avm.selectedCategory, content: {
-                        ForEach(avm.categories, id: \.self){
-                            Text($0)
+                        ForEach(Item.Category.allCases, id: \.self){ category in
+                            Text(category.rawValue)
                         }
                     })
                 }

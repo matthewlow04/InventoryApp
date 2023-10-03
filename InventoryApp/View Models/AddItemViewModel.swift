@@ -42,6 +42,7 @@ class AddItemViewModel: ObservableObject{
                         dataManager.fetchItems()
                         alertMessage = "Item added"
                         showingAlert = true
+                        print("Added")
                     }
                     else{
                         duplicateAlert = true

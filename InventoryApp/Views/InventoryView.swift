@@ -18,21 +18,22 @@ struct InventoryView: View {
                 .filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
     }
+    let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 2)
+
     var body: some View {
         VStack {
             NavigationStack {
-                List(filteredItems, id: \.self) { item in
-                    NavigationLink(destination: ItemView(selectedItem: item)) {
-                        HStack {
-                            Text(item.name)
-                                .bold()
-                            Spacer()
-                            Text("\(item.amountInStock)/\(item.amountTotal)")
+                ScrollView{
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(filteredItems, id: \.self) { item in
+                            NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(slices: [(Double(item.amountInStock), Color.red), (Double(item.amountTotal-item.amountInStock), Color.gray.opacity(0.4))], name: item.name, total: item.amountTotal, stock: item.amountInStock) .listRowSeparatorTint(.clear)
+                            }
                         }
                     }
+                    .navigationTitle("Inventory")
+                    .searchable(text: $searchText)
+                    .animation(searchText.isEmpty ? .none: .default)
                 }
-                .navigationTitle("Inventory")
-                .searchable(text: $searchText)
             }
             .onAppear {
                 dataManager.fetchItems()

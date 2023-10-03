@@ -49,42 +49,42 @@ struct AddItemView: View {
                 Section{
                     Button("Add Item"){
                         avm.checkErrors()
-                       
-                    }
-                    .alert(avm.alertMessage, isPresented: $avm.showingAlert){
-                        Button("OK", role: .cancel){
-                            if (avm.alertMessage != "You must pick a category"){
-                                avm.clearFields()
-                            }
-                        }
-                    }
-                    .alert(isPresented:$avm.duplicateAlert) {
-                        Alert(
-                            title: Text("This item already exists"),
-                            message: Text("Do you want to add to the existing inventory?"),
-                            primaryButton: .default(Text("Yes")) {
-                                print(avm.name)
-                                if let item = dataManager.getItemByName(name: avm.name) {
-                                    print("Found item: \(item.name)")
-                                    let newItemStock = item.amountInStock + (Int(avm.numberInStock) ?? 0)
-                                    let newItemTotal = item.amountTotal + (Int(avm.numberInStock) ?? 0)
-                                    dataManager.updateItem(itemName: item.name, newAmount: newItemStock, itemTotal: newItemTotal, itemHistory: item.amountHistory)
-                                    avm.alertMessage = "\(avm.numberInStock) were added"
-                                    avm.showingAlert = true
-                                    avm.clearFields()
-                                    
-                                } else {
-                                    print("Item not found")
-                                    avm.clearFields()
-                                }
-
-                               
-                            },
-                            secondaryButton: .cancel()
-                        )
                     }
                 }
-            }.navigationTitle("Add Items")
+            }
+            .navigationTitle("Add Items")
+            .alert(avm.alertMessage, isPresented: $avm.showingAlert){
+                Button("OK", role: .cancel){
+                    if (avm.alertMessage != "You must pick a category"){
+                        avm.clearFields()
+                    }
+                }
+            }
+            .alert(isPresented:$avm.duplicateAlert) {
+                Alert(
+                    title: Text("This item already exists"),
+                    message: Text("Do you want to add to the existing inventory?"),
+                    primaryButton: .default(Text("Yes")) {
+                        print(avm.name)
+                        if let item = dataManager.getItemByName(name: avm.name) {
+                            print("Found item: \(item.name)")
+                            let newItemStock = item.amountInStock + (Int(avm.numberInStock) ?? 0)
+                            let newItemTotal = item.amountTotal + (Int(avm.numberInStock) ?? 0)
+                            dataManager.updateItem(itemName: item.name, newAmount: newItemStock, itemTotal: newItemTotal, itemHistory: item.amountHistory)
+                            avm.alertMessage = "\(avm.numberInStock) were added"
+                            avm.showingAlert = true
+                            avm.clearFields()
+                            
+                        } else {
+                            print("Item not found")
+                            avm.clearFields()
+                        }
+
+                       
+                    },
+                    secondaryButton: .cancel()
+                )
+            }
         }
         
     }

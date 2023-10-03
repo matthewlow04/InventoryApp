@@ -10,6 +10,9 @@ import SwiftUI
 struct InventoryPageItemView: View {
     
     var slices: [(Double, Color)]
+    var name: String
+    var total: Int
+    var stock: Int
 
     var body: some View {
         ZStack{
@@ -37,16 +40,20 @@ struct InventoryPageItemView: View {
                 
             }
             .aspectRatio(1, contentMode: .fit)
-            .frame(width: 200, height:200)
+            .frame(width: 150, height:150)
             
             Circle()
                 .foregroundColor(Color.white)
-                .frame(width: 150)
-            VStack{
-                Text("Keyboard")
-                Text("20/50")
+                .frame(width: 100)
+            VStack {
+                Text(name)
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+                    .frame(width: 100)
+                Text("\(stock)/\(total)")
             }
             .bold()
+            .foregroundColor(Color.black)
             
         }
         
@@ -59,8 +66,8 @@ struct InventoryPageItemView: View {
 
 
 
-struct InventoryPageItemView_Previews: PreviewProvider {
-    static var previews: some View {
-        InventoryPageItemView(slices: [(2,.orange),(3,.gray)])
-    }
-}
+//struct InventoryPageItemView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        InventoryPageItemView(slices: [(2,.orange),(3,.gray)])
+//    }
+//}

@@ -6,13 +6,9 @@
 //
 
 import Foundation
-import SwiftUI
 
 class AddItemViewModel: ObservableObject{
-    
-    
-    
-    
+
     
     @Published var name = ""
     @Published var notes = ""
@@ -21,12 +17,15 @@ class AddItemViewModel: ObservableObject{
     @Published var alertMessage = "Item added"
     @Published var selectedCategory = ""
     @Published var duplicateAlert = false
-    @EnvironmentObject var dataManager: DataManager
+    var dataManager: DataManager
+    
+    init(dataManager: DataManager) {
+           self.dataManager = dataManager
+    }
     
     var categories: [String]{
         return ["Select"] + Item.Category.allCases.map({$0.rawValue})
     }
-
     
     func clearFields(){
         name = ""

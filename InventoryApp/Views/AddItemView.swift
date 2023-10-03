@@ -9,7 +9,11 @@ import SwiftUI
 
 struct AddItemView: View {
     @EnvironmentObject var dataManager: DataManager
-    @ObservedObject var avm = AddItemViewModel()
+    @ObservedObject var avm: AddItemViewModel
+    
+    init(dataManager: DataManager) {
+        self.avm = AddItemViewModel(dataManager: dataManager)
+    }
     
     var body: some View {
         NavigationStack{
@@ -55,41 +59,40 @@ struct AddItemView: View {
                         }
                     }
                     .alert(isPresented:$avm.duplicateAlert) {
-                                Alert(
-                                    title: Text("This item already exists"),
-                                    message: Text("Do you want to add to the existing inventory?"),
-                                    primaryButton: .default(Text("Yes")) {
-                                        print(avm.name)
-                                        if let item = dataManager.getItemByName(name: avm.name) {
-                                            print("Found item: \(item.name)")
-                                            let newItemStock = item.amountInStock + (Int(avm.numberInStock) ?? 0)
-                                            let newItemTotal = item.amountTotal + (Int(avm.numberInStock) ?? 0)
-                                            dataManager.updateItem(itemName: item.name, newAmount: newItemStock, itemTotal: newItemTotal, itemHistory: item.amountHistory)
-                                            avm.alertMessage = "\(avm.numberInStock) were added"
-                                            avm.showingAlert = true
-                                            avm.clearFields()
-                                            
-                                        } else {
-                                            print("Item not found")
-                                            avm.clearFields()
-                                        }
+                        Alert(
+                            title: Text("This item already exists"),
+                            message: Text("Do you want to add to the existing inventory?"),
+                            primaryButton: .default(Text("Yes")) {
+                                print(avm.name)
+                                if let item = dataManager.getItemByName(name: avm.name) {
+                                    print("Found item: \(item.name)")
+                                    let newItemStock = item.amountInStock + (Int(avm.numberInStock) ?? 0)
+                                    let newItemTotal = item.amountTotal + (Int(avm.numberInStock) ?? 0)
+                                    dataManager.updateItem(itemName: item.name, newAmount: newItemStock, itemTotal: newItemTotal, itemHistory: item.amountHistory)
+                                    avm.alertMessage = "\(avm.numberInStock) were added"
+                                    avm.showingAlert = true
+                                    avm.clearFields()
+                                    
+                                } else {
+                                    print("Item not found")
+                                    avm.clearFields()
+                                }
 
-                                       
-                                    },
-                                    secondaryButton: .cancel()
-                                )
-                            }
+                               
+                            },
+                            secondaryButton: .cancel()
+                        )
+                    }
                 }
             }.navigationTitle("Add Items")
         }
         
     }
     
-    
 }
 
 struct AddItemView_Previews: PreviewProvider {
     static var previews: some View {
-        AddItemView()
+        AddItemView(dataManager: DataManager())
     }
 }

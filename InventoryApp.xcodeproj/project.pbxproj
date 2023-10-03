@@ -18,6 +18,7 @@
 		A0B977712AC605FF0042E1DA /* PersonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B977702AC605FF0042E1DA /* PersonListView.swift */; };
 		A0B977732AC606A70042E1DA /* PersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B977722AC606A70042E1DA /* PersonView.swift */; };
 		A0B9778F2ACC68F00042E1DA /* ItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B9778E2ACC68F00042E1DA /* ItemViewModel.swift */; };
+		A0B977912ACC72330042E1DA /* InventoryPageItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B977902ACC72330042E1DA /* InventoryPageItemView.swift */; };
 		A0EC991A2AB22E3100EE777B /* InventoryAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */; };
 		A0EC991C2AB22E3100EE777B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC991B2AB22E3100EE777B /* ContentView.swift */; };
 		A0EC991E2AB22E3200EE777B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0EC991D2AB22E3200EE777B /* Assets.xcassets */; };
@@ -61,6 +62,7 @@
 		A0B977702AC605FF0042E1DA /* PersonListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonListView.swift; sourceTree = "<group>"; };
 		A0B977722AC606A70042E1DA /* PersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonView.swift; sourceTree = "<group>"; };
 		A0B9778E2ACC68F00042E1DA /* ItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewModel.swift; sourceTree = "<group>"; };
+		A0B977902ACC72330042E1DA /* InventoryPageItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryPageItemView.swift; sourceTree = "<group>"; };
 		A0EC99162AB22E3100EE777B /* InventoryApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InventoryApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAppApp.swift; sourceTree = "<group>"; };
 		A0EC991B2AB22E3100EE777B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 				A0EC99312AB2474100EE777B /* AddItemView.swift */,
 				A0EC991B2AB22E3100EE777B /* ContentView.swift */,
 				A0EC99292AB2343800EE777B /* InventoryView.swift */,
+				A0B977902ACC72330042E1DA /* InventoryPageItemView.swift */,
 				A0EC99532AB3829900EE777B /* ItemView.swift */,
 				A06BEF422AB8982D00D7A3AF /* LoginView.swift */,
 				A0994CDB2ABB5575004D7EAD /* BackgroundView.swift */,
@@ -300,6 +303,7 @@
 				A0FEE2DD2AC33725008005C0 /* AlertView.swift in Sources */,
 				A0994CDC2ABB5575004D7EAD /* BackgroundView.swift in Sources */,
 				A0FEE2DB2AC2137A008005C0 /* HistoryModel.swift in Sources */,
+				A0B977912ACC72330042E1DA /* InventoryPageItemView.swift in Sources */,
 				A06BEF432AB8982D00D7A3AF /* LoginView.swift in Sources */,
 				A0EC991A2AB22E3100EE777B /* InventoryAppApp.swift in Sources */,
 				A0B977712AC605FF0042E1DA /* PersonListView.swift in Sources */,

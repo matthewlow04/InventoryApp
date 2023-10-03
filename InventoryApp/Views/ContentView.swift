@@ -17,7 +17,8 @@ struct ContentView: View {
                 .tabItem{
                     Label("Inventory", systemImage: "archivebox")
                 }
-            AddItemView()
+            AddItemView(dataManager: dataManager)
+                .environmentObject(dataManager)
                 .tabItem{
                     Label("Add New Item", systemImage: "plus")
                 }

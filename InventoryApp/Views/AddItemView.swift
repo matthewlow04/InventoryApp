@@ -9,10 +9,10 @@ import SwiftUI
 
 struct AddItemView: View {
     @EnvironmentObject var dataManager: DataManager
-    @ObservedObject var avm: AddItemViewModel
-    
+    @StateObject var avm: AddItemViewModel
+
     init(dataManager: DataManager) {
-        self.avm = AddItemViewModel(dataManager: dataManager)
+        _avm = StateObject(wrappedValue: AddItemViewModel(dataManager: dataManager))
     }
     
     var body: some View {

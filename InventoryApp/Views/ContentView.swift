@@ -34,8 +34,10 @@ struct ContentView: View {
                 .tabItem{
                     Label("Alerts", systemImage: "bell")
                 }
-                .badge(dataManager.alerts.count)           
+                .badge(dataManager.alerts.count)
+            
         }
+        
     }
 }
 

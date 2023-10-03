@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 class ItemViewModel: ObservableObject{
+    
     func getBackgroundColor(for category: Item.Category) -> Color {
         switch category {
         case .office: return Color.blue

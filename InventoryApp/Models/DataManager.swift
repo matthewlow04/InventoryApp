@@ -39,7 +39,7 @@ class DataManager: ObservableObject{
                               let category = data["category"] as? String ?? ""
                               let amountHistory = data["amountHistory"] as? [Int] ?? [amountTotal]
                             
-                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.other, amountHistory: amountHistory)
+                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory)
                               self.inventory.append(item)
                             
                           }

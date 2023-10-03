@@ -10,9 +10,7 @@ import SwiftUI
 struct AddItemView: View {
     @EnvironmentObject var dataManager: DataManager
     @ObservedObject var avm = AddItemViewModel()
-    @State var showingAlert = false
-    @State var alertMessage = "Item added"
-    @State var duplicateAlert = false
+    
     var body: some View {
         NavigationStack{
             Form{
@@ -38,23 +36,25 @@ struct AddItemView: View {
                 
                 Section{
                     Picker("Category: ", selection: $avm.selectedCategory, content: {
-                        ForEach(Item.Category.allCases, id: \.self){ category in
-                            Text(category.rawValue)
+                        ForEach(avm.categories, id: \.self){
+                            Text($0)
                         }
                     })
                 }
                 
                 Section{
                     Button("Add Item"){
-                        checkErrors()
+                        avm.checkErrors()
                        
                     }
-                    .alert(alertMessage, isPresented: $showingAlert){
+                    .alert(avm.alertMessage, isPresented: $avm.showingAlert){
                         Button("OK", role: .cancel){
-                            avm.clearFields()
+                            if (avm.alertMessage != "You must pick a category"){
+                                avm.clearFields()
+                            }
                         }
                     }
-                    .alert(isPresented:$duplicateAlert) {
+                    .alert(isPresented:$avm.duplicateAlert) {
                                 Alert(
                                     title: Text("This item already exists"),
                                     message: Text("Do you want to add to the existing inventory?"),
@@ -65,8 +65,8 @@ struct AddItemView: View {
                                             let newItemStock = item.amountInStock + (Int(avm.numberInStock) ?? 0)
                                             let newItemTotal = item.amountTotal + (Int(avm.numberInStock) ?? 0)
                                             dataManager.updateItem(itemName: item.name, newAmount: newItemStock, itemTotal: newItemTotal, itemHistory: item.amountHistory)
-                                            alertMessage = "\(avm.numberInStock) were added"
-                                            showingAlert = true
+                                            avm.alertMessage = "\(avm.numberInStock) were added"
+                                            avm.showingAlert = true
                                             avm.clearFields()
                                             
                                         } else {
@@ -85,29 +85,7 @@ struct AddItemView: View {
         
     }
     
-    func checkErrors(){
-        if(avm.name != ""){
-            if(Int(avm.numberInStock) ?? 0 > 0){
-                if(dataManager.checkIfExists(name: avm.name)){
-                    dataManager.addItem(itemName: avm.name, itemNotes: avm.notes, itemAmount: avm.numberInStock, category: avm.selectedCategory)
-                    dataManager.fetchItems()
-                    alertMessage = "Item added"
-                    showingAlert = true
-                }
-                else{
-                    duplicateAlert = true
-                }
-            }
-            else{
-                alertMessage = "Amount must be a positive number"
-                showingAlert = true
-            }
-        }
-        else{
-            alertMessage = "You must enter a name"
-            showingAlert = true
-        }
-    }
+    
 }
 
 struct AddItemView_Previews: PreviewProvider {

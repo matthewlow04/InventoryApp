@@ -12,16 +12,16 @@ struct LoginView: View {
     
     @State private var email = ""
     @State private var password = ""
-    
-    @AppStorage("uid") var userID: String = ""
+   
     @EnvironmentObject var lvm: LoginViewModel
     @EnvironmentObject var dataManager: DataManager
     
     var body: some View {
         if lvm.isLoggedIn{
-            ContentView(userId: userID)
+            ContentView()
         } else{
             loginView
+                .ignoresSafeArea(.keyboard)
         }
     }
     
@@ -29,7 +29,6 @@ struct LoginView: View {
         ZStack{
             BackgroundView()
             VStack(spacing: 20){
-                //Text("Generis Inventory")
                 TextField("Email", text: $email)
                 Rectangle()
                     .frame(width: 300, height: 1)
@@ -44,10 +43,10 @@ struct LoginView: View {
                     .bold()
                 signUpButton
                     .bold()
-                
             }
             .frame(width:300)
             .foregroundColor(CustomColor.textBlue)
+           
             .sheet(isPresented: $lvm.showingSheet){
                 SheetView
             }
@@ -56,6 +55,9 @@ struct LoginView: View {
                     
                 }
             })
+        }
+        .onTapGesture {
+            UIApplication.shared.windows.first?.rootViewController?.view.endEditing(true)
         }
        
     }
@@ -77,6 +79,9 @@ struct LoginView: View {
                 lvm.showingSheet = false
             }
         })
+        .onTapGesture {
+            UIApplication.shared.windows.first?.rootViewController?.view.endEditing(true)
+        }
        
     }
     

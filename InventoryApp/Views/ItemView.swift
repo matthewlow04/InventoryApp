@@ -41,13 +41,23 @@ struct ItemView: View {
                 .padding(.top, 10)
 
             Form{
-                Section{
+                Section {
                     Slider(value: $amountInStock, in: 0...Double(selectedItem.amountTotal), step:1)
-                    Text("\(Int(amountInStock))")
-                        
+                    TextField("Amount in Stock", text: Binding(
+                        get: { "\(Int(amountInStock))" },
+                        set: { newValue in
+                            if let intValue = Int(newValue), intValue >= 0 && intValue <= selectedItem.amountTotal {
+                                amountInStock = Double(intValue)
+                            }
+                        }
+                    ))
+                    .keyboardType(.numberPad)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    
                 }header: {
-                    Text("Change Amount")
+                    Text("Change amount")
                 }
+               
                 
                 Section{
                     Text(selectedItem.notes)
@@ -57,7 +67,12 @@ struct ItemView: View {
                 
                 
                 Section(header: Text("Stock History")) {
-                    chartView
+                    HStack{
+                        Spacer()
+                        chartView
+                        Spacer()
+                    }
+                  
                 }
                 
                 Section{
@@ -76,8 +91,13 @@ struct ItemView: View {
                 
                 
             }.scrollContentBackground(.hidden)
+                
 
-        }.toolbar{
+        }
+        .onTapGesture {
+            UIApplication.shared.windows.first?.rootViewController?.view.endEditing(true)
+        }
+        .toolbar{
             Button("Save"){
                 dataManager.updateItem(itemName: selectedItem.name, newAmount: Int(amountInStock), itemTotal: selectedItem.amountTotal, itemHistory: selectedItem.amountHistory)
                 isShowingAlert = true
@@ -87,7 +107,9 @@ struct ItemView: View {
             Button("OK", role: .cancel){}
         })
         
+        
     }
+    
     
     var chartView: some View{
         Chart(0..<selectedItem.amountHistory.count, id: \.self){ nr in

@@ -26,7 +26,7 @@ struct InventoryView: View {
                 ScrollView{
                     LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(filteredItems, id: \.self) { item in
-                            NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(slices: [(Double(item.amountInStock), Color.red), (Double(item.amountTotal-item.amountInStock), Color.gray.opacity(0.4))], name: item.name, total: item.amountTotal, stock: item.amountInStock) .listRowSeparatorTint(.clear)
+                            NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(slices: [(Double(item.amountInStock), CustomColor.lightBlue), (Double(item.amountTotal-item.amountInStock), Color.gray.opacity(0.4))], name: item.name, total: item.amountTotal, stock: item.amountInStock) .listRowSeparatorTint(.clear)
                             }
                         }
                     }

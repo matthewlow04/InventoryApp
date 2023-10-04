@@ -14,6 +14,7 @@ struct Item: Hashable{
     var amountInStock: Int
     var category: Category
     enum Category: String, CaseIterable, Codable{
+        case select = "Select"
         case office = "Office"
         case tech = "Tech"
         case stationairy = "Stationairies"

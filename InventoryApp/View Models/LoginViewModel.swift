@@ -21,29 +21,40 @@ class LoginViewModel: ObservableObject{
         print("Login init")
     }
     
-    func register(userEmail: String, userPassword: String){
-        Auth.auth().createUser(withEmail: userEmail, password: userPassword) { [self] result, error in
-            if error != nil{
-                errorMessage = error!.localizedDescription
-                errorShowing = true
-            }
-            if let result = result{
-                signUpAlert = true
-                username = result.user.email!
+    func register(userEmail: String, userPassword: String) {
+            Auth.auth().createUser(withEmail: userEmail, password: userPassword) { [self] result, error in
+                if let error = error {
+                    print("Register Error: \(error.localizedDescription)")
+                    errorMessage = "Registration failed: \(error.localizedDescription)"
+                    errorShowing = true
+                }
+
+                if let result = result {
+                    signUpAlert = true
+                    username = result.user.email!
+                }
             }
         }
-    }
-    func login(userEmail: String, userPassword: String){
+
+    func login(userEmail: String, userPassword: String) {
         Auth.auth().signIn(withEmail: userEmail, password: userPassword) { [self] result, error in
-            if error != nil{
-                errorMessage = error!.localizedDescription
+            if let error = error {
+                print("Login Error: \(error.localizedDescription)")
+                errorMessage = "Login failed: \(error.localizedDescription)"
                 errorShowing = true
             }
+
             if let result = result {
-                print(result.user.uid)
+                print("User ID: \(result.user.uid)")
                 isLoggedIn = true
             }
-            
         }
     }
 }
+ 
+
+
+
+
+
+

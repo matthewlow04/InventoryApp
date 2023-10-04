@@ -15,7 +15,7 @@ class AddItemViewModel: ObservableObject{
     @Published var numberInStock = ""
     @Published var showingAlert = false
     @Published var alertMessage = "Item added"
-    @Published var selectedCategory = ""
+    @Published var selectedCategory = "Select"
     @Published var duplicateAlert = false
     var dataManager: DataManager
     
@@ -24,7 +24,7 @@ class AddItemViewModel: ObservableObject{
     }
     
     var categories: [String]{
-        return ["Select"] + Item.Category.allCases.map({$0.rawValue})
+        return Item.Category.allCases.map({$0.rawValue})
     }
     
     func clearFields(){
@@ -36,7 +36,7 @@ class AddItemViewModel: ObservableObject{
     func checkErrors(){
         if(name != ""){
             if(Int(numberInStock) ?? 0 > 0){
-                if(selectedCategory != ""){
+                if(selectedCategory != "Select"){
                     if(dataManager.checkIfExists(name: name)){
                         dataManager.addItem(itemName: name, itemNotes: notes, itemAmount: numberInStock, category: selectedCategory)
                         dataManager.fetchItems()

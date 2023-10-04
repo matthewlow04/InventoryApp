@@ -17,6 +17,7 @@ class ItemViewModel: ObservableObject{
         case .stationairy: return Color.orange
         case .entertainment: return Color.purple
         case .other: return Color.gray
+        case .select: return Color.white
         }
     }
 }

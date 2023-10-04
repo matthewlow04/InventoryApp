@@ -15,13 +15,29 @@ class AddPersonViewModel: ObservableObject{
     @Published var quantity = ""
     @Published var itemName = ""
     @Published var showingAlert = false
-    @Published var alertMessage = "Item added"
+    @Published var alertMessage = ""
     @Published var selectedItem = ""
     
     func clearFields(){
         firstName = ""
         lastName = ""
         quantity = ""
+    }
+    
+    func checkValid() -> Bool{
+        if (firstName != "" && lastName != ""){
+            return true
+        }
+        else{
+            if(firstName == ""){
+                alertMessage = "You must enter a first name"
+                showingAlert = true
+            }else{
+                alertMessage = "You must enter a last name"
+                showingAlert = true
+            }
+            return false
+        }
     }
     
 }

@@ -10,6 +10,9 @@ import SwiftUI
 struct AddPersonView: View {
     @EnvironmentObject var dataManager: DataManager
     @ObservedObject var apvm = AddPersonViewModel()
+    @Environment(\.dismiss) var dismiss
+
+    
     var itemNames: [String]{
         return ["Pick an item"] + dataManager.inventory.map { $0.name }
     }
@@ -29,12 +32,12 @@ struct AddPersonView: View {
                 }
             }
             
-            Section{
-                HStack{
-                    Text("Item Name:")
-                    TextField("Item Name", text: $apvm.itemName)
-                }
-            }
+//            Section{
+//                HStack{
+//                    Text("Item Name:")
+//                    TextField("Item Name", text: $apvm.itemName)
+//                }
+//            }
             
 //            Section{
 //                Picker("Item Name: ", selection: $apvm.selectedItem){
@@ -47,9 +50,20 @@ struct AddPersonView: View {
             
             Section{
                 Button("Add new person"){
-                    let item = AssignedItem(firstName: apvm.firstName, lastName: apvm.lastName, itemID: apvm.itemName, quantity: Int(apvm.quantity)!)
-                    dataManager.addPerson(firstName: apvm.firstName, lastName: apvm.lastName, inventory: [item])
+                    if apvm.checkValid() == true{
+                        //let item = AssignedItem(firstName: apvm.firstName, lastName: apvm.lastName, itemID: apvm.itemName, quantity: Int(apvm.quantity)!)
+                        dataManager.addPerson(firstName: apvm.firstName, lastName: apvm.lastName, inventory: [/*item*/])
+                        apvm.alertMessage = "Person added"
+                        apvm.showingAlert = true
+                        dismiss()
+                    }
+
+                    
                 }
+            }
+        }.alert(apvm.alertMessage, isPresented: $apvm.showingAlert){
+            Button("OK", role: .cancel){
+                
             }
         }
     }

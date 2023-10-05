@@ -12,10 +12,12 @@ struct PersonView: View {
     @State var selectedPerson: Person
     @Environment(\.dismiss) var dismiss
     @State var showingSheet = false
+    @State var showingSheetAlert = false
     @State var showingAlert = false
     @State var selectedItem = ""
     @State var itemAmount = 0.0
     @State var tapImage = false
+    @State var alertMessage = ""
     var itemNames: [String] {
         let selectedPersonInventoryNames = Set(selectedPerson.inventory.map { $0.itemID })
 
@@ -46,6 +48,7 @@ struct PersonView: View {
                    .scaleEffect(tapImage ? 0 : 1.0)
            }
        }
+       
        VStack(alignment: .leading){
            Text((selectedPerson.firstName+" "+selectedPerson.lastName))
                 .font(.title)
@@ -58,7 +61,11 @@ struct PersonView: View {
                } .font(.subheadline)
            }
      
-        }.padding()
+        }
+       .alert("This person has all possible unique items", isPresented: $showingAlert, actions: {
+           Button("OK", role: .cancel){}
+       })
+       .padding()
             .foregroundColor(CustomColor.textBlue)
             .toolbar{
                 Button("Save"){
@@ -73,31 +80,42 @@ struct PersonView: View {
             .onAppear{
                 dataManager.fetchPeopleData()
             }
-        Text("Inventory").foregroundColor(Color.gray)
-        ForEach(selectedPerson.inventory.indices, id: \.self) { index in
-            let item = selectedPerson.inventory[index]
+        ScrollView{
+            Text("Inventory").foregroundColor(Color.gray)
+            ForEach(selectedPerson.inventory.indices, id: \.self) { index in
+                let item = selectedPerson.inventory[index]
 
-            HStack {
-                Text(item.itemID)
-                Spacer()
-                MinusButton(action: {
-                    if selectedPerson.inventory[index].quantity > 0 {
-                        selectedPerson.inventory[index].quantity -= 1
-                    }
-                    print(selectedPerson.inventory[index].quantity)
-                })
-                Text("\(item.quantity)")
-                AddButton(action: {
-                    selectedPerson.inventory[index].quantity += 1
-                    print(selectedPerson.inventory[index].quantity)
-                })
+                HStack {
+                    Text(item.itemID)
+                    Spacer()
+                    MinusButton(action: {
+                        if selectedPerson.inventory[index].quantity > 0 {
+                            selectedPerson.inventory[index].quantity -= 1
+                        }
+                        print(selectedPerson.inventory[index].quantity)
+                    })
+                    Text("\(item.quantity)")
+                    AddButton(action: {
+                        selectedPerson.inventory[index].quantity += 1
+                        print(selectedPerson.inventory[index].quantity)
+                    })
+                }
+                
+               
+            }.padding(.horizontal, 50)
+            
+        }
+        Button("Add New Item"){
+            print(selectedPerson.inventory.count)
+            print(dataManager.inventory.filter{$0.amountInStock>0}.count)
+
+            if(itemNames.count != 1){
+                showingSheet = true
+            }
+            else{
+                showingAlert = true
             }
             
-           
-        }.padding(.horizontal, 50)
-            
-        Button("Add New Item"){
-            showingSheet = true
         }
             
          
@@ -123,19 +141,39 @@ struct PersonView: View {
             
             Button("Assign Item"){
                 if(selectedItem != ""){
-                    dataManager.addItemToPerson(person: &selectedPerson, itemID: selectedItem, quantity: Int(itemAmount))
-                    itemAmount = 0
+                    if(itemAmount > 0){
+                        dataManager.addItemToPerson(person: &selectedPerson, itemID: selectedItem, quantity: Int(itemAmount))
+                        print(selectedItem)
+                        alertMessage = "\(selectedItem) assigned to \(selectedPerson.firstName + " "+selectedPerson.lastName)"
+                        showingSheetAlert = true
+                        
+                    }
+                    else{
+                        alertMessage = "You must select an amount"
+                        showingSheetAlert = true
+                    }
+                    
                 }else{
-                    print("Showing alert")
-                    showingAlert = true
+                    alertMessage = "You must pick an item"
+                    showingSheetAlert = true
+                 
+                    
                 }
                
             }
         }.padding(.horizontal, 50)
-        .alert("Please select an item", isPresented: $showingAlert, actions: {
-            Button("OK", role: .cancel){}
+        .alert(alertMessage, isPresented: $showingSheetAlert, actions: {
+            Button("OK", role: .cancel){
+                print(alertMessage)
+                print("\(selectedItem) assigned to \(selectedPerson.firstName + " "+selectedPerson.lastName)")
+                if(alertMessage == ("\(selectedItem) assigned to \(selectedPerson.firstName + " "+selectedPerson.lastName)")){
+                    showingSheet = false
+                    selectedItem = ""
+                    itemAmount = 0
+                }
+            }
         })
-      
+        
         
     }
     

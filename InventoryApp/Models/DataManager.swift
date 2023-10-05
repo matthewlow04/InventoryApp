@@ -245,7 +245,6 @@ class DataManager: ObservableObject{
         }
     }
     
-    
     func checkIfExists(name: String) -> Bool{
         let results = inventory.filter {$0.name == name}
         return results.isEmpty
@@ -345,10 +344,14 @@ class DataManager: ObservableObject{
                                    lastName: person.lastName,
                                    itemID: itemID,
                                    quantity: quantity)
+        guard let item = getItemByName(name: itemID) else {
+            
+            return
+        }
+        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory)
 
         person.inventory.append(newItem)
 
         updatePerson(selectedPerson: person)
     }
-
 }

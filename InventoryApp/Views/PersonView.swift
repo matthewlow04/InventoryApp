@@ -13,6 +13,7 @@ struct PersonView: View {
     @Environment(\.dismiss) var dismiss
     @State var showingSheet = false
     @State var showingSheetAlert = false
+    @State var showingStockAlert = false
     @State var showingAlert = false
     @State var selectedItem = ""
     @State var itemAmount = 0.0
@@ -48,6 +49,7 @@ struct PersonView: View {
                    .scaleEffect(tapImage ? 0 : 1.0)
            }
        }
+
        
        VStack(alignment: .leading){
            Text((selectedPerson.firstName+" "+selectedPerson.lastName))
@@ -65,11 +67,16 @@ struct PersonView: View {
        .alert("This person has all possible unique items", isPresented: $showingAlert, actions: {
            Button("OK", role: .cancel){}
        })
+       .alert("There is no more of that item left in stock", isPresented: $showingStockAlert, actions: {
+           Button("OK", role: .cancel){}
+       })
        .padding()
             .foregroundColor(CustomColor.textBlue)
             .toolbar{
                 Button("Save"){
                     dataManager.updatePerson(selectedPerson: selectedPerson)
+                    dataManager.saveItemChangesPerson(items: &selectedPerson.inventory)
+
                     dismiss()
                 }
             }
@@ -91,13 +98,23 @@ struct PersonView: View {
                     MinusButton(action: {
                         if selectedPerson.inventory[index].quantity > 0 {
                             selectedPerson.inventory[index].quantity -= 1
+                            selectedPerson.inventory[index].currentDifference -= 1
                         }
+                       
                         print(selectedPerson.inventory[index].quantity)
                     })
                     Text("\(item.quantity)")
                     AddButton(action: {
-                        selectedPerson.inventory[index].quantity += 1
-                        print(selectedPerson.inventory[index].quantity)
+                        let item = dataManager.getItemByName(name: selectedPerson.inventory[index].itemID)
+                        
+                        if(selectedPerson.inventory[index].currentDifference >= item!.amountInStock){
+                            showingStockAlert = true
+                        }else{
+                            selectedPerson.inventory[index].quantity += 1
+                            selectedPerson.inventory[index].currentDifference += 1
+                            print(selectedPerson.inventory[index].quantity)
+                        }
+                      
                     })
                 }
                 

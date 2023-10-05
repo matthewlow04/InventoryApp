@@ -229,6 +229,64 @@ class DataManager: ObservableObject{
        
     }
     
+    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int]){
+        if let currentUser = Auth.auth().currentUser{
+           
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let fullPath = "Users/\(userID)/Items/\(itemName)"
+            let ref = db.document(fullPath)
+            var newHistory = itemHistory
+            newHistory.append(newAmount)
+            
+            let oldAmount = getItemByName(name: itemName)?.amountInStock
+            let difference = newAmount - oldAmount!
+            var added: Bool
+            
+            if difference > 0{
+                added = true
+            }else{
+                added = false
+            }
+           
+            let decimalInStock = Double(newAmount)/Double(itemTotal)
+            if(newAmount == 0){
+                let id = UUID()
+                let newPath = "Users/\(userID)/Alert/\(id)"
+                let ref = db.document(newPath)
+              
+                ref.setData(["name": "Out of Stock", "date": Timestamp(date: Date.now), "severity": "high", "message": itemName+" is out of stock", "seen": false, "id": id.uuidString]){ error in
+                    if let error = error{
+                        print(error.localizedDescription)
+                    }
+                    
+                }
+            }
+            else if (decimalInStock <= 0.1){
+                let id = UUID()
+                let newPath = "Users/\(userID)/Alert/\(id)"
+                
+                let ref = db.document(newPath)
+                ref.setData(["name": "Low Stock", "date": Timestamp(date: Date.now), "severity": "medium", "message": itemName+" is below 10% in stock", "seen": false, "id" : id.uuidString]){ error in
+                    if let error = error{
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+            
+            createHistory(name: itemName, amount: difference, added: added, id: UUID())
+            
+            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+            }
+           
+        }
+       
+       
+    }
+    
     func deleteItem(itemName: String){
         if let currentUser = Auth.auth().currentUser{
             let userID = currentUser.uid
@@ -353,5 +411,19 @@ class DataManager: ObservableObject{
         person.inventory.append(newItem)
 
         updatePerson(selectedPerson: person)
+    }
+    
+    func saveItemChangesPerson( items: inout [AssignedItem]){
+        let changedItems = items.filter{$0.currentDifference != 0}
+        
+        for item in changedItems{
+            let itemModelReference = getItemByName(name: item.itemID)
+            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [])
+        }
+        
+        fetchItems()
+        fetchAlertHistory()
+        
+        items = items.map { var mutableItem = $0; mutableItem.currentDifference = 0; return mutableItem }
     }
 }

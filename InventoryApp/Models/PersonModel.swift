@@ -18,5 +18,6 @@ struct AssignedItem:Hashable{
     var lastName: String
     var itemID: String
     var quantity: Int
+    var currentDifference = 0
 }
 

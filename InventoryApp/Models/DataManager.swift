@@ -15,7 +15,12 @@ class DataManager: ObservableObject{
     @Published var inventoryHistory: [History] = []
     @Published var alerts: [Notification] = []
     @Published var people: [Person] = []
-    var hasLoadedData = false
+    @Published var hasLoadedItemData = false
+    @Published var hasLoadedHistoryData = false
+    @Published var hasLoadedPeopleData = false
+    var noPeople = false
+    var noItems = false
+    var noHistory = false
 
     func fetchItems(){
         inventory.removeAll()
@@ -45,9 +50,11 @@ class DataManager: ObservableObject{
                             
                           }
                       }
+                      self.hasLoadedItemData = true
+                      print("Fetch request")
                   }
-                  print("Fetch request")
-                  hasLoadedData = true
+                  
+                  
         }
         
     }
@@ -78,6 +85,7 @@ class DataManager: ObservableObject{
                         
                       }
                   }
+                  self.hasLoadedHistoryData = true
               }
     }
     
@@ -146,6 +154,7 @@ class DataManager: ObservableObject{
                     self.people.append(person)
                 }
             }
+            self.hasLoadedPeopleData = true
         }
     }
     

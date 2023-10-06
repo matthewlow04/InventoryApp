@@ -13,8 +13,15 @@ struct HistoryView: View {
 
     var body: some View {
         NavigationStack{
-            if(dataManager.inventoryHistory.isEmpty){
+            if(!$dataManager.hasLoadedHistoryData.wrappedValue){
                 ProgressView()
+                    .navigationTitle("Inventory History")
+            }
+            else if(dataManager.inventoryHistory.isEmpty){
+                Text("No inventory history")
+                    .font(.title)
+                    .foregroundColor(.secondary)
+                    .padding()
                     .navigationTitle("Inventory History")
             }else{
                 List(dataManager.inventoryHistory, id: \.self){ item in
@@ -53,6 +60,7 @@ struct HistoryView: View {
             
         }
         .onAppear{
+            dataManager.hasLoadedHistoryData = false
             dataManager.fetchInventoryHistory()
         }
     }

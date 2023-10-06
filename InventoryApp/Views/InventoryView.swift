@@ -23,8 +23,15 @@ struct InventoryView: View {
     var body: some View {
         VStack {
             NavigationStack {
-                if(dataManager.inventory.isEmpty){
+                if(!$dataManager.hasLoadedItemData.wrappedValue){
                     ProgressView()
+                        .navigationTitle("Inventory")
+                }
+                else if(dataManager.inventory.isEmpty){
+                    Text("No items")
+                        .font(.title)
+                        .foregroundColor(.secondary)
+                        .padding()
                         .navigationTitle("Inventory")
                 }else{
                     ScrollView{
@@ -42,6 +49,7 @@ struct InventoryView: View {
                 
             }
             .onAppear {
+                dataManager.hasLoadedItemData = false
                 dataManager.fetchItems()
                 dataManager.fetchAlertHistory()
             }

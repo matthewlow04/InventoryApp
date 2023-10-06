@@ -12,8 +12,15 @@ struct PersonListView: View {
     
     var body: some View {
         NavigationStack{
-            if(dataManager.people.isEmpty){
+            if(!$dataManager.hasLoadedPeopleData.wrappedValue ){
                 ProgressView()
+                    .navigationTitle("People")
+            }
+            else if(dataManager.people.isEmpty){
+                Text("No people")
+                    .font(.title)
+                    .foregroundColor(.secondary)
+                    .padding()
                     .navigationTitle("People")
             }else{
                 List(dataManager.people, id: \.self){ person in
@@ -39,6 +46,7 @@ struct PersonListView: View {
         }
         
         .onAppear{
+            dataManager.hasLoadedPeopleData = false
             dataManager.fetchPeopleData()
         }
     }

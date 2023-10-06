@@ -12,24 +12,30 @@ struct AlertView: View {
     
     var body: some View {
         NavigationStack{
-            NavigationStack {
-                        List {
-                            ForEach(dataManager.alerts, id: \.id) { item in
-                                AlertRow(alert: item)
-                            }
-                            .onDelete { indexSet in
-                                    for index in indexSet {
-                                        let alertToDelete = dataManager.alerts[index]
-                                        deleteAlert(alertID: alertToDelete.id, alert: alertToDelete)
-                                    }
-                                }
-                        }
-                        .navigationTitle("Alerts")
-                        .onAppear {
-//                            dataManager.fetchAlertHistory()
+            if(dataManager.alerts.isEmpty){
+                Text("No alerts")
+                    .font(.title)
+                    .foregroundColor(.secondary)
+                    .padding()
+                    .navigationTitle("Alerts")
+            }else{
+        
+                List {
+                    ForEach(dataManager.alerts, id: \.id) { item in
+                        AlertRow(alert: item)
+                    }
+                    .onDelete { indexSet in
+                        for index in indexSet {
+                            let alertToDelete = dataManager.alerts[index]
+                            deleteAlert(alertID: alertToDelete.id, alert: alertToDelete)
                         }
                     }
+                }
+                .navigationTitle("Alerts")
+            }
         }
+        
+        
     }
     
     func deleteAlert(alertID: String, alert: Notification) {

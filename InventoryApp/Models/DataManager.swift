@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestore
 
 class DataManager: ObservableObject{
     
@@ -159,7 +160,7 @@ class DataManager: ObservableObject{
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
-            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount), "amountInStock": Int(itemAmount), "category": category, "amountHistory": [Int(itemAmount)]]){ error in
+            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount)!, "amountInStock": Int(itemAmount)!, "category": category, "amountHistory": [Int(itemAmount)]]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -215,7 +216,9 @@ class DataManager: ObservableObject{
                 }
             }
             
-            createHistory(name: itemName, amount: difference, added: added, id: UUID(), person: person!)
+            if(newAmount != oldAmount){
+                createHistory(name: itemName, amount: difference, added: added, id: UUID(), person: person!)
+            }
             
             ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
                 if let error = error{
@@ -274,9 +277,10 @@ class DataManager: ObservableObject{
                     }
                 }
             }
-            
-            createHistory(name: itemName, amount: difference, added: added, id: UUID(), person: person!)
-            
+            if(newAmount != oldAmount){
+                createHistory(name: itemName, amount: difference, added: added, id: UUID(), person: person!)
+            }
+         
             ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
                 if let error = error{
                     print(error.localizedDescription)
@@ -407,7 +411,7 @@ class DataManager: ObservableObject{
             
             return
         }
-        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory)
+        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"))
 
         person.inventory.append(newItem)
 

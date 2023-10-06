@@ -23,17 +23,23 @@ struct InventoryView: View {
     var body: some View {
         VStack {
             NavigationStack {
-                ScrollView{
-                    LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(filteredItems, id: \.self) { item in
-                            NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(slices: [(Double(item.amountInStock), CustomColor.lightBlue), (Double(item.amountTotal-item.amountInStock), Color.gray.opacity(0.4))], name: item.name, total: item.amountTotal, stock: item.amountInStock) .listRowSeparatorTint(.clear)
+                if(dataManager.inventory.isEmpty){
+                    ProgressView()
+                        .navigationTitle("Inventory")
+                }else{
+                    ScrollView{
+                        LazyVGrid(columns: columns, spacing: 16) {
+                            ForEach(filteredItems, id: \.self) { item in
+                                NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(slices: [(Double(item.amountInStock), CustomColor.lightBlue), (Double(item.amountTotal-item.amountInStock), Color.gray.opacity(0.4))], name: item.name, total: item.amountTotal, stock: item.amountInStock) .listRowSeparatorTint(.clear)
+                                }
                             }
                         }
+                        .navigationTitle("Inventory")
+                        .searchable(text: $searchText)
+                        .animation(searchText.isEmpty ? .none: .default)
                     }
-                    .navigationTitle("Inventory")
-                    .searchable(text: $searchText)
-                    .animation(searchText.isEmpty ? .none: .default)
                 }
+                
             }
             .onAppear {
                 dataManager.fetchItems()

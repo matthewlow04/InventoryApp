@@ -27,7 +27,7 @@ struct LoginView: View {
     
     var loginView: some View{
         ZStack{
-            BackgroundView()
+            BackgroundView(isLogin: true)
             VStack(spacing: 20){
                 TextField("Email", text: $email)
                 Rectangle()
@@ -40,10 +40,14 @@ struct LoginView: View {
                     .foregroundColor(CustomColor.aquamarine)
                     .padding(.bottom)
                 loginButton
-                    .bold()
+                    .padding()
+                    .background(CustomColor.aquamarine)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
                 signUpButton
                     .bold()
             }
+
             .frame(width:300)
             .foregroundColor(CustomColor.textBlue)
            
@@ -62,28 +66,56 @@ struct LoginView: View {
        
     }
     
-    var SheetView: some View{
-        
-        VStack(spacing: 20){
-            TextField("Email", text: $email)
-            SecureField("Password", text: $password)
-            createAccountButton
-        }
-        .alert(lvm.errorMessage, isPresented: $lvm.errorShowing, actions: {
-            Button("OK", role: .cancel){
+    var SheetView: some View {
+        ZStack {
+            BackgroundView(isLogin: false)
+            VStack(spacing: 20) {
+            
+                Image("generis-logo-color")
+                    .padding(.bottom,-50)
+                  
+                TextField("Email", text: $email)
+                    .padding(.horizontal)
+                    .background(Color.white.opacity(0.7))
+                    .cornerRadius(10)
                 
+                Rectangle()
+                    .frame(width: 300, height: 1)
+                    .foregroundColor(CustomColor.aquamarine)
+                    .padding(.bottom)
+                
+                SecureField("Password", text: $password)
+                    .padding(.horizontal)
+                    .background(Color.white.opacity(0.7))
+                    .cornerRadius(10)
+                
+                Rectangle()
+                    .frame(width: 300, height: 1)
+                    .foregroundColor(CustomColor.aquamarine)
+                    .padding(.bottom)
+                
+                createAccountButton
+                    .padding()
+                    .background(CustomColor.aquamarine)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
             }
-        })
-        .alert("User with email address: \(lvm.username) created", isPresented: $lvm.signUpAlert, actions:{
-            Button("OK", role: .cancel){
-                lvm.showingSheet = false
+            .padding(.all, 20)
+            .alert(lvm.errorMessage, isPresented: $lvm.errorShowing, actions: {
+                Button("OK", role: .cancel) {}
+            })
+            .alert("User with email address: \(lvm.username) created", isPresented: $lvm.signUpAlert, actions: {
+                Button("OK", role: .cancel) {
+                    lvm.showingSheet = false
+                }
+            })
+            .onTapGesture {
+                UIApplication.shared.windows.first?.rootViewController?.view.endEditing(true)
             }
-        })
-        .onTapGesture {
-            UIApplication.shared.windows.first?.rootViewController?.view.endEditing(true)
-        }
-       
+            
+        }.ignoresSafeArea(.keyboard)
     }
+
     
     var loginButton: some View{
         Button("Login"){

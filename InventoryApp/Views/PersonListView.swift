@@ -12,29 +12,35 @@ struct PersonListView: View {
     
     var body: some View {
         NavigationStack{
-            List(dataManager.people, id: \.self){ person in
-                NavigationLink(destination: PersonView(selectedPerson: person)){
-                    HStack{
-                        Text(person.firstName+" "+person.lastName)
-                            .bold()
+            if(dataManager.people.isEmpty){
+                ProgressView()
+                    .navigationTitle("People")
+            }else{
+                List(dataManager.people, id: \.self){ person in
+                    NavigationLink(destination: PersonView(selectedPerson: person)){
+                        HStack{
+                            Text(person.firstName+" "+person.lastName)
+                                .bold()
+                        }
                     }
+                    
+                    
                 }
-                
-                
+                .navigationTitle("People")
             }
-            .toolbar{
-          
-                NavigationLink(destination: AddPersonView()){
-                    Text("Add Person")
-                }
-            
+           
+   
+        }
+        .toolbar{
+            NavigationLink(destination: AddPersonView()){
+                Text("Add Person")
             }
-            .onAppear{
-                dataManager.fetchPeopleData()
-            }
-            .navigationTitle("People")
+        
         }
         
+        .onAppear{
+            dataManager.fetchPeopleData()
+        }
     }
 }
 

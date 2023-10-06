@@ -75,7 +75,7 @@ struct PersonView: View {
             .toolbar{
                 Button("Save"){
                     dataManager.updatePerson(selectedPerson: selectedPerson)
-                    dataManager.saveItemChangesPerson(items: &selectedPerson.inventory)
+                    dataManager.saveItemChangesPerson(items: &selectedPerson.inventory, person: selectedPerson)
 
                     dismiss()
                 }

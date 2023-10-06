@@ -20,7 +20,7 @@ struct Item: Hashable{
         case stationairy = "Stationairies"
         case entertainment = "Entertainment"
         case other = "Other"
-    }
+    }  
     var amountHistory: [Int]
 
    

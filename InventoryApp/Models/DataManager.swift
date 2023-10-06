@@ -70,8 +70,9 @@ class DataManager: ObservableObject{
                           let name = data["name"] as? String ?? ""
                           let amount = data["amount"] as? Int ?? 0
                           let added = data["added"] as? Bool ?? true
+                          let person = data["person"] as? String ?? "No Person"
                         
-                          let historyItem = History(itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount))
+                          let historyItem = History(itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount), person: person)
                           self.inventoryHistory.append(historyItem)
                         
                       }
@@ -169,7 +170,7 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int]){
+    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person"){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -214,7 +215,7 @@ class DataManager: ObservableObject{
                 }
             }
             
-            createHistory(name: itemName, amount: difference, added: added, id: UUID())
+            createHistory(name: itemName, amount: difference, added: added, id: UUID(), person: person!)
             
             ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
                 if let error = error{
@@ -229,7 +230,7 @@ class DataManager: ObservableObject{
        
     }
     
-    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int]){
+    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person"){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -274,7 +275,7 @@ class DataManager: ObservableObject{
                 }
             }
             
-            createHistory(name: itemName, amount: difference, added: added, id: UUID())
+            createHistory(name: itemName, amount: difference, added: added, id: UUID(), person: person!)
             
             ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
                 if let error = error{
@@ -312,19 +313,19 @@ class DataManager: ObservableObject{
         return inventory.first { $0.name.lowercased() == name.lowercased() }
     }
     
-    func createHistory(name: String, amount: Int, added: Bool, id: UUID){
+    func createHistory(name: String, amount: Int, added: Bool, id: UUID, person: String){
         if let currentUser = Auth.auth().currentUser{
             let userID = currentUser.uid
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/History/\(id)"
             let ref = db.document(fullPath)
-            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount)]){ error in
+            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
             }
         }
-        let newHistory = History(itemName: name, date: Date.now, addedItem: added, amount: abs(amount))
+        let newHistory = History(itemName: name, date: Date.now, addedItem: added, amount: abs(amount), person: person)
         inventoryHistory.append(newHistory)
     }
     
@@ -413,12 +414,12 @@ class DataManager: ObservableObject{
         updatePerson(selectedPerson: person)
     }
     
-    func saveItemChangesPerson( items: inout [AssignedItem]){
+    func saveItemChangesPerson( items: inout [AssignedItem], person: Person){
         let changedItems = items.filter{$0.currentDifference != 0}
         
         for item in changedItems{
             let itemModelReference = getItemByName(name: item.itemID)
-            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [])
+            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"))
         }
         
         fetchItems()

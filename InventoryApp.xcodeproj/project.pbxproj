@@ -56,7 +56,6 @@
 		A0774F062AB89A90006DF7C7 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		A0994CD92ABB5154004D7EAD /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		A0994CDB2ABB5575004D7EAD /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
-		A09FE2952AD05B8E00D85A66 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A0B9776A2AC4B2F80042E1DA /* PersonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonModel.swift; sourceTree = "<group>"; };
 		A0B9776C2AC4C31F0042E1DA /* AddPersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonView.swift; sourceTree = "<group>"; };
 		A0B9776E2AC4C3630042E1DA /* AddPersonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonViewModel.swift; sourceTree = "<group>"; };
@@ -137,7 +136,6 @@
 			isa = PBXGroup;
 			children = (
 				A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */,
-				A09FE2952AD05B8E00D85A66 /* Info.plist */,
 				A0EC99512AB37F0F00EE777B /* Models */,
 				A0EC99502AB37EF700EE777B /* Views */,
 				A0EC99522AB37F2E00EE777B /* View Models */,

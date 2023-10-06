@@ -136,8 +136,8 @@
 		A0EC99182AB22E3100EE777B /* InventoryApp */ = {
 			isa = PBXGroup;
 			children = (
-				A09FE2952AD05B8E00D85A66 /* Info.plist */,
 				A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */,
+				A09FE2952AD05B8E00D85A66 /* Info.plist */,
 				A0EC99512AB37F0F00EE777B /* Models */,
 				A0EC99502AB37EF700EE777B /* Views */,
 				A0EC99522AB37F2E00EE777B /* View Models */,

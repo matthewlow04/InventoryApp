@@ -18,9 +18,6 @@ class DataManager: ObservableObject{
     @Published var hasLoadedItemData = false
     @Published var hasLoadedHistoryData = false
     @Published var hasLoadedPeopleData = false
-    var noPeople = false
-    var noItems = false
-    var noHistory = false
 
     func fetchItems(){
         inventory.removeAll()
@@ -382,6 +379,7 @@ class DataManager: ObservableObject{
                     print(error.localizedDescription)
                 }
             }
+            
         }
     }
     func updatePerson(selectedPerson: Person) {

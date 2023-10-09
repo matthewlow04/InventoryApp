@@ -53,6 +53,7 @@ struct AddPersonView: View {
                     if apvm.checkValid() == true{
                         //let item = AssignedItem(firstName: apvm.firstName, lastName: apvm.lastName, itemID: apvm.itemName, quantity: Int(apvm.quantity)!)
                         dataManager.addPerson(firstName: apvm.firstName, lastName: apvm.lastName, inventory: [/*item*/])
+                        dataManager.fetchPeopleData()
                         apvm.alertMessage = "Person added"
                         apvm.showingAlert = true
                         dismiss()

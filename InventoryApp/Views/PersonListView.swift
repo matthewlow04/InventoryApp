@@ -22,6 +22,12 @@ struct PersonListView: View {
                     .foregroundColor(.secondary)
                     .padding()
                     .navigationTitle("People")
+                .toolbar{
+                    NavigationLink(destination: AddPersonView()){
+                        Text("Add Person")
+                    }
+                
+                }
             }else{
                 List(dataManager.people, id: \.self){ person in
                     NavigationLink(destination: PersonView(selectedPerson: person)){
@@ -32,6 +38,12 @@ struct PersonListView: View {
                     }
                     
                     
+                }
+                .toolbar{
+                    NavigationLink(destination: AddPersonView()){
+                        Text("Add Person")
+                    }
+                
                 }
                 .navigationTitle("People")
             }
@@ -44,7 +56,6 @@ struct PersonListView: View {
             }
         
         }
-        
         .onAppear{
             dataManager.hasLoadedPeopleData = false
             dataManager.fetchPeopleData()

@@ -11,6 +11,7 @@ struct InventoryView: View {
     @EnvironmentObject var dataManager: DataManager
     @ObservedObject var ivm = ItemViewModel()
     @State private var searchText = ""
+    @State var isCategories = true
     var filteredItems: [Item] {
         if searchText.isEmpty {
             return dataManager.inventory
@@ -40,20 +41,25 @@ struct InventoryView: View {
                     ScrollView{
                         VStack(alignment: .leading){
                             if(searchText == ""){
-                                FavouritesRowView()
+                                FavouritesRowView(isCat: $isCategories)
                                 Text("Main Inventory").modifier(HeadlineModifier())
                             }
                             
                            
                             LazyVGrid(columns: columns, spacing: 16) {
                                 ForEach(filteredItems, id: \.self) { item in
-                                    NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getBackgroundColor(for: item.category)) .listRowSeparatorTint(.clear)
+                                    NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: isCategories ? ivm.getBackgroundColor(for: item.category)  : CustomColor.lightBlue  ) .listRowSeparatorTint(.clear)
                                     }
                                 }
                             }
                             .navigationTitle("Inventory")
                             .searchable(text: $searchText)
                             .animation(searchText.isEmpty ? .none: .default)
+                        }
+                    }
+                    .toolbar{
+                        Button(isCategories ? "Uncategorizied":"Categorized"){
+                            isCategories.toggle()
                         }
                     }
                     

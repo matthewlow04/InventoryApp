@@ -151,7 +151,10 @@ struct PersonView: View {
 
            
             if (selectedItem != ""){
-                Slider(value: $itemAmount, in: 0...Double(dataManager.getItemByName(name: selectedItem)?.amountInStock ?? 1), step:1)
+                if(dataManager.getItemByName(name: selectedItem)?.amountInStock != 0){
+                    Slider(value: $itemAmount, in: 0...Double(dataManager.getItemByName(name: selectedItem)?.amountInStock ?? 1), step:1)
+                }
+             
                 Text("\(Int(itemAmount)) / \(dataManager.getItemByName(name: selectedItem)?.amountInStock ?? 0)")
             }
            
@@ -163,6 +166,7 @@ struct PersonView: View {
                         print(selectedItem)
                         alertMessage = "\(selectedItem) assigned to \(selectedPerson.firstName + " "+selectedPerson.lastName)"
                         showingSheetAlert = true
+                        dismiss()
                         
                     }
                     else{

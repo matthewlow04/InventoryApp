@@ -22,6 +22,7 @@ struct Item: Hashable{
         case other = "Other"
     }  
     var amountHistory: [Int]
+    var isFavourite: Bool
 
    
 }

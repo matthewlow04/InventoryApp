@@ -41,8 +41,9 @@ class DataManager: ObservableObject{
                               let notes = data["notes"] as? String ?? ""
                               let category = data["category"] as? String ?? ""
                               let amountHistory = data["amountHistory"] as? [Int] ?? [amountTotal]
+                              let isFav = data["isFavourite"] as? Bool ?? false
                             
-                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory)
+                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory, isFavourite: isFav)
                               self.inventory.append(item)
                             
                           }
@@ -177,7 +178,7 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person"){
+    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -226,7 +227,7 @@ class DataManager: ObservableObject{
                 createHistory(name: itemName, amount: difference, added: added, id: UUID(), person: person!)
             }
             
-            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory, "isFavourite": isFavourite]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -239,7 +240,7 @@ class DataManager: ObservableObject{
        
     }
     
-    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person"){
+    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -287,7 +288,7 @@ class DataManager: ObservableObject{
                 createHistory(name: itemName, amount: difference, added: added, id: UUID(), person: person!)
             }
          
-            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory, "isFavourite": isFavourite]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -418,7 +419,7 @@ class DataManager: ObservableObject{
             
             return
         }
-        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"))
+        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"), isFavourite: item.isFavourite)
 
         person.inventory.append(newItem)
 
@@ -430,7 +431,7 @@ class DataManager: ObservableObject{
         
         for item in changedItems{
             let itemModelReference = getItemByName(name: item.itemID)
-            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"))
+            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false)
         }
         
         fetchItems()

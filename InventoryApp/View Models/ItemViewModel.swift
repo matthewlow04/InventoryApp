@@ -20,5 +20,26 @@ class ItemViewModel: ObservableObject{
         case .select: return Color.white
         }
     }
+    
+    func getStockColor(stock: Double, total: Double) -> Color{
+
+        let percent = stock/total
+        if(percent > 0.66){
+            return Color.green
+        }else if(percent > 0.33){
+            return Color.yellow
+        }else{
+            return Color.red
+        }
+    }
+    
+    func getOpacity(stock: Double, total: Double) -> Double{
+        let percent = (stock/total)*100
+        if(percent == 100 || percent == 2/3){
+            return 1
+        }
+        let opacity = Int(percent) % 33
+        return (Double(opacity)/33.0)
+    }
 }
  

@@ -19,7 +19,7 @@ struct FavouritesRowView: View {
             ScrollView(.horizontal, showsIndicators: false){
                 HStack(spacing: 10){
                     ForEach(dataManager.inventory.filter{$0.isFavourite == true}, id: \.self){ item in
-                        NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: isCat ? ivm.getBackgroundColor(for: item.category) : CustomColor.lightBlue ) .listRowSeparatorTint(.clear)
+                        NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal))) ) .listRowSeparatorTint(.clear)
                         }
                     }
                 }

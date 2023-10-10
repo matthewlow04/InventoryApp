@@ -11,7 +11,7 @@ struct InventoryView: View {
     @EnvironmentObject var dataManager: DataManager
     @ObservedObject var ivm = ItemViewModel()
     @State private var searchText = ""
-    @State var isCategories = true
+    @State var isCategories = false
     var filteredItems: [Item] {
         if searchText.isEmpty {
             return dataManager.inventory
@@ -45,18 +45,23 @@ struct InventoryView: View {
                                 Text("Main Inventory").modifier(HeadlineModifier())
                             }
                             
-                           
-                            LazyVGrid(columns: columns, spacing: 16) {
-                                ForEach(filteredItems, id: \.self) { item in
-                                    NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: isCategories ? ivm.getBackgroundColor(for: item.category)  : CustomColor.lightBlue  ) .listRowSeparatorTint(.clear)
+                            if(isCategories == false){
+                                LazyVGrid(columns: columns, spacing: 16) {
+                                    ForEach(filteredItems, id: \.self) { item in
+                                        NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal)))) .listRowSeparatorTint(.clear)
+                                        }
                                     }
                                 }
+                            }else{
+                                CategorizedView()
                             }
-                            .navigationTitle("Inventory")
-                            .searchable(text: $searchText)
-                            .animation(searchText.isEmpty ? .none: .default)
-                        }
+                            
+                           
+                        }.animation(.easeInOut)
                     }
+                    .navigationTitle("Inventory")
+                    .searchable(text: $searchText)
+                    .animation(searchText.isEmpty ? .none: .default)
                     .toolbar{
                         Button(isCategories ? "Uncategorizied":"Categorized"){
                             isCategories.toggle()

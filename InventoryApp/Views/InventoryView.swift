@@ -9,6 +9,7 @@ import SwiftUI
 
 struct InventoryView: View {
     @EnvironmentObject var dataManager: DataManager
+    @ObservedObject var ivm = ItemViewModel()
     @State private var searchText = ""
     var filteredItems: [Item] {
         if searchText.isEmpty {
@@ -34,17 +35,28 @@ struct InventoryView: View {
                         .padding()
                         .navigationTitle("Inventory")
                 }else{
+                   
+                        
                     ScrollView{
-                        LazyVGrid(columns: columns, spacing: 16) {
-                            ForEach(filteredItems, id: \.self) { item in
-                                NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock) .listRowSeparatorTint(.clear)
+                        VStack(alignment: .leading){
+                            if(searchText == ""){
+                                FavouritesRowView()
+                                Text("Main Inventory").modifier(HeadlineModifier())
+                            }
+                            
+                           
+                            LazyVGrid(columns: columns, spacing: 16) {
+                                ForEach(filteredItems, id: \.self) { item in
+                                    NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getBackgroundColor(for: item.category)) .listRowSeparatorTint(.clear)
+                                    }
                                 }
                             }
+                            .navigationTitle("Inventory")
+                            .searchable(text: $searchText)
+                            .animation(searchText.isEmpty ? .none: .default)
                         }
-                        .navigationTitle("Inventory")
-                        .searchable(text: $searchText)
-                        .animation(searchText.isEmpty ? .none: .default)
                     }
+                    
                 }
                 
             }

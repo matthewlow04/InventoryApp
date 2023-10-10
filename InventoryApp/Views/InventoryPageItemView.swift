@@ -12,13 +12,14 @@ struct InventoryPageItemView: View {
     var name: String
     var total: Int
     var stock: Int
+    var color: Color
 
     var body: some View {
         ZStack{
 
             Chart{
                 SectorMark(angle: .value("In Stock", stock), innerRadius: .ratio(0.6))
-                    .foregroundStyle(CustomColor.lightBlue)
+                    .foregroundStyle(color)
                 SectorMark(angle: .value("In Use", total-stock), innerRadius: .ratio(0.6))
                     .foregroundStyle(Color.gray)
             }

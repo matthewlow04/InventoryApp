@@ -67,7 +67,7 @@ struct HistoryView: View {
     
     func appendedText(hist: History) -> String{
         if(hist.person == "No Person"){
-            return ""
+            return "person.slash.fill"
         }else{
             return hist.addedItem ? "icloud.and.arrow.up" : "icloud.and.arrow.down"
         }

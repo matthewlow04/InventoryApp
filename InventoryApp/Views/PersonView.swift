@@ -19,6 +19,7 @@ struct PersonView: View {
     @State var itemAmount = 0.0
     @State var tapImage = false
     @State var alertMessage = ""
+    @State var isPresentingConfirm = false
     var itemNames: [String] {
         let selectedPersonInventoryNames = Set(selectedPerson.inventory.map { $0.itemID })
 
@@ -76,6 +77,7 @@ struct PersonView: View {
                 Button("Save"){
                     dataManager.updatePerson(selectedPerson: selectedPerson)
                     dataManager.saveItemChangesPerson(items: &selectedPerson.inventory, person: selectedPerson)
+                    dataManager.fetchPeopleData()
 
                     dismiss()
                 }
@@ -84,9 +86,6 @@ struct PersonView: View {
                 SheetView
             }
           
-            .onAppear{
-                dataManager.fetchPeopleData()
-            }
         ScrollView{
             Text("Inventory").foregroundColor(Color.gray)
             ForEach(selectedPerson.inventory.indices, id: \.self) { index in
@@ -122,21 +121,27 @@ struct PersonView: View {
             }.padding(.horizontal, 50)
             
         }
-        Button("Add New Item"){
-            print(selectedPerson.inventory.count)
-            print(dataManager.inventory.filter{$0.amountInStock>0}.count)
-
-            if(itemNames.count != 1){
-                showingSheet = true
-            }
-            else{
-                showingAlert = true
-            }
-            
+        HStack{
+            addItemButton
+                .buttonStyle(AddButtonStyle())
+            Spacer()
+            deleteButton
+                .buttonStyle(DeleteButtonStyle())
+                .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm){
+                    Button("Delete \(selectedPerson.firstName) \(selectedPerson.lastName)?", role: .destructive){
+                        print("person deleted")
+                        dataManager.fetchPeopleData()
+                    }
+                }
         }
+        .padding(30)
+        
             
+        
+        
          
     }
+    
     var SheetView: some View{
         VStack{
             Text("Assign Item To Person")
@@ -157,32 +162,16 @@ struct PersonView: View {
              
                 Text("\(Int(itemAmount)) / \(dataManager.getItemByName(name: selectedItem)?.amountInStock ?? 0)")
             }
-           
             
-            Button("Assign Item"){
-                if(selectedItem != ""){
-                    if(itemAmount > 0){
-                        dataManager.addItemToPerson(person: &selectedPerson, itemID: selectedItem, quantity: Int(itemAmount))
-                        print(selectedItem)
-                        alertMessage = "\(selectedItem) assigned to \(selectedPerson.firstName + " "+selectedPerson.lastName)"
-                        showingSheetAlert = true
-                        dismiss()
-                        
-                    }
-                    else{
-                        alertMessage = "You must select an amount"
-                        showingSheetAlert = true
-                    }
-                    
-                }else{
-                    alertMessage = "You must pick an item"
-                    showingSheetAlert = true
-                 
-                    
-                }
-               
+            HStack{
+                assignItemButton
+                    .buttonStyle(AddButtonStyle())
+                
             }
-        }.padding(.horizontal, 50)
+           
+           
+        }
+        .padding(.horizontal, 50)
         .alert(alertMessage, isPresented: $showingSheetAlert, actions: {
             Button("OK", role: .cancel){
                 print(alertMessage)
@@ -191,27 +180,66 @@ struct PersonView: View {
                     showingSheet = false
                     selectedItem = ""
                     itemAmount = 0
+                    dataManager.fetchPeopleData()
+                  
                 }
             }
         })
         
         
+      
+        
+        
     }
     
-   
-    
-        
-    struct CircleImage: View {
-//        var picture: String
-        var body: some View {
-              Image(systemName: "person")
-                .resizable()
-                .frame(width: 200, height: 200)
-                    .aspectRatio(contentMode: .fit)
-                         .clipShape(Circle())
-                         .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                         .shadow(radius: 10)
+    var addItemButton: some View{
+        Button("Add New Item"){
+            print(selectedPerson.inventory.count)
+            print(dataManager.inventory.filter{$0.amountInStock>0}.count)
+
+            if(itemNames.count != 1){
+                showingSheet = true
+            }
+            else{
+                showingAlert = true
+            }
+            
         }
+
+    }
+    
+    var deleteButton: some View{
+        Button("Delete Person"){
+            isPresentingConfirm = true
+        }
+    }
+    
+    
+   
+    var assignItemButton: some View{
+        Button("Assign Item"){
+            if(selectedItem != ""){
+                if(itemAmount > 0){
+                    dataManager.addItemToPerson(person: &selectedPerson, itemID: selectedItem, quantity: Int(itemAmount))
+                    print(selectedItem)
+                    alertMessage = "\(selectedItem) assigned to \(selectedPerson.firstName + " "+selectedPerson.lastName)"
+                    showingSheetAlert = true
+                    
+                    
+                }
+                else{
+                    alertMessage = "You must select an amount"
+                    showingSheetAlert = true
+                }
+                
+            }else{
+                alertMessage = "You must pick an item"
+                showingSheetAlert = true
+             
+                
+            }
+        }
+       
     }
     
     struct MinusButton: View {
@@ -241,6 +269,20 @@ struct PersonView: View {
             }
         }
     }
+        
+    struct CircleImage: View {
+//        var picture: String
+        var body: some View {
+              Image(systemName: "person")
+                .resizable()
+                .frame(width: 200, height: 200)
+                    .aspectRatio(contentMode: .fit)
+                         .clipShape(Circle())
+                         .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                         .shadow(radius: 10)
+        }
+    }
+   
     
 }
 

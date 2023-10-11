@@ -50,17 +50,19 @@ struct PersonListView: View {
            
    
         }
+        .onAppear{
+            dataManager.hasLoadedPeopleData = false
+            dataManager.fetchPeopleData()
+        }
         .toolbar{
             NavigationLink(destination: AddPersonView()){
                 Text("Add Person")
             }
         
         }
-        .onAppear{
-            dataManager.hasLoadedPeopleData = false
-            dataManager.fetchPeopleData()
-        }
+        
     }
+    
 }
 
 struct PersonListView_Previews: PreviewProvider {

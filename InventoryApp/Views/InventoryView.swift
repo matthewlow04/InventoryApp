@@ -12,6 +12,7 @@ struct InventoryView: View {
     @ObservedObject var ivm = ItemViewModel()
     @State private var searchText = ""
     @State var isCategories = false
+    @State var viewAnimation = false
     var filteredItems: [Item] {
         if searchText.isEmpty {
             return dataManager.inventory
@@ -54,17 +55,22 @@ struct InventoryView: View {
                                 }
                             }else{
                                 CategorizedView()
+                                
                             }
                             
                            
-                        }.animation(.easeInOut)
+                        }.animation(viewAnimation ? .easeInOut : .none)
                     }
                     .navigationTitle("Inventory")
                     .searchable(text: $searchText)
                     .animation(searchText.isEmpty ? .none: .default)
                     .toolbar{
                         Button(isCategories ? "Uncategorizied":"Categorized"){
-                            isCategories.toggle()
+                            withAnimation(){
+                                viewAnimation = false
+                                isCategories.toggle()
+                                viewAnimation = true
+                            }
                         }
                     }
                     

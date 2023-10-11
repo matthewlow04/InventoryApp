@@ -119,7 +119,10 @@ struct LoginView: View {
     
     var loginButton: some View{
         Button("Login"){
-            lvm.login(userEmail: email, userPassword: password)
+            withAnimation(.bouncy){
+                lvm.login(userEmail: email, userPassword: password)
+            }
+          
         }
     }
     

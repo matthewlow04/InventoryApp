@@ -152,6 +152,7 @@ class DataManager: ObservableObject{
                     self.people.append(person)
                 }
             }
+            print("People fetched")
             self.hasLoadedPeopleData = true
         }
     }

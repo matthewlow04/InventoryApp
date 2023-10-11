@@ -129,8 +129,9 @@ struct PersonView: View {
                 .buttonStyle(DeleteButtonStyle())
                 .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm){
                     Button("Delete \(selectedPerson.firstName) \(selectedPerson.lastName)?", role: .destructive){
-                        print("person deleted")
-                        dataManager.fetchPeopleData()
+                        
+                        dataManager.deletePerson(selectedPerson: selectedPerson)
+                        dismiss()
                     }
                 }
         }

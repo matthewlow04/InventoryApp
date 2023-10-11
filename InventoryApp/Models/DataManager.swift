@@ -411,6 +411,51 @@ class DataManager: ObservableObject{
         }
     }
     
+    func deletePerson(selectedPerson: Person){
+        if let currentUser = Auth.auth().currentUser{
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let id = selectedPerson.firstName + selectedPerson.lastName
+            let name = "\(selectedPerson.firstName) \(selectedPerson.lastName)"
+            let fullPath = "Users/\(userID)/People/\(id)"
+            let ref = db.document(fullPath)
+            
+            var tempInventory = [AssignedItem] ()
+            for item in selectedPerson.inventory{
+                tempInventory.append(item)
+            }
+            ref.delete(){ error in
+                if let error = error{
+                    print(error.localizedDescription)
+                    return
+                }
+                
+            }
+            
+            for item in tempInventory{
+                let itemModelReference = getItemByName(name: item.itemID)
+                updateMultipleItems(itemName: item.itemID, newAmount: item.quantity + (itemModelReference?.amountInStock ?? 0), itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(selectedPerson.firstName) \(selectedPerson.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false)
+            }
+            
+            
+            let alertId = UUID()
+            let newPath = "Users/\(userID)/Alert/\(alertId)"
+            
+            let newRef = db.document(newPath)
+            newRef.setData(["name": "Person Deleted", "date": Timestamp(date: Date.now), "severity": "low", "message": ("Person named '\(name)' deleted"), "seen": false, "id" : alertId.uuidString]){ error in
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+            }
+            
+            print("person deleted")
+            fetchPeopleData()
+            fetchAlertHistory()
+            fetchItems()
+        }
+        
+    }
+    
     func addItemToPerson(person: inout Person, itemID: String, quantity: Int) {
         let newItem = AssignedItem(firstName: person.firstName,
                                    lastName: person.lastName,

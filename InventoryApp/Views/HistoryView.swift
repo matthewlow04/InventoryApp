@@ -46,7 +46,7 @@ struct HistoryView: View {
                        
                     }
                 }
-                .alert("The upload symbol means that the items are coming from the person, the download symbol means the items are going to that person", isPresented: $helpAlertShowing){
+                .alert("The arrow right means the person is receiving items from inventory, the arrow left means the items are going back to inventory", isPresented: $helpAlertShowing){
                     Button("OK", role: .cancel){}
                 }
                 .navigationTitle("Inventory History")
@@ -69,7 +69,7 @@ struct HistoryView: View {
         if(hist.person == "No Person"){
             return "person.slash.fill"
         }else{
-            return hist.addedItem ? "icloud.and.arrow.up" : "icloud.and.arrow.down"
+            return hist.addedItem ? "arrow.left" : "arrow.right"
         }
     }
 }

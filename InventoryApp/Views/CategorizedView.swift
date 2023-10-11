@@ -11,10 +11,10 @@ struct CategorizedView: View {
     @EnvironmentObject var dataManager: DataManager
     
     let categories = Item.Category.allCases.filter { $0 != .select }
-    
+    @Binding var searchText: String
     var body: some View {
         ForEach(categories, id: \.self) { category in
-            CategoryRowView(category: category)
+            CategoryRowView(searchText: $searchText, category: category)
         }
     }
 }
@@ -22,6 +22,7 @@ struct CategorizedView: View {
 struct CategoryRowView: View{
     @EnvironmentObject var dataManager: DataManager
     @ObservedObject var ivm = ItemViewModel()
+    @Binding var searchText: String
     var category: Item.Category
     var body: some View{
         Text(category.rawValue)
@@ -35,7 +36,7 @@ struct CategoryRowView: View{
             
            
         }else{
-            ScrollView(.horizontal){
+            ScrollView(.horizontal, showsIndicators: false){
                 HStack{
                     ForEach(listOfItems(category: category), id: \.self){ item in
                         NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal))) ) .listRowSeparatorTint(.clear)
@@ -50,7 +51,11 @@ struct CategoryRowView: View{
     }
     
     func listOfItems(category: Item.Category) -> [Item]{
-        let list = dataManager.inventory.filter{$0.category == category}
+        var list = dataManager.inventory.filter{$0.category == category}
+        if (searchText != ""){
+            list = list.filter{$0.name.lowercased().contains(searchText.lowercased())}
+        }
+         
         return list
     }
                     
@@ -58,6 +63,3 @@ struct CategoryRowView: View{
 }
                     
 
-#Preview {
-    CategorizedView()
-}

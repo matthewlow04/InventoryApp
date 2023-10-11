@@ -54,7 +54,7 @@ struct InventoryView: View {
                                     }
                                 }
                             }else{
-                                CategorizedView()
+                                CategorizedView(searchText: $searchText)
                                 
                             }
                             
@@ -67,9 +67,10 @@ struct InventoryView: View {
                     .toolbar{
                         Button(isCategories ? "Uncategorizied":"Categorized"){
                             withAnimation(){
-                                viewAnimation = false
-                                isCategories.toggle()
                                 viewAnimation = true
+                                isCategories.toggle()
+                            }completion:{
+                                viewAnimation = false
                             }
                         }
                     }

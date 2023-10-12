@@ -82,6 +82,7 @@ struct InventoryView: View {
                 dataManager.hasLoadedItemData = false
                 dataManager.fetchItems()
                 dataManager.fetchAlertHistory()
+                dataManager.fetchInventoryHistory()
             }
         }
     }

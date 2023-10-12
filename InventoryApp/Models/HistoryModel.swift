@@ -8,7 +8,7 @@
 import Foundation
 
 struct History: Hashable, Identifiable{
-    var id = UUID()
+    var id: String
     var itemName: String
     var date: Date
     var addedItem: Bool

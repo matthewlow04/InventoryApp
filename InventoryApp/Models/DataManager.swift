@@ -49,7 +49,7 @@ class DataManager: ObservableObject{
                           }
                       }
                       self.hasLoadedItemData = true
-                      print("Fetch request")
+//                      print("Fetch request")
                   }
                   
                   
@@ -77,13 +77,15 @@ class DataManager: ObservableObject{
                           let amount = data["amount"] as? Int ?? 0
                           let added = data["added"] as? Bool ?? true
                           let person = data["person"] as? String ?? "No Person"
+                          let id = data["id"] as? String ?? "Error"
                         
-                          let historyItem = History(itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount), person: person)
+                          let historyItem = History(id: id, itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount), person: person)
                           self.inventoryHistory.append(historyItem)
                         
                       }
                   }
                   self.hasLoadedHistoryData = true
+                  
               }
     }
     
@@ -152,7 +154,7 @@ class DataManager: ObservableObject{
                     self.people.append(person)
                 }
             }
-            print("People fetched")
+//            print("People fetched")
             self.hasLoadedPeopleData = true
         }
     }
@@ -189,8 +191,12 @@ class DataManager: ObservableObject{
             var newHistory = itemHistory
             newHistory.append(newAmount)
             
-            let oldAmount = getItemByName(name: itemName)?.amountInStock
-            let difference = newAmount - oldAmount!
+           
+            guard let oldAmount = getItemByName(name: itemName)?.amountInStock else {
+                print("Error updating item")
+                return
+            }
+            let difference = newAmount - oldAmount
             var added: Bool
             
             if difference > 0{
@@ -225,7 +231,7 @@ class DataManager: ObservableObject{
             }
             
             if(newAmount != oldAmount){
-                createHistory(name: itemName, amount: difference, added: added, id: UUID(), person: person!)
+                createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!)
             }
             
             ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory, "isFavourite": isFavourite]){ error in
@@ -235,6 +241,8 @@ class DataManager: ObservableObject{
             }
             fetchItems()
             fetchAlertHistory()
+            fetchInventoryHistory()
+            print("Fetched from update")
            
         }
        
@@ -251,7 +259,13 @@ class DataManager: ObservableObject{
             var newHistory = itemHistory
             newHistory.append(newAmount)
             
+            
             let oldAmount = getItemByName(name: itemName)?.amountInStock
+            if oldAmount == nil{
+                
+                print("Error updating person")
+                return
+            }
             let difference = newAmount - oldAmount!
             var added: Bool
             
@@ -286,7 +300,7 @@ class DataManager: ObservableObject{
                 }
             }
             if(newAmount != oldAmount){
-                createHistory(name: itemName, amount: difference, added: added, id: UUID(), person: person!)
+                createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!)
             }
          
             ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory, "isFavourite": isFavourite]){ error in
@@ -312,6 +326,16 @@ class DataManager: ObservableObject{
                 }
                 
             }
+    
+            for history in inventoryHistory{
+                if(history.itemName == itemName){
+//                    print("Match - UUID: \(history.id)")
+                    deleteHistory(id: ("\(history.id)"))
+                }
+            }
+            
+            fetchInventoryHistory()
+            print("Fetch from delete")
             fetchItems()
         }
     }
@@ -325,20 +349,37 @@ class DataManager: ObservableObject{
         return inventory.first { $0.name.lowercased() == name.lowercased() }
     }
     
-    func createHistory(name: String, amount: Int, added: Bool, id: UUID, person: String){
+    func createHistory(name: String, amount: Int, added: Bool, id: String, person: String){
         if let currentUser = Auth.auth().currentUser{
             let userID = currentUser.uid
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/History/\(id)"
             let ref = db.document(fullPath)
-            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person]){ error in
+//            print(fullPath)
+            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person, "id": id]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
             }
         }
-        let newHistory = History(itemName: name, date: Date.now, addedItem: added, amount: abs(amount), person: person)
+        let newHistory = History(id: id, itemName: name, date: Date.now, addedItem: added, amount: abs(amount), person: person)
         inventoryHistory.append(newHistory)
+    }
+    
+    func deleteHistory(id: String){
+        if let currentUser = Auth.auth().currentUser{
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let newPath = "Users/\(userID)/History/\(id)"
+//            print(newPath)
+            let ref = db.document(newPath)
+            
+            ref.delete(){ error in
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+            }
+        }
     }
     
     func deleteAlert(alertID: String){
@@ -448,7 +489,9 @@ class DataManager: ObservableObject{
                 }
             }
             
-            print("person deleted")
+
+            fetchInventoryHistory()
+            print("Fetch from person delete")
             fetchPeopleData()
             fetchAlertHistory()
             fetchItems()
@@ -482,6 +525,8 @@ class DataManager: ObservableObject{
         
         fetchItems()
         fetchAlertHistory()
+        fetchInventoryHistory()
+        print("Fetch from item changes")
         
         items = items.map { var mutableItem = $0; mutableItem.currentDifference = 0; return mutableItem }
     }

@@ -18,7 +18,14 @@ class DataManager: ObservableObject{
     @Published var hasLoadedItemData = false
     @Published var hasLoadedHistoryData = false
     @Published var hasLoadedPeopleData = false
+    @Published var currentNavigationView: NavigationViewType?
 
+    enum NavigationViewType {
+        case inventory
+        case itemView
+        case other
+    }
+    
     func fetchItems(){
         inventory.removeAll()
         if let currentUser = Auth.auth().currentUser{
@@ -398,6 +405,39 @@ class DataManager: ObservableObject{
             }
         }
         fetchAlertHistory()
+    }
+    
+    func deleteAllAlerts(){
+        if let currentUser = Auth.auth().currentUser{
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            
+            let ref = db.collection("Users/\(userID)/Alert")
+
+            ref.getDocuments { (snapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error.localizedDescription)")
+                    return
+                }
+
+                let batch = db.batch()
+
+                snapshot?.documents.forEach { document in
+                    batch.deleteDocument(ref.document(document.documentID))
+                }
+
+                // Commit the batch
+                batch.commit { batchError in
+                    if let batchError = batchError {
+                        print("Error committing batch: \(batchError.localizedDescription)")
+                    } else {
+                        print("Batch delete successful")
+                        self.fetchAlertHistory()
+                    }
+                }
+            }
+        }
+        
     }
     
     func addPerson(firstName: String, lastName: String, inventory: [AssignedItem]){

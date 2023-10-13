@@ -122,6 +122,7 @@ struct ItemView: View {
         })
         .onDisappear{
             onItemUpdated()
+            dismiss()
         }
         
         

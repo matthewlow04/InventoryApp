@@ -55,6 +55,9 @@ struct InventoryView: View {
                                         NavigationLink(destination: ItemView(selectedItem: item, onItemUpdated: sortArray)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal)))) .listRowSeparatorTint(.clear)
                                             
                                         }
+                                        .onAppear {
+                                            dataManager.currentNavigationView = .itemView
+                                        }
                                     }
                                 }
                             }else{
@@ -126,11 +129,18 @@ struct InventoryView: View {
                 
             }
             .onAppear {
+                sortDescending = false
                 dataManager.hasLoadedItemData = false
                 dataManager.fetchItems()
                 dataManager.fetchAlertHistory()
                 dataManager.fetchInventoryHistory()
                 sortArray()
+            }
+            .onDisappear{
+                if let currentNavigationView = dataManager.currentNavigationView,
+                   !(currentNavigationView == .itemView) {
+                        sortOption = 0
+                    }
             }
             
         }
@@ -147,7 +157,7 @@ struct InventoryView: View {
         case 2:
             dataManager.inventory.sort { sortDescending ? ($0.dateUpdated > $1.dateUpdated) : ($0.dateUpdated < $1.dateUpdated) }
         case 3:
-            dataManager.inventory.sort { sortDescending ? ($0.amountInStock > $1.amountInStock) : ($0.amountInStock > $1.amountInStock) }
+            dataManager.inventory.sort { sortDescending ? ($0.amountInStock > $1.amountInStock) : ($0.amountInStock < $1.amountInStock) }
         case 4:
             dataManager.inventory.sort { item1, item2 in
                 let ratio1 = Double(item1.amountInStock) / Double(item1.amountTotal)

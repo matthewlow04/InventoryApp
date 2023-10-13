@@ -22,6 +22,10 @@ struct FavouritesRowView: View {
                     ForEach(dataManager.inventory.filter{$0.isFavourite == true}, id: \.self){ item in
                         NavigationLink(destination: ItemView(selectedItem: item, onItemUpdated: onItemUpdated)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal))) ) .listRowSeparatorTint(.clear)
                         }
+                        .onAppear {
+                            dataManager.currentNavigationView = .itemView
+                        
+                        }
                     }
                 }
                

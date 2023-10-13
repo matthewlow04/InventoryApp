@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AlertView: View {
     @EnvironmentObject var dataManager: DataManager
+    @State var showingConfirmation = false
     
     var body: some View {
         NavigationStack{
@@ -32,11 +33,25 @@ struct AlertView: View {
                     }
                 }
                 .navigationTitle("Alerts")
+                .toolbar{
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button("Clear All Alerts"){
+                            showingConfirmation = true
+                        }
+                        .confirmationDialog("Are you sure?", isPresented: $showingConfirmation) {
+                            Button("Delete all alerts?", role: .destructive) {
+                                dataManager.deleteAllAlerts()
+                            }
+                        }
+                    }
+                }
             }
         }
+       
         
         
     }
+    
     
     func deleteAlert(alertID: String, alert: Notification) {
         if let index = dataManager.alerts.firstIndex(where: { $0.id == alert.id }) {

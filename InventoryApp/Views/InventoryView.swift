@@ -12,7 +12,10 @@ struct InventoryView: View {
     @ObservedObject var ivm = ItemViewModel()
     @State private var searchText = ""
     @State var isCategories = false
+    @State var sortOption = 0
+    @State var sortDescending = false
     @State var viewAnimation = false
+
     var filteredItems: [Item] {
         if searchText.isEmpty {
             return dataManager.inventory
@@ -42,36 +45,80 @@ struct InventoryView: View {
                     ScrollView{
                         VStack(alignment: .leading){
                             if(searchText == ""){
-                                FavouritesRowView(isCat: $isCategories)
+                                FavouritesRowView(onItemUpdated: sortArray, isCat: $isCategories)
                                 Text("Main Inventory").modifier(HeadlineModifier())
                             }
                             
                             if(isCategories == false){
                                 LazyVGrid(columns: columns, spacing: 16) {
                                     ForEach(filteredItems, id: \.self) { item in
-                                        NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal)))) .listRowSeparatorTint(.clear)
+                                        NavigationLink(destination: ItemView(selectedItem: item, onItemUpdated: sortArray)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal)))) .listRowSeparatorTint(.clear)
+                                            
                                         }
                                     }
                                 }
                             }else{
-                                CategorizedView(searchText: $searchText)
+                                CategorizedView(onItemUpdated: sortArray, searchText: $searchText)
                                 
                             }
                             
                            
-                        }.animation(viewAnimation ? .easeInOut : .none)
+                        }.animation(viewAnimation ? .easeInOut : .none, value: UUID())
                     }
-                    .navigationTitle("Inventory")
+                    .navigationBarTitle("Inventory")
+                    .navigationBarTitleDisplayMode(.automatic)
                     .searchable(text: $searchText)
-                    .animation(searchText.isEmpty ? .none: .default)
+                    .animation(searchText.isEmpty ? .none: .default,value: UUID())
                     .toolbar{
-                        Button(isCategories ? "Uncategorizied":"Categorized"){
-                            withAnimation(){
-                                viewAnimation = true
-                                isCategories.toggle()
-                            }completion:{
-                                viewAnimation = false
+                        ToolbarItem(placement: .topBarTrailing){
+                            Button(action: {
+                                withAnimation(){
+                                    viewAnimation = true
+                                    sortDescending.toggle()
+                                    sortArray()
+                                }completion:{
+                                    viewAnimation = false
+                                }
+                            }) {
+                                Image(systemName: sortDescending ? "arrow.down" : "arrow.up")
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                    .foregroundStyle(Color.accentColor)
                             }
+                        }
+                        ToolbarItem(placement: .topBarTrailing){
+                            Menu {
+                                Picker("Sorting Options", selection: $sortOption) {
+                                    Text("Alphabetical").tag(0)
+                                    Text("Date Created").tag(1)
+                                    Text("Date Updated").tag(2)
+                                    Text("Stock Left").tag(3)
+                                    Text("Stock Left Percent").tag(4)
+                                }
+                                .onChange(of: sortOption) {
+                                    sortArray()
+                                }
+                                
+                            }
+                            label: {
+                                Label("Sort", systemImage: "arrow.up.arrow.down.circle")
+                            }
+                        }
+                        ToolbarItem(placement: .topBarTrailing){
+                            Button(action: {
+                                withAnimation(){
+                                    viewAnimation = true
+                                    isCategories.toggle()
+                                }completion:{
+                                    viewAnimation = false
+                                }
+                            }) {
+                                Image(systemName: isCategories ? "tag.fill" : "tag")
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                    .foregroundStyle(Color.accentColor)
+                            }
+                           
                         }
                     }
                     
@@ -83,10 +130,52 @@ struct InventoryView: View {
                 dataManager.fetchItems()
                 dataManager.fetchAlertHistory()
                 dataManager.fetchInventoryHistory()
+                sortArray()
             }
+            
         }
     }
+    
+    func sortArray() {
+        print("sort array called, option: \(sortOption)")
+        
+        switch sortOption {
+        case 0:
+            dataManager.inventory.sort { sortDescending ? ($0.name > $1.name) : ($0.name < $1.name)  }
+        case 1:
+            dataManager.inventory.sort { sortDescending ? ($0.dateCreated > $1.dateCreated) : ($0.dateCreated < $1.dateCreated)  }
+        case 2:
+            dataManager.inventory.sort { sortDescending ? ($0.dateUpdated > $1.dateUpdated) : ($0.dateUpdated < $1.dateUpdated) }
+        case 3:
+            dataManager.inventory.sort { sortDescending ? ($0.amountInStock > $1.amountInStock) : ($0.amountInStock > $1.amountInStock) }
+        case 4:
+            dataManager.inventory.sort { item1, item2 in
+                let ratio1 = Double(item1.amountInStock) / Double(item1.amountTotal)
+                let ratio2 = Double(item2.amountInStock) / Double(item2.amountTotal)
+                if(sortDescending){
+                    return ratio1 > ratio2
+                }
+                else{
+                    return ratio1 < ratio2
+                }
+              
+            }
+        default:
+            break
+        }
+    }
+    
+   
+
 }
+
+//struct SortView: View{
+//    var body: some View{
+//        VStack{
+//            Text()
+//        }
+//    }
+//}
 
 struct InventoryView_Previews: PreviewProvider {
     static var previews: some View {

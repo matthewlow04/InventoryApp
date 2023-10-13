@@ -151,7 +151,7 @@ struct PersonView: View {
                     Text($0)
                 }
             }
-            .onChange(of: selectedItem) { _ in
+            .onChange(of: selectedItem) {
                 itemAmount = 0
             }
 

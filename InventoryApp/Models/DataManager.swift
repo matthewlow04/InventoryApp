@@ -42,8 +42,10 @@ class DataManager: ObservableObject{
                               let category = data["category"] as? String ?? ""
                               let amountHistory = data["amountHistory"] as? [Int] ?? [amountTotal]
                               let isFav = data["isFavourite"] as? Bool ?? false
+                              let dateCreated = data["dateCreated"] as? Timestamp ?? Timestamp(date: Date.now)
+                              let dateUpdated = data["dateUpdated"] as? Timestamp ?? Timestamp(date: Date.now)
                             
-                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory, isFavourite: isFav)
+                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory, isFavourite: isFav, dateCreated: dateCreated.dateValue(), dateUpdated:  dateUpdated.dateValue())
                               self.inventory.append(item)
                             
                           }
@@ -170,7 +172,7 @@ class DataManager: ObservableObject{
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
-            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount)!, "amountInStock": Int(itemAmount)!, "category": category, "amountHistory": [Int(itemAmount)]]){ error in
+            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount)!, "amountInStock": Int(itemAmount)!, "category": category, "amountHistory": [Int(itemAmount)], "dateCreated": Timestamp(date: Date.now), "dateUpdated": Timestamp(date: Date.now)]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -234,7 +236,7 @@ class DataManager: ObservableObject{
                 createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!)
             }
             
-            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory, "isFavourite": isFavourite]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now)]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -303,7 +305,7 @@ class DataManager: ObservableObject{
                 createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!)
             }
          
-            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory, "isFavourite": isFavourite]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now)]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }

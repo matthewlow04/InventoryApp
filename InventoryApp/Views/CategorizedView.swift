@@ -9,17 +9,20 @@ import SwiftUI
 
 struct CategorizedView: View {
     @EnvironmentObject var dataManager: DataManager
-    
-    let categories = Item.Category.allCases.filter { $0 != .select }
+    var onItemUpdated: () -> Void
+    let categories = Item.Category.allCases.filter 
+    { $0 != .select }
     @Binding var searchText: String
     var body: some View {
         ForEach(categories, id: \.self) { category in
-            CategoryRowView(searchText: $searchText, category: category)
+            CategoryRowView(onItemUpdated: onItemUpdated, searchText: $searchText, category: category)
         }
     }
 }
 
 struct CategoryRowView: View{
+    
+    var onItemUpdated: () -> Void
     @EnvironmentObject var dataManager: DataManager
     @ObservedObject var ivm = ItemViewModel()
     @Binding var searchText: String
@@ -39,7 +42,7 @@ struct CategoryRowView: View{
             ScrollView(.horizontal, showsIndicators: false){
                 HStack{
                     ForEach(listOfItems(category: category), id: \.self){ item in
-                        NavigationLink(destination: ItemView(selectedItem: item)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal))) ) .listRowSeparatorTint(.clear)
+                        NavigationLink(destination: ItemView(selectedItem: item, onItemUpdated: onItemUpdated)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal))) ) .listRowSeparatorTint(.clear)
                         }
                     }
                 }

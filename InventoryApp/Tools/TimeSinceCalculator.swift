@@ -22,3 +22,9 @@ func timeSince(date: Date) -> String {
         return "\(days) days ago"
     }
 }
+
+func formattedDate(date: Date) -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "MMM d, yyyy" // Customize the date format as needed
+    return dateFormatter.string(from: date)
+}

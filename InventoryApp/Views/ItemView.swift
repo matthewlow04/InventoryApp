@@ -18,6 +18,7 @@ struct ItemView: View {
     @State var alertMessage = "Item saved"
     @Environment(\.dismiss) var dismiss
     
+    var onItemUpdated: () -> Void
     var body: some View {
         VStack{
             HStack{
@@ -80,6 +81,12 @@ struct ItemView: View {
                         }
                     }
                     
+                    VStack(alignment: .leading){
+                        Text("Date Created: \(formattedDate(date: selectedItem.dateCreated))")
+                        Text("Last Updated: \(timeSince(date: selectedItem.dateUpdated))")
+                    }
+                    .foregroundStyle(Color.gray)
+                    
                 }
                 
 
@@ -113,6 +120,9 @@ struct ItemView: View {
         }.alert(alertMessage, isPresented: $isShowingAlert, actions: {
             Button("OK", role: .cancel){}
         })
+        .onDisappear{
+            onItemUpdated()
+        }
         
         
     }
@@ -139,8 +149,8 @@ struct ItemView: View {
     }        
 }
 
-struct ItemView_Previews: PreviewProvider {
-    static var previews: some View {
-        ItemView(selectedItem: Item(name: "Pencil", notes: "This is a pencil", amountTotal: 20, amountInStock: 10, category: Item.Category.stationairy, amountHistory: [10], isFavourite: true))
-    }
-}
+//struct ItemView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ItemView(selectedItem: Item(name: "Pencil", notes: "This is a pencil", amountTotal: 20, amountInStock: 10, category: Item.Category.stationairy, amountHistory: [10], isFavourite: true, dateCreated: Date.now, dateUpdated: Date.now))
+//    }
+//}

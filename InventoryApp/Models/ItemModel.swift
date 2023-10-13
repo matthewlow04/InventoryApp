@@ -23,6 +23,8 @@ struct Item: Hashable{
     }  
     var amountHistory: [Int]
     var isFavourite: Bool
+    var dateCreated: Date
+    var dateUpdated: Date
 
    
 }

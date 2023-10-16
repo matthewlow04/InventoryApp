@@ -42,8 +42,8 @@ class DataManager: ObservableObject{
                       if let snapshot = snapshot{
                           for document in snapshot.documents{
                               let data = document.data()
-                              let amountInStock = data["amountInStock"] as? Int ?? 60
-                              let amountTotal = data["amountTotal"] as? Int ?? 60
+                              let amountInStock = data["amountInStock"] as? Int ?? 1000 //remember
+                              let amountTotal = data["amountTotal"] as? Int ?? 1000
                               let name = data["name"] as? String ?? ""
                               let notes = data["notes"] as? String ?? ""
                               let category = data["category"] as? String ?? ""
@@ -213,6 +213,7 @@ class DataManager: ObservableObject{
             }else{
                 added = false
             }
+            
            
             let decimalInStock = Double(newAmount)/Double(itemTotal)
             if(newAmount == 0){
@@ -243,7 +244,15 @@ class DataManager: ObservableObject{
                 createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!)
             }
             
-            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now)]){ error in
+            var total = 0
+            if(itemTotal < newAmount){
+                
+                total = newAmount
+            }else{
+                total = itemTotal
+            }
+            
+            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now)]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -311,8 +320,16 @@ class DataManager: ObservableObject{
             if(newAmount != oldAmount){
                 createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!)
             }
+            
+            var total = 0
+            if(itemTotal < newAmount){
+                
+                total = newAmount
+            }else{
+                total = itemTotal
+            }
          
-            ref.updateData(["amountInStock":newAmount, "amountTotal":itemTotal, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now)]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now)]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -478,7 +495,7 @@ class DataManager: ObservableObject{
             let data: [String: Any] = [
                 "firstName": selectedPerson.firstName,
                 "lastName": selectedPerson.lastName,
-                "inventory": selectedPerson.inventory.map { item in
+                "inventory": selectedPerson.inventory.filter{$0.quantity > 0}.map { item in
                     return [
                         "itemID": item.itemID,
                         "quantity": item.quantity
@@ -547,7 +564,6 @@ class DataManager: ObservableObject{
                                    itemID: itemID,
                                    quantity: quantity)
         guard let item = getItemByName(name: itemID) else {
-            
             return
         }
         updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"), isFavourite: item.isFavourite)

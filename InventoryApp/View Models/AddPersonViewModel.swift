@@ -61,7 +61,7 @@ class AddPersonViewModel: ObservableObject{
                 .map { (index, amount) in
                    
                     let itemInstance = dataManager.getItemByName(name: dataManager.inventory[index].name)
-                    dataManager.updateMultipleItems(itemName: dataManager.inventory[index].name, newAmount: (itemInstance?.amountInStock ?? Int(amount)) - Int(amount), itemTotal: itemInstance?.amountInStock ?? 0 , itemHistory: itemInstance?.amountHistory ?? [], person: ("\(firstName) \(lastName)"), isFavourite: itemInstance?.isFavourite ?? false)
+                    dataManager.updateMultipleItems(itemName: dataManager.inventory[index].name, newAmount: (itemInstance?.amountInStock ?? Int(amount)) - Int(amount), itemTotal: itemInstance?.amountTotal ?? 0 , itemHistory: itemInstance?.amountHistory ?? [], person: ("\(firstName) \(lastName)"), isFavourite: itemInstance?.isFavourite ?? false)
                     return AssignedItem(firstName: firstName, lastName: lastName, itemID: dataManager.inventory[index].name, quantity: Int(amount))
                 }
         

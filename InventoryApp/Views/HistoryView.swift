@@ -10,7 +10,7 @@ import SwiftUI
 struct HistoryView: View {
     @State var helpAlertShowing = false
     @State var searchText = ""
-    var filteredItems: [History] {
+    var filteredHistory: [History] {
         if searchText.isEmpty {
             return dataManager.inventoryHistory
         } else {
@@ -33,7 +33,7 @@ struct HistoryView: View {
                     .padding()
                     .navigationTitle("Inventory History")
             }else{
-                List(filteredItems, id: \.self){ item in
+                List(filteredHistory, id: \.self){ item in
                     HStack{
                         VStack(alignment: .leading, spacing: 10){
                             Text(item.itemName)

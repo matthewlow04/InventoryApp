@@ -60,6 +60,7 @@ struct AddItemView: View {
                     }
                 }
             }
+            .foregroundStyle(CustomColor.textBlue)
             .alert(isPresented:$avm.duplicateAlert) {
                 Alert(
                     title: Text("This item already exists"),

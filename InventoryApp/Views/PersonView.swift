@@ -51,20 +51,16 @@ struct PersonView: View {
            }
        }
 
-       
-       VStack(alignment: .leading){
-           Text((selectedPerson.firstName+" "+selectedPerson.lastName))
-                .font(.title)
-           HStack() {
-               Text("Insert person title")
-               
-               Spacer()
-               VStack{
-                   Text("Insert person info")
-               } .font(.subheadline)
-           }
-     
+        HStack{
+            VStack(alignment: .leading){
+                Text((selectedPerson.firstName+" "+selectedPerson.lastName))
+                     .font(.title)
+                
+                Text("Insert person title")
+             }
+            Spacer()
         }
+      
        .alert("This person has all possible unique items", isPresented: $showingAlert, actions: {
            Button("OK", role: .cancel){}
        })
@@ -145,56 +141,60 @@ struct PersonView: View {
          
     }
     
-    var SheetView: some View{
-        VStack{
-            Text("Assign Item To Person")
-            Picker("Pick an item: ", selection: $selectedItem) {
-                ForEach(itemNames, id: \.self) {
-                    Text($0)
-                }
-            }
-            .onChange(of: selectedItem) {
-                itemAmount = 0
-            }
-
-           
-            if (selectedItem != ""){
-                if(dataManager.getItemByName(name: selectedItem)?.amountInStock != 0){
-                    Slider(value: $itemAmount, in: 0...Double(dataManager.getItemByName(name: selectedItem)?.amountInStock ?? 1), step:1)
-                }
-             
-                Text("\(Int(itemAmount)) / \(dataManager.getItemByName(name: selectedItem)?.amountInStock ?? 0)")
+    var SheetView: some View {
+        VStack(spacing: 50){
+            VStack(alignment: .leading){
+                Text("Assign Item To Person")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(CustomColor.textBlue)
             }
             
-            HStack{
-                assignItemButton
-                    .buttonStyle(AddButtonStyle())
+            
+            
+            VStack(spacing: 40) {
                 
+                
+                Picker("Pick an item: ", selection: $selectedItem) {
+                    ForEach(itemNames, id: \.self) {
+                        Text($0)
+                    }
+                }
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
+                
+                if selectedItem != "" {
+                    if let item = dataManager.getItemByName(name: selectedItem), item.amountInStock != 0 {
+                        Slider(value: $itemAmount, in: 0...Double(item.amountInStock), step: 1)
+                            .accentColor(.blue)
+                        Text("\(Int(itemAmount)) / \(item.amountInStock)")
+                            .foregroundColor(.gray)
+                            .padding(.bottom, 20)
+                    }
+                    
+                    HStack {
+                        assignItemButton
+                            .buttonStyle(AddButtonStyle())
+                    }
+                }
             }
-           
-           
+            
         }
-        .padding(.horizontal, 50)
-        .alert(alertMessage, isPresented: $showingSheetAlert, actions: {
-            Button("OK", role: .cancel){
-                print(alertMessage)
-                print("\(selectedItem) assigned to \(selectedPerson.firstName + " "+selectedPerson.lastName)")
-                if(alertMessage == ("\(selectedItem) assigned to \(selectedPerson.firstName + " "+selectedPerson.lastName)")){
+        .padding()
+        .padding(.horizontal, 20)
+    
+        .alert(alertMessage, isPresented: $showingSheetAlert) {
+            Button("OK", role: .cancel) {
+                if alertMessage == "\(selectedItem) assigned to \(selectedPerson.firstName + " " + selectedPerson.lastName)" {
                     showingSheet = false
                     selectedItem = ""
                     itemAmount = 0
                     dataManager.fetchPeopleData()
-                  
                 }
             }
-        })
-        
-        
-      
-        
-        
+        }
     }
-    
     var addItemButton: some View{
         Button("Add New Item"){
             print(selectedPerson.inventory.count)

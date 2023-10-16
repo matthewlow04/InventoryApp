@@ -9,6 +9,15 @@ import SwiftUI
 
 struct HistoryView: View {
     @State var helpAlertShowing = false
+    @State var searchText = ""
+    var filteredItems: [History] {
+        if searchText.isEmpty {
+            return dataManager.inventoryHistory
+        } else {
+            return dataManager.inventoryHistory
+                .filter { $0.itemName.lowercased().contains(searchText.lowercased()) || $0.person.lowercased().contains(searchText.lowercased()) }
+        }
+    }
     @EnvironmentObject var dataManager: DataManager
 
     var body: some View {
@@ -24,7 +33,7 @@ struct HistoryView: View {
                     .padding()
                     .navigationTitle("Inventory History")
             }else{
-                List(dataManager.inventoryHistory, id: \.self){ item in
+                List(filteredItems, id: \.self){ item in
                     HStack{
                         VStack(alignment: .leading, spacing: 10){
                             Text(item.itemName)
@@ -49,6 +58,7 @@ struct HistoryView: View {
                 .alert("The arrow right means the person is receiving items from inventory, the arrow left means the items are going back to inventory", isPresented: $helpAlertShowing){
                     Button("OK", role: .cancel){}
                 }
+                .searchable(text: $searchText)
                 .navigationTitle("Inventory History")
                 .navigationBarItems(trailing: Button(action: {
                                helpAlertShowing = true

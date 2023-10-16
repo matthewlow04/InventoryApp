@@ -17,35 +17,9 @@ struct PersonListView: View {
                     .navigationTitle("People")
             }
             else if(dataManager.people.isEmpty){
-                Text("No people")
-                    .font(.title)
-                    .foregroundColor(.secondary)
-                    .padding()
-                    .navigationTitle("People")
-                .toolbar{
-                    NavigationLink(destination: AddPersonView()){
-                        Text("Add Person")
-                    }
-                
-                }
+               NoPeople
             }else{
-                List(dataManager.people, id: \.self){ person in
-                    NavigationLink(destination: PersonView(selectedPerson: person)){
-                        HStack{
-                            Text(person.firstName+" "+person.lastName)
-                                .bold()
-                        }
-                    }
-                    
-                    
-                }
-                .toolbar{
-                    NavigationLink(destination: AddPersonView()){
-                        Text("Add Person")
-                    }
-                
-                }
-                .navigationTitle("People")
+               LoadedView
             }
            
    
@@ -55,12 +29,46 @@ struct PersonListView: View {
             dataManager.fetchPeopleData()
         }
         .toolbar{
-            NavigationLink(destination: AddPersonView()){
+            NavigationLink(destination: AddPersonView(apvm: AddPersonViewModel(dataManager: dataManager))){
                 Text("Add Person")
             }
         
         }
         
+    }
+    
+    var NoPeople: some View{
+        Text("No people")
+            .font(.title)
+            .foregroundColor(.secondary)
+            .padding()
+            .navigationTitle("People")
+        .toolbar{
+            NavigationLink(destination: AddPersonView(apvm: AddPersonViewModel(dataManager: dataManager))){
+                Text("Add Person")
+            }
+        
+        }
+    }
+    
+    var LoadedView: some View{
+        List(dataManager.people, id: \.self){ person in
+            NavigationLink(destination: PersonView(selectedPerson: person)){
+                HStack{
+                    Text(person.firstName+" "+person.lastName)
+                        .bold()
+                }
+            }
+            
+            
+        }
+        .toolbar{
+            NavigationLink(destination: AddPersonView(apvm: AddPersonViewModel(dataManager: dataManager))){
+                Text("Add Person")
+            }
+        
+        }
+        .navigationTitle("People")
     }
     
 }

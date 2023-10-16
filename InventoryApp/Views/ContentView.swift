@@ -52,7 +52,6 @@ struct ContentView: View {
                 .badge(dataManager.alerts.count)
             
         }
-        
     }
 }
 

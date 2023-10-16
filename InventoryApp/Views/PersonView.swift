@@ -122,9 +122,6 @@ struct PersonView: View {
             
         }
         HStack{
-            addItemButton
-                .buttonStyle(AddButtonStyle())
-            Spacer()
             deleteButton
                 .buttonStyle(DeleteButtonStyle())
                 .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm){
@@ -134,6 +131,11 @@ struct PersonView: View {
                         dismiss()
                     }
                 }
+            Spacer()
+            addItemButton
+                .buttonStyle(AddButtonStyle())
+            
+            
         }
         .padding(30)
         

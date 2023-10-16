@@ -11,6 +11,7 @@ struct AlertView: View {
     @EnvironmentObject var dataManager: DataManager
     @State var showingConfirmation = false
     
+    
     var body: some View {
         NavigationStack{
             if(dataManager.alerts.isEmpty){

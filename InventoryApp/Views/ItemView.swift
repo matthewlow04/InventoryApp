@@ -15,8 +15,13 @@ struct ItemView: View {
 //    @State private var amountInStock: Double
     @State var isPresentingConfirm = false
     @State var isShowingAlert = false
+    @State var isShowingCat = false
     @State var alertMessage = "Item saved"
+    @State var editedNotes = ""
+    @State var currentlyEditing = false
+    @State var selectedCategory: Item.Category?
     @Environment(\.dismiss) var dismiss
+
     
     var onItemUpdated: () -> Void
     var body: some View {
@@ -38,7 +43,10 @@ struct ItemView: View {
 
             Text("\(Int(selectedItem.amountInStock)) in stock / \(selectedItem.amountTotal) in total")
             
-            Text(selectedItem.category.rawValue)
+            Button(selectedItem.category.rawValue){
+                isShowingCat = true
+                
+            }
                 .padding(.vertical, 8)
                 .padding(.horizontal, 16)
                 .background(ivm.getBackgroundColor(for: selectedItem.category))
@@ -70,7 +78,20 @@ struct ItemView: View {
                     }
 
                     Section(header: Text("Notes")) {
-                        Text(selectedItem.notes)
+                        Toggle(currentlyEditing ? "Editing..." : "Edit", isOn: $currentlyEditing)
+                            .foregroundStyle(Color.gray)
+                        
+                        if currentlyEditing {
+                            TextField("Edit Here", text: $editedNotes)
+                        } else {
+                            if(selectedItem.notes != ""){
+                                Text(selectedItem.notes)
+                            }else{
+                                Text("No Notes")
+                                    .italic()
+                                    .foregroundStyle(Color.gray)
+                            }
+                        }
                     }
 
                     Section(header: Text("Stock History")) {
@@ -113,13 +134,16 @@ struct ItemView: View {
         }
         .toolbar{
             Button("Save"){
-                dataManager.updateItem(itemName: selectedItem.name, newAmount: Int(selectedItem.amountInStock), itemTotal: selectedItem.amountTotal, itemHistory: selectedItem.amountHistory, isFavourite: selectedItem.isFavourite)
+                dataManager.updateItem(itemName: selectedItem.name, newAmount: Int(selectedItem.amountInStock), itemTotal: selectedItem.amountTotal, itemHistory: selectedItem.amountHistory, isFavourite: selectedItem.isFavourite, notes: (editedNotes != "") ? editedNotes : selectedItem.notes, category: selectedItem.category.rawValue)
                 isShowingAlert = true
                 dismiss()
             }
         }.alert(alertMessage, isPresented: $isShowingAlert, actions: {
             Button("OK", role: .cancel){}
         })
+        .sheet(isPresented: $isShowingCat){
+            sheetView
+        }
         .onDisappear{
             onItemUpdated()
             dismiss()
@@ -147,7 +171,46 @@ struct ItemView: View {
             isPresentingConfirm = true
             
         }
-    }        
+    }
+    
+    var sheetView: some View {
+        VStack {
+            Text("Select Category")
+                .modifier(SheetTitleModifier())
+
+            ForEach(Item.Category.allCases, id: \.self) { category in
+                Button(action: {
+                    selectedCategory = category
+                    
+                }) {
+                    Text(category.rawValue)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(ivm.getBackgroundColor(for: category))
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+            }
+            
+            Button("Dismiss") {
+                isShowingCat = false
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(10)
+        }
+        .padding()
+        .onChange(of: selectedCategory) {
+            if let selectedCategory = selectedCategory {
+                selectedItem.category = selectedCategory
+                self.selectedCategory = nil
+            }
+            isShowingCat = false
+        }
+    }
+    
+    
 }
 
 //struct ItemView_Previews: PreviewProvider {

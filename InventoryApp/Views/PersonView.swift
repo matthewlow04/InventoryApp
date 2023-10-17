@@ -145,9 +145,7 @@ struct PersonView: View {
         VStack(spacing: 50){
             VStack(alignment: .leading){
                 Text("Assign Item To Person")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .foregroundStyle(CustomColor.textBlue)
+                    .modifier(SheetTitleModifier())
             }
             
             

@@ -16,3 +16,12 @@ struct HeadlineModifier: ViewModifier {
             .padding(.top, 5)
     }
 }
+
+struct SheetTitleModifier: ViewModifier{
+    func body(content: Content) -> some View{
+        content
+            .font(.title)
+            .fontWeight(.bold)
+            .foregroundStyle(CustomColor.textBlue)
+    }
+}

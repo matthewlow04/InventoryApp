@@ -190,7 +190,7 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool){
+    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String ){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -252,7 +252,7 @@ class DataManager: ObservableObject{
                 total = itemTotal
             }
             
-            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now)]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -267,7 +267,7 @@ class DataManager: ObservableObject{
        
     }
     
-    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool){
+    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -329,7 +329,7 @@ class DataManager: ObservableObject{
                 total = itemTotal
             }
          
-            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now)]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -534,7 +534,7 @@ class DataManager: ObservableObject{
             
             for item in tempInventory{
                 let itemModelReference = getItemByName(name: item.itemID)
-                updateMultipleItems(itemName: item.itemID, newAmount: item.quantity + (itemModelReference?.amountInStock ?? 0), itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(selectedPerson.firstName) \(selectedPerson.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false)
+                updateMultipleItems(itemName: item.itemID, newAmount: item.quantity + (itemModelReference?.amountInStock ?? 0), itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(selectedPerson.firstName) \(selectedPerson.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other")
             }
             
             
@@ -566,7 +566,7 @@ class DataManager: ObservableObject{
         guard let item = getItemByName(name: itemID) else {
             return
         }
-        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"), isFavourite: item.isFavourite)
+        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"), isFavourite: item.isFavourite, notes: item.notes, category: item.category.rawValue)
 
         person.inventory.append(newItem)
 
@@ -578,7 +578,7 @@ class DataManager: ObservableObject{
         
         for item in changedItems{
             let itemModelReference = getItemByName(name: item.itemID)
-            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false)
+            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other")
         }
         
         fetchItems()

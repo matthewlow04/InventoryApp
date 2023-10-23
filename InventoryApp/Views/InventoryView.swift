@@ -136,6 +136,7 @@ struct InventoryView: View {
                 dataManager.fetchItems()
                 dataManager.fetchAlertHistory()
                 dataManager.fetchInventoryHistory()
+                dataManager.fetchPeopleData()
                 sortArray()
             }
             .onDisappear{

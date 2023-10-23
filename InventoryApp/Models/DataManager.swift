@@ -87,13 +87,15 @@ class DataManager: ObservableObject{
                           let added = data["added"] as? Bool ?? true
                           let person = data["person"] as? String ?? "No Person"
                           let id = data["id"] as? String ?? "Error"
+                          let newStock = data["newStock"] as? Bool ?? false
                         
-                          let historyItem = History(id: id, itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount), person: person)
+                          let historyItem = History(id: id, itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount), person: person, newStock: newStock)
                           self.inventoryHistory.append(historyItem)
                         
                       }
                   }
                   self.hasLoadedHistoryData = true
+                  print(self.inventoryHistory.count)
                   
               }
     }
@@ -190,7 +192,7 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String ){
+    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -241,7 +243,10 @@ class DataManager: ObservableObject{
             }
             
             if(newAmount != oldAmount){
-                createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!)
+                if(updateHistory!){
+                    createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
+                }
+                
             }
             
             var total = 0
@@ -267,7 +272,7 @@ class DataManager: ObservableObject{
        
     }
     
-    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String){
+    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -318,7 +323,9 @@ class DataManager: ObservableObject{
                 }
             }
             if(newAmount != oldAmount){
-                createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!)
+                if(updateHistory!){
+                    createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
+                }
             }
             
             var total = 0
@@ -375,20 +382,29 @@ class DataManager: ObservableObject{
         return inventory.first { $0.name.lowercased() == name.lowercased() }
     }
     
-    func createHistory(name: String, amount: Int, added: Bool, id: String, person: String){
+    func getPersonByName(name: String) -> Person? {
+       
+        return people.first { ("\($0.firstName) \($0.lastName)").lowercased() == name.lowercased()}
+    }
+    
+    func getIndexInPersonInventory(name: String, person: Person) -> Int? {
+        return person.inventory.firstIndex {$0.itemID.lowercased() == name.lowercased()}
+    }
+    
+    func createHistory(name: String, amount: Int, added: Bool, id: String, person: String, newStock: Bool){
         if let currentUser = Auth.auth().currentUser{
             let userID = currentUser.uid
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/History/\(id)"
             let ref = db.document(fullPath)
 //            print(fullPath)
-            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person, "id": id]){ error in
+            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person, "id": id, "newStock": newStock]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
             }
         }
-        let newHistory = History(id: id, itemName: name, date: Date.now, addedItem: added, amount: abs(amount), person: person)
+        let newHistory = History(id: id, itemName: name, date: Date.now, addedItem: added, amount: abs(amount), person: person, newStock: newStock)
         inventoryHistory.append(newHistory)
     }
     
@@ -406,6 +422,39 @@ class DataManager: ObservableObject{
                 }
             }
         }
+    }
+    
+    func deleteAllHistory(){
+        if let currentUser = Auth.auth().currentUser{
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            
+            let ref = db.collection("Users/\(userID)/History")
+
+            ref.getDocuments { (snapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error.localizedDescription)")
+                    return
+                }
+
+                let batch = db.batch()
+
+                snapshot?.documents.forEach { document in
+                    batch.deleteDocument(ref.document(document.documentID))
+                }
+
+                // Commit the batch
+                batch.commit { batchError in
+                    if let batchError = batchError {
+                        print("Error committing batch: \(batchError.localizedDescription)")
+                    } else {
+                        print("Batch delete successful")
+                        self.fetchInventoryHistory()
+                    }
+                }
+            }
+        }
+        
     }
     
     func deleteAlert(alertID: String){

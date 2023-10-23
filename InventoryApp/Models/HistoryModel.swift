@@ -14,6 +14,7 @@ struct History: Hashable, Identifiable{
     var addedItem: Bool
     var amount: Int
     var person: String
+    var newStock: Bool
     
     func addedItemString(_ addedItem: Bool) -> String{
         return addedItem ? "+":"-"

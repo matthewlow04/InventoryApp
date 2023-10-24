@@ -18,6 +18,7 @@ struct ItemView: View {
     @State var isShowingCat = false
     @State var alertMessage = "Item saved"
     @State var editedNotes = ""
+    @State var editedLocation = ""
     @State var currentlyEditing = false
     @State var selectedCategory: Item.Category?
     @Environment(\.dismiss) var dismiss
@@ -53,11 +54,17 @@ struct ItemView: View {
                 .cornerRadius(20)
                 .foregroundColor(.white)
             
+            Toggle(currentlyEditing ? "Editing..." : "Edit", isOn: $currentlyEditing)
+                .foregroundStyle(Color.gray)
+                .padding(.horizontal, 10)
+
+            
             Divider()
                 .padding(.top, 10)
 
             List {
                 Group{
+                   
                     Section(header: Text("Change amount")) {
                         Slider(value: Binding<Double>(
                             get: { Double(selectedItem.amountInStock) },
@@ -78,11 +85,9 @@ struct ItemView: View {
                     }
 
                     Section(header: Text("Notes")) {
-                        Toggle(currentlyEditing ? "Editing..." : "Edit", isOn: $currentlyEditing)
-                            .foregroundStyle(Color.gray)
                         
                         if currentlyEditing {
-                            TextField("Edit Here", text: $editedNotes)
+                            TextField("Edit Notes", text: $editedNotes)
                         } else {
                             if(selectedItem.notes != ""){
                                 Text(selectedItem.notes)
@@ -100,6 +105,47 @@ struct ItemView: View {
                             chartView
                             Spacer()
                         }
+                    }
+                    
+                    Section(header: Text("Location")) {
+                        VStack(alignment: .leading){
+                            VStack{
+                                if currentlyEditing {
+                                    TextField("Edit Location", text: $editedLocation)
+                                }else{
+                                    if(selectedItem.location != ""){
+                                        Text(selectedItem.location)
+                                    }else{
+                                        Text("No Location")
+                                            .italic()
+                                            .foregroundStyle(Color.gray)
+                                    }
+                                }
+                            }
+                            .padding(.bottom, 10)
+                            if currentlyEditing{
+                                VStack{
+                                    ScrollView(.horizontal){
+                                        HStack{
+                                            ForEach(dataManager.locations, id: \.self){ location in
+                                                Button(location){
+                                                    editedLocation = location
+                                                }
+                                                .foregroundStyle(Color.accentColor)
+                                            }
+                                        }
+                                        
+                                    }
+                                    clearButton
+                                }
+                            
+                            
+                               
+                            }
+                        }
+                      
+                        
+                      
                     }
                     
                     VStack(alignment: .leading){
@@ -125,6 +171,7 @@ struct ItemView: View {
                 }
             }
             .scrollContentBackground(.hidden)
+            
 
                 
 
@@ -134,8 +181,14 @@ struct ItemView: View {
         }
         .toolbar{
             Button("Save"){
-                dataManager.updateItem(itemName: selectedItem.name, newAmount: Int(selectedItem.amountInStock), itemTotal: selectedItem.amountTotal, itemHistory: selectedItem.amountHistory, isFavourite: selectedItem.isFavourite, notes: (editedNotes != "") ? editedNotes : selectedItem.notes, category: selectedItem.category.rawValue)
+                dataManager.updateItem(itemName: selectedItem.name, newAmount: Int(selectedItem.amountInStock), itemTotal: selectedItem.amountTotal, itemHistory: selectedItem.amountHistory, isFavourite: selectedItem.isFavourite, notes: (editedNotes != "") ? editedNotes : selectedItem.notes, category: selectedItem.category.rawValue, location: (editedLocation != "") ? editedLocation : selectedItem.location)
+                
+                if(editedLocation != ""){
+                    addToLocations()
+                }
+                
                 isShowingAlert = true
+                dataManager.fetchLocations()
                 dismiss()
             }
         }.alert(alertMessage, isPresented: $isShowingAlert, actions: {
@@ -171,6 +224,13 @@ struct ItemView: View {
             isPresentingConfirm = true
             
         }
+    }
+    
+    var clearButton: some View{
+        Button("Clear"){
+            editedLocation = ""
+        }
+        
     }
     
     var sheetView: some View {
@@ -210,7 +270,15 @@ struct ItemView: View {
         }
     }
     
-    
+    func addToLocations(){
+        for dataLocation in dataManager.locations{
+            if(dataLocation.lowercased() == editedLocation.lowercased()){
+                return
+            }
+        }
+        
+        dataManager.addLocation(editedLocation)
+    }
 }
 
 //struct ItemView_Previews: PreviewProvider {

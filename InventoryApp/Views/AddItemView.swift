@@ -47,6 +47,43 @@ struct AddItemView: View {
                 }
                 
                 Section{
+                    VStack{
+                        HStack{
+                            Text("Location: ")
+                            TextField("Location ", text: $avm.location)
+                        }
+                        .padding(.bottom, 10)
+                        if(avm.showingLocations == false){
+                            VStack(alignment: .leading){
+                                Button("Use Previous Location"){
+                                    avm.showingLocations = true
+                                }
+                                .foregroundStyle(Color.accentColor)
+                                .disabled(dataManager.locations.isEmpty)
+                            }
+                          
+                        }
+                        else{
+                            ScrollView(.horizontal){
+                                HStack{
+                                    ForEach(dataManager.locations, id: \.self){ location in
+                                          Button(location){
+                                              avm.location = location
+                                              avm.showingLocations = false
+                                          }
+                                          .foregroundStyle(Color.accentColor)
+                                      }
+                                }
+                                
+                            }
+                         
+                        }
+                      
+                    }
+                    
+                }
+                
+                Section{
                     Button("Add Item"){
                         avm.checkErrors()
                     }
@@ -71,7 +108,7 @@ struct AddItemView: View {
                             print("Found item: \(item.name)")
                             let newItemStock = item.amountInStock + (Int(avm.numberInStock) ?? 0)
                             let newItemTotal = item.amountTotal + (Int(avm.numberInStock) ?? 0)
-                            dataManager.updateItem(itemName: item.name, newAmount: newItemStock, itemTotal: newItemTotal, itemHistory: item.amountHistory, isFavourite: item.isFavourite, notes: item.notes, category: avm.selectedCategory, newStock: true)
+                            dataManager.updateItem(itemName: item.name, newAmount: newItemStock, itemTotal: newItemTotal, itemHistory: item.amountHistory, isFavourite: item.isFavourite, notes: item.notes, category: avm.selectedCategory, newStock: true, location: item.location)
                             avm.alertMessage = "\(avm.numberInStock) were added"
                             avm.showingAlert = true
                             avm.clearFields()
@@ -86,6 +123,15 @@ struct AddItemView: View {
                     secondaryButton: .cancel()
                 )
             }
+        }
+        .onAppear{
+            if(dataManager.firstLocationFetch == true){
+                dataManager.fetchLocations()
+                dataManager.firstLocationFetch = false
+            }
+        }
+        .onDisappear{
+            avm.showingLocations = false
         }
         
     }

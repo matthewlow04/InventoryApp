@@ -25,6 +25,6 @@ struct Item: Hashable{
     var isFavourite: Bool
     var dateCreated: Date
     var dateUpdated: Date
-
+    var location: String
    
 }

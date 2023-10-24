@@ -13,6 +13,8 @@ class AddItemViewModel: ObservableObject{
     @Published var name = ""
     @Published var notes = ""
     @Published var numberInStock = ""
+    @Published var location = ""
+    @Published var showingLocations = false
     @Published var showingAlert = false
     @Published var alertMessage = "Item added"
     @Published var selectedCategory = "Select"
@@ -38,8 +40,17 @@ class AddItemViewModel: ObservableObject{
             if(Int(numberInStock) ?? 0 > 0){
                 if(selectedCategory != "Select"){
                     if(dataManager.checkIfExists(name: name)){
-                        dataManager.addItem(itemName: name, itemNotes: notes, itemAmount: numberInStock, category: selectedCategory)
+                        
+                        if(location.isEmpty){
+                            location = "No Location"
+                        }
+                        addToLocations()
+                        dataManager.addItem(itemName: name, itemNotes: notes, itemAmount: numberInStock, category: selectedCategory, location: location)
+                       
                         dataManager.fetchItems()
+                        dataManager.fetchLocations()
+                        showingLocations = false
+                        location = ""
                         alertMessage = "Item added"
                         showingAlert = true
                         print("Added")
@@ -65,4 +76,13 @@ class AddItemViewModel: ObservableObject{
         }
     }
     
+    func addToLocations(){
+        for dataLocation in dataManager.locations{
+            if(dataLocation.lowercased() == location.lowercased()){
+                return
+            }
+        }
+        
+        dataManager.addLocation(location)
+    }
 }

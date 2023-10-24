@@ -15,10 +15,13 @@ class DataManager: ObservableObject{
     @Published var inventoryHistory: [History] = []
     @Published var alerts: [Notification] = []
     @Published var people: [Person] = []
+    @Published var locations: [String] = []
     @Published var hasLoadedItemData = false
     @Published var hasLoadedHistoryData = false
     @Published var hasLoadedPeopleData = false
     @Published var currentNavigationView: NavigationViewType?
+    
+    var firstLocationFetch = true
 
     enum NavigationViewType {
         case inventory
@@ -51,8 +54,9 @@ class DataManager: ObservableObject{
                               let isFav = data["isFavourite"] as? Bool ?? false
                               let dateCreated = data["dateCreated"] as? Timestamp ?? Timestamp(date: Date.now)
                               let dateUpdated = data["dateUpdated"] as? Timestamp ?? Timestamp(date: Date.now)
+                              let location = data["location"] as? String ?? "No Location"
                             
-                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory, isFavourite: isFav, dateCreated: dateCreated.dateValue(), dateUpdated:  dateUpdated.dateValue())
+                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory, isFavourite: isFav, dateCreated: dateCreated.dateValue(), dateUpdated:  dateUpdated.dateValue(), location: location)
                               self.inventory.append(item)
                             
                           }
@@ -170,18 +174,44 @@ class DataManager: ObservableObject{
         }
     }
     
+    func fetchLocations(){
+        locations.removeAll()
+        let fullPath = "Users/\(Auth.auth().currentUser!.uid)/Locations"
+        let db = Firestore.firestore()
+        let ref = db.collection(fullPath)
+        
+        ref.getDocuments { snapshot, error in
+            guard error == nil else{
+                print(error!.localizedDescription)
+                return
+            }
+            
+            if let snapshot = snapshot{
+                
+                for document in snapshot.documents{
+                    
+                    let data = document.data()
+                    
+                    let location = data["location"] as? String ?? "No Location"
+                    self.locations.append(location)
+                }
+            }
+        }
+    }
+    
     
     func copyArray() -> [Item]{
         return inventory
     }
     
-    func addItem(itemName: String, itemNotes: String, itemAmount: String, category: String){
+    func addItem(itemName: String, itemNotes: String, itemAmount: String, category: String, location: String = "No Location"){
         if let currentUser = Auth.auth().currentUser{
             let userID = currentUser.uid
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
-            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount)!, "amountInStock": Int(itemAmount)!, "category": category, "amountHistory": [Int(itemAmount)], "dateCreated": Timestamp(date: Date.now), "dateUpdated": Timestamp(date: Date.now)]){ error in
+            
+            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount)!, "amountInStock": Int(itemAmount)!, "category": category, "amountHistory": [Int(itemAmount)], "dateCreated": Timestamp(date: Date.now), "dateUpdated": Timestamp(date: Date.now), "location": location]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -192,7 +222,7 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true){
+    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -257,7 +287,7 @@ class DataManager: ObservableObject{
                 total = itemTotal
             }
             
-            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes, "location": location]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -272,7 +302,7 @@ class DataManager: ObservableObject{
        
     }
     
-    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true){
+    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -336,7 +366,7 @@ class DataManager: ObservableObject{
                 total = itemTotal
             }
          
-            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes, "location": location]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -583,7 +613,7 @@ class DataManager: ObservableObject{
             
             for item in tempInventory{
                 let itemModelReference = getItemByName(name: item.itemID)
-                updateMultipleItems(itemName: item.itemID, newAmount: item.quantity + (itemModelReference?.amountInStock ?? 0), itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(selectedPerson.firstName) \(selectedPerson.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other")
+                updateMultipleItems(itemName: item.itemID, newAmount: item.quantity + (itemModelReference?.amountInStock ?? 0), itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(selectedPerson.firstName) \(selectedPerson.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other", location: itemModelReference!.location)
             }
             
             
@@ -615,7 +645,7 @@ class DataManager: ObservableObject{
         guard let item = getItemByName(name: itemID) else {
             return
         }
-        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"), isFavourite: item.isFavourite, notes: item.notes, category: item.category.rawValue)
+        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"), isFavourite: item.isFavourite, notes: item.notes, category: item.category.rawValue, location: item.location)
 
         person.inventory.append(newItem)
 
@@ -627,7 +657,7 @@ class DataManager: ObservableObject{
         
         for item in changedItems{
             let itemModelReference = getItemByName(name: item.itemID)
-            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other")
+            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other", location: itemModelReference!.location)
         }
         
         fetchItems()
@@ -636,5 +666,23 @@ class DataManager: ObservableObject{
         print("Fetch from item changes")
         
         items = items.map { var mutableItem = $0; mutableItem.currentDifference = 0; return mutableItem }
+    }
+    
+    func addLocation(_ location: String){
+        if let currentUser = Auth.auth().currentUser{
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let fullPath = "Users/\(userID)/Locations/\(location)"
+            let ref = db.document(fullPath)
+            
+            ref.setData(["location": location]){ error in
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+                
+            }
+        }
+       
+  
     }
 }

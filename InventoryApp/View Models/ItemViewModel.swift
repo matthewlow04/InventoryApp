@@ -41,5 +41,6 @@ class ItemViewModel: ObservableObject{
         let opacity = Int(percent) % 33
         return (Double(opacity)/33.0)
     }
+    
 }
  

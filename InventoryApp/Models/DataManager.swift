@@ -397,7 +397,12 @@ class DataManager: ObservableObject{
                 }
             }
             
+            for person in people{
+                updatePersonItemDeletion(selectedPerson: person, itemName: itemName)
+            }
+            
             fetchInventoryHistory()
+            fetchPeopleData()
             print("Fetch from delete")
             fetchItems()
         }
@@ -575,6 +580,33 @@ class DataManager: ObservableObject{
                 "firstName": selectedPerson.firstName,
                 "lastName": selectedPerson.lastName,
                 "inventory": selectedPerson.inventory.filter{$0.quantity > 0}.map { item in
+                    return [
+                        "itemID": item.itemID,
+                        "quantity": item.quantity
+                    ] as [String : Any]
+                }
+            ]
+
+            ref.setData(data) { error in
+                if let error = error {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    func updatePersonItemDeletion(selectedPerson: Person, itemName:String) {
+        if let currentUser = Auth.auth().currentUser {
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let id = selectedPerson.firstName + selectedPerson.lastName
+            let newPath = "Users/\(userID)/People/\(id)"
+            let ref = db.document(newPath)
+
+            let data: [String: Any] = [
+                "firstName": selectedPerson.firstName,
+                "lastName": selectedPerson.lastName,
+                "inventory": selectedPerson.inventory.filter{$0.itemID.lowercased() != itemName.lowercased()}.map { item in
                     return [
                         "itemID": item.itemID,
                         "quantity": item.quantity

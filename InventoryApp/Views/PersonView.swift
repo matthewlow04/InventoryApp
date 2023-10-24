@@ -61,7 +61,7 @@ struct PersonView: View {
             Spacer()
         }
       
-       .alert("This person has all possible unique items", isPresented: $showingAlert, actions: {
+       .alert(alertMessage, isPresented: $showingAlert, actions: {
            Button("OK", role: .cancel){}
        })
        .alert("There is no more of that item left in stock", isPresented: $showingStockAlert, actions: {
@@ -74,12 +74,18 @@ struct PersonView: View {
                     dataManager.updatePerson(selectedPerson: selectedPerson)
                     dataManager.saveItemChangesPerson(items: &selectedPerson.inventory, person: selectedPerson)
                     dataManager.fetchPeopleData()
+                    
+                    alertMessage = "Changes to person saved"
+                    showingAlert = true
 
                     dismiss()
                 }
             }
             .sheet(isPresented: $showingSheet){
                 SheetView
+            }
+            .onDisappear{
+                dismiss()
             }
           
         ScrollView{
@@ -140,6 +146,7 @@ struct PersonView: View {
         
          
     }
+      
     
     var SheetView: some View {
         VStack(spacing: 50){
@@ -202,6 +209,7 @@ struct PersonView: View {
                 showingSheet = true
             }
             else{
+                alertMessage = "This person has all possible unique items"
                 showingAlert = true
             }
             

@@ -17,20 +17,36 @@ struct FavouritesRowView: View {
             
             Text("Favourites")
                 .modifier(HeadlineModifier())
-            ScrollView(.horizontal, showsIndicators: false){
-                HStack(spacing: 10){
-                    ForEach(dataManager.inventory.filter{$0.isFavourite == true}, id: \.self){ item in
-                        NavigationLink(destination: ItemView(selectedItem: item, onItemUpdated: onItemUpdated)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal))) ) .listRowSeparatorTint(.clear)
-                        }
-                        .onAppear {
-                            dataManager.currentNavigationView = .itemView
-                        
-                        }
-                    }
+            if(dataManager.inventory.filter{$0.isFavourite == true}.isEmpty){
+                HStack(alignment: .center){
+                    Spacer()
+                    Text("No Items")
+                        .italic()
+                    Spacer()
                 }
-               
+                .frame(maxWidth: .infinity)
+            }else{
+                ScrollView(.horizontal, showsIndicators: false){
+                    HStack(spacing: 10){
+     
+                            ForEach(dataManager.inventory.filter{$0.isFavourite == true}, id: \.self){ item in
+                                NavigationLink(destination: ItemView(selectedItem: item, onItemUpdated: onItemUpdated)){ InventoryPageItemView(name: item.name, total: item.amountTotal, stock: item.amountInStock, color: ivm.getStockColor(stock: Double(item.amountInStock), total: Double(item.amountTotal)).opacity(ivm.getOpacity(stock: Double(item.amountInStock), total: Double(item.amountTotal))) ) .listRowSeparatorTint(.clear)
+                                }
+                                
+                            }
+                    }
+                  
+                }
+                .padding(.horizontal, 10)
             }
+            
         }
+        
+        .onAppear {
+            dataManager.currentNavigationView = .itemView
+        
+        }
+       
         
     }
 }

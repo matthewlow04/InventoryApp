@@ -124,7 +124,7 @@ struct ItemView: View {
                             }
                             .padding(.bottom, 10)
                             if currentlyEditing{
-                                VStack{
+                                VStack(spacing: 30){
                                     ScrollView(.horizontal){
                                         HStack{
                                             ForEach(dataManager.locations, id: \.self){ location in
@@ -136,7 +136,16 @@ struct ItemView: View {
                                         }
                                         
                                     }
-                                    clearButton
+                                    Button {
+                                        editedLocation = ""
+                                    } label: {
+                                           Text("Clear Location")
+                                               .frame(maxWidth: .infinity)
+                                               .frame(height: 44) // Adjust the height as needed
+                                               .background(Color.clear)
+                                               .border(Color.accentColor, width: 1)
+                                    }
+                                    .buttonStyle(BorderlessButtonStyle())
                                 }
                             
                             

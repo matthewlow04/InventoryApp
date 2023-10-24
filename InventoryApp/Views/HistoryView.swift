@@ -200,5 +200,3 @@ struct HistoryView: View {
         }
     }
 }
-
-

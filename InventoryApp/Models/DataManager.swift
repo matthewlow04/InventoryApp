@@ -230,7 +230,7 @@ class DataManager: ObservableObject{
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
             var newHistory = itemHistory
-            newHistory.append(newAmount)
+           
             
            
             guard let oldAmount = getItemByName(name: itemName)?.amountInStock else {
@@ -245,7 +245,6 @@ class DataManager: ObservableObject{
             }else{
                 added = false
             }
-            
            
             let decimalInStock = Double(newAmount)/Double(itemTotal)
             if(newAmount == 0){
@@ -276,6 +275,7 @@ class DataManager: ObservableObject{
                 if(updateHistory!){
                     createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
                 }
+                newHistory.append(newAmount)
                 
             }
             
@@ -356,6 +356,7 @@ class DataManager: ObservableObject{
                 if(updateHistory!){
                     createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
                 }
+                newHistory.append(newAmount)
             }
             
             var total = 0
@@ -645,7 +646,7 @@ class DataManager: ObservableObject{
             
             for item in tempInventory{
                 let itemModelReference = getItemByName(name: item.itemID)
-                updateMultipleItems(itemName: item.itemID, newAmount: item.quantity + (itemModelReference?.amountInStock ?? 0), itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(selectedPerson.firstName) \(selectedPerson.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other", location: itemModelReference!.location)
+                updateMultipleItems(itemName: item.itemID, newAmount: item.quantity + (itemModelReference?.amountInStock ?? 0), itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(selectedPerson.firstName) \(selectedPerson.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other", location: itemModelReference?.location ?? "No Location")
             }
             
             
@@ -689,7 +690,7 @@ class DataManager: ObservableObject{
         
         for item in changedItems{
             let itemModelReference = getItemByName(name: item.itemID)
-            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other", location: itemModelReference!.location)
+            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other", location: itemModelReference?.location ?? "No Location")
         }
         
         fetchItems()

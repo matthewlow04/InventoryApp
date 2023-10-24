@@ -46,8 +46,8 @@ struct InventoryView: View {
                         VStack(alignment: .leading){
                             if(searchText == ""){
                                 FavouritesRowView(onItemUpdated: sortArray, isCat: $isCategories)
-                                    .padding(.horizontal,10)
                                 Text("Main Inventory").modifier(HeadlineModifier())
+                      
                             }
                             
                             if(isCategories == false){

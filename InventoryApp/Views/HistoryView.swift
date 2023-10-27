@@ -40,7 +40,7 @@ struct HistoryView: View {
                     Button {
                         selectedHistoryItem = item
                         showingActionSheet = true
-                        print("\(item) FROM HERE")
+//                        print("\(item) FROM HERE")
                     } label: {
                         HStack{
                             VStack(alignment: .leading, spacing: 10){

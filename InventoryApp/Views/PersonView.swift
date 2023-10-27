@@ -20,6 +20,7 @@ struct PersonView: View {
     @State var tapImage = false
     @State var alertMessage = ""
     @State var isPresentingConfirm = false
+    @Environment(\.presentationMode) var presentationMode
     var itemNames: [String] {
         let selectedPersonInventoryNames = Set(selectedPerson.inventory.map { $0.itemID })
 
@@ -78,7 +79,8 @@ struct PersonView: View {
                     alertMessage = "Changes to person saved"
                     showingAlert = true
 
-                    dismiss()
+//                    dismiss()
+                    presentationMode.wrappedValue.dismiss()
                 }
             }
             .sheet(isPresented: $showingSheet){
@@ -86,6 +88,7 @@ struct PersonView: View {
             }
             .onDisappear{
                 dismiss()
+                dataManager.fetchItems()
             }
           
         ScrollView{
@@ -202,8 +205,8 @@ struct PersonView: View {
     }
     var addItemButton: some View{
         Button("Add New Item"){
-            print(selectedPerson.inventory.count)
-            print(dataManager.inventory.filter{$0.amountInStock>0}.count)
+//            print(selectedPerson.inventory.count)
+//            print(dataManager.inventory.filter{$0.amountInStock>0}.count)
 
             if(itemNames.count != 1){
                 showingSheet = true
@@ -230,7 +233,7 @@ struct PersonView: View {
             if(selectedItem != ""){
                 if(itemAmount > 0){
                     dataManager.addItemToPerson(person: &selectedPerson, itemID: selectedItem, quantity: Int(itemAmount))
-                    print(selectedItem)
+//                    print(selectedItem)
                     alertMessage = "\(selectedItem) assigned to \(selectedPerson.firstName + " "+selectedPerson.lastName)"
                     showingSheetAlert = true
                     

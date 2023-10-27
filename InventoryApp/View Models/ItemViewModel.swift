@@ -42,5 +42,16 @@ class ItemViewModel: ObservableObject{
         return (Double(opacity)/33.0)
     }
     
+    func getAmountAssignedToPeople(people: [Person], item: Item) -> Int{
+        var total = 0
+        for person in people{
+            if let itemAmount = person.inventory.first(where: {$0.itemID.lowercased() == item.name.lowercased()}){
+                let increment = itemAmount.quantity
+                total = increment + total
+            }
+        }
+        return total
+    }
+    
 }
  

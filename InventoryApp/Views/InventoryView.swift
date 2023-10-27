@@ -151,7 +151,7 @@ struct InventoryView: View {
     }
     
     func sortArray() {
-        print("sort array called, option: \(sortOption)")
+//        print("sort array called, option: \(sortOption)")
         
         switch sortOption {
         case 0:

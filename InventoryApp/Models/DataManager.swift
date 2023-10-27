@@ -99,7 +99,7 @@ class DataManager: ObservableObject{
                       }
                   }
                   self.hasLoadedHistoryData = true
-                  print(self.inventoryHistory.count)
+//                  print(self.inventoryHistory.count)
                   
               }
     }
@@ -276,6 +276,7 @@ class DataManager: ObservableObject{
                     createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
                 }
                 newHistory.append(newAmount)
+                print("appended")
                 
             }
             
@@ -310,8 +311,6 @@ class DataManager: ObservableObject{
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
             var newHistory = itemHistory
-            newHistory.append(newAmount)
-            
             
             let oldAmount = getItemByName(name: itemName)?.amountInStock
             if oldAmount == nil{
@@ -357,6 +356,7 @@ class DataManager: ObservableObject{
                     createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
                 }
                 newHistory.append(newAmount)
+         
             }
             
             var total = 0

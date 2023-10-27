@@ -23,7 +23,7 @@ struct ItemView: View {
     @State var selectedCategory: Item.Category?
     @Environment(\.dismiss) var dismiss
 
-    
+  
     var onItemUpdated: () -> Void
     var body: some View {
         VStack{
@@ -106,6 +106,51 @@ struct ItemView: View {
                             Spacer()
                         }
                     }
+                    Section(header: Text("People")){
+                        VStack{
+                            VStack{
+                                HStack{
+                                    Text("Name")
+                                    Spacer()
+                                    VStack{
+                                        Text("Amount")
+                                        Text("in Stock")
+                                    }
+                                    
+                                }
+                            }
+                            ScrollView{
+                                VStack {
+                                    ForEach(dataManager.people.sorted(by: { person1, person2 in
+                                        guard let item1 = person1.inventory.first(where: { $0.itemID.lowercased() == selectedItem.name.lowercased() }),
+                                              let item2 = person2.inventory.first(where: { $0.itemID.lowercased() == selectedItem.name.lowercased() }) else {
+                                            return false
+                                        }
+                                        return item1.quantity > item2.quantity
+                                    }), id: \.self) { person in
+                                        if let assignedItem = person.inventory.first(where: { $0.itemID.lowercased() == selectedItem.name.lowercased() }) {
+                                            ItemPersonView(person: person, itemID: assignedItem.itemID)
+                                        }
+                                    }
+                                }
+                                
+                            }.frame(height: 150).padding(.bottom, 10)
+                            Divider()
+                                .padding(.bottom, 10)
+                            HStack{
+                                
+                                Text("Total")
+                                
+                                Spacer()
+                                Text("\(ivm.getAmountAssignedToPeople(people: dataManager.people, item: selectedItem))")
+                                    .foregroundStyle(Color.accentColor)
+                                    .bold()
+                            }
+                        }
+                       
+                    
+                    }
+            
                     
                     Section(header: Text("Location")) {
                         VStack(alignment: .leading){
@@ -206,11 +251,15 @@ struct ItemView: View {
         .sheet(isPresented: $isShowingCat){
             sheetView
         }
+        .onAppear{
+//            print("Amount: \(selectedItem.amountInStock)")
+            dataManager.fetchItems()
+        }
         .onDisappear{
             onItemUpdated()
             dismiss()
         }
-        
+
         
     }
     

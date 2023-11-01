@@ -88,7 +88,7 @@ struct PersonView: View {
             }
             .onDisappear{
                 dismiss()
-                dataManager.fetchItems()
+//                dataManager.fetchItems()
             }
           
         ScrollView{

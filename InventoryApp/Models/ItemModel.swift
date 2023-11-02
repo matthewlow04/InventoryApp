@@ -26,5 +26,6 @@ struct Item: Hashable{
     var dateCreated: Date
     var dateUpdated: Date
     var location: String
+    var amountUnassigned: Int
    
 }

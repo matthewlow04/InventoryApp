@@ -21,6 +21,7 @@ struct ItemView: View {
     @State var editedLocation = ""
     @State var currentlyEditing = false
     @State var selectedCategory: Item.Category?
+    
     @Environment(\.dismiss) var dismiss
 
   
@@ -64,7 +65,6 @@ struct ItemView: View {
 
             List {
                 Group{
-                   
                     Section(header: Text("Change amount")) {
                         Slider(value: Binding<Double>(
                             get: { Double(selectedItem.amountInStock) },
@@ -137,15 +137,26 @@ struct ItemView: View {
                             }.frame(height: 150).padding(.bottom, 10)
                             Divider()
                                 .padding(.bottom, 10)
+                            
                             HStack{
-                                
-                                Text("Total")
-                                
+                                Text("Total Assigned to People")
                                 Spacer()
                                 Text("\(ivm.getAmountAssignedToPeople(people: dataManager.people, item: selectedItem))")
                                     .foregroundStyle(Color.accentColor)
                                     .bold()
                             }
+                                .padding(.bottom, 10)
+                            Divider()
+                                .padding(.bottom, 10)
+                            
+                            HStack{
+                                Text("Total Unassigned to People")
+                                Spacer()
+                                Text("\(selectedItem.amountUnassigned)")
+                                    .foregroundStyle(Color.accentColor)
+                                    .bold()
+                            }
+         
                         }
                        
                     
@@ -235,7 +246,15 @@ struct ItemView: View {
         }
         .toolbar{
             Button("Save"){
-                dataManager.updateItem(itemName: selectedItem.name, newAmount: Int(selectedItem.amountInStock), itemTotal: selectedItem.amountTotal, itemHistory: selectedItem.amountHistory, isFavourite: selectedItem.isFavourite, notes: (editedNotes != "") ? editedNotes : selectedItem.notes, category: selectedItem.category.rawValue, location: (editedLocation != "") ? editedLocation : selectedItem.location)
+                let oldAmount = dataManager.getItemByName(name: selectedItem.name)?.amountInStock
+                if(selectedItem.amountUnassigned - (selectedItem.amountInStock - oldAmount!) < 0){
+                    alertMessage = "You can't return assigned items through here"
+                    selectedItem.amountInStock = oldAmount!
+                    isShowingAlert = true
+                    return
+                }
+                alertMessage = "Item Saved"
+                dataManager.updateItem(itemName: selectedItem.name, newAmount: Int(selectedItem.amountInStock), itemTotal: selectedItem.amountTotal, itemHistory: selectedItem.amountHistory, isFavourite: selectedItem.isFavourite, notes: (editedNotes != "") ? editedNotes : selectedItem.notes, category: selectedItem.category.rawValue, location: (editedLocation != "") ? editedLocation : selectedItem.location, unassignedAmount: selectedItem.amountUnassigned)
                 
                 if(editedLocation != ""){
                     addToLocations()

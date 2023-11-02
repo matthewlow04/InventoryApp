@@ -55,8 +55,9 @@ class DataManager: ObservableObject{
                               let dateCreated = data["dateCreated"] as? Timestamp ?? Timestamp(date: Date.now)
                               let dateUpdated = data["dateUpdated"] as? Timestamp ?? Timestamp(date: Date.now)
                               let location = data["location"] as? String ?? "No Location"
+                              let unassigned = data["unassigned"] as? Int ?? 1000
                             
-                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory, isFavourite: isFav, dateCreated: dateCreated.dateValue(), dateUpdated:  dateUpdated.dateValue(), location: location)
+                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory, isFavourite: isFav, dateCreated: dateCreated.dateValue(), dateUpdated:  dateUpdated.dateValue(), location: location, amountUnassigned: unassigned)
                               self.inventory.append(item)
                             
                           }
@@ -211,7 +212,7 @@ class DataManager: ObservableObject{
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
             
-            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount)!, "amountInStock": Int(itemAmount)!, "category": category, "amountHistory": [Int(itemAmount)], "dateCreated": Timestamp(date: Date.now), "dateUpdated": Timestamp(date: Date.now), "location": location]){ error in
+            ref.setData(["name": itemName, "notes": itemNotes, "amountTotal": Int(itemAmount)!, "amountInStock": Int(itemAmount)!, "category": category, "amountHistory": [Int(itemAmount)], "dateCreated": Timestamp(date: Date.now), "dateUpdated": Timestamp(date: Date.now), "location": location, "unassigned": 0]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -222,7 +223,7 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String){
+    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String, unassignedAmount: Int? = 0, calledByAddItem: Bool? = false){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -279,6 +280,11 @@ class DataManager: ObservableObject{
                 print("appended")
                 
             }
+            var unassigned = unassignedAmount
+            
+            if(person == "No Person" && !calledByAddItem!){
+                unassigned = unassignedAmount! - difference
+            }
             
             var total = 0
             if(itemTotal < newAmount){
@@ -288,7 +294,7 @@ class DataManager: ObservableObject{
                 total = itemTotal
             }
             
-            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes, "location": location]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes, "location": location, "unassigned": unassigned]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -303,7 +309,7 @@ class DataManager: ObservableObject{
        
     }
     
-    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String){
+    func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String, unassignedAmount: Int? = 0){
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -366,8 +372,13 @@ class DataManager: ObservableObject{
             }else{
                 total = itemTotal
             }
+            
+            var unassigned = unassignedAmount
+            if(person == "No Person"){
+                unassigned = unassignedAmount! - difference
+            }
          
-            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes, "location": location]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes, "location": location, "unassigned": unassigned]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -410,7 +421,7 @@ class DataManager: ObservableObject{
     }
     
     func checkIfExists(name: String) -> Bool{
-        let results = inventory.filter {$0.name == name}
+        let results = inventory.filter {$0.name.lowercased() == name.lowercased()}
         return results.isEmpty
     }
     
@@ -646,7 +657,7 @@ class DataManager: ObservableObject{
             
             for item in tempInventory{
                 let itemModelReference = getItemByName(name: item.itemID)
-                updateMultipleItems(itemName: item.itemID, newAmount: item.quantity + (itemModelReference?.amountInStock ?? 0), itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(selectedPerson.firstName) \(selectedPerson.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other", location: itemModelReference?.location ?? "No Location")
+                updateMultipleItems(itemName: item.itemID, newAmount: item.quantity + (itemModelReference?.amountInStock ?? 0), itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(selectedPerson.firstName) \(selectedPerson.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other", location: itemModelReference?.location ?? "No Location", unassignedAmount: itemModelReference!.amountUnassigned)
             }
             
             
@@ -678,7 +689,7 @@ class DataManager: ObservableObject{
         guard let item = getItemByName(name: itemID) else {
             return
         }
-        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"), isFavourite: item.isFavourite, notes: item.notes, category: item.category.rawValue, location: item.location)
+        updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"), isFavourite: item.isFavourite, notes: item.notes, category: item.category.rawValue, location: item.location, unassignedAmount: item.amountUnassigned)
 
         person.inventory.append(newItem)
 
@@ -690,7 +701,7 @@ class DataManager: ObservableObject{
         
         for item in changedItems{
             let itemModelReference = getItemByName(name: item.itemID)
-            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other", location: itemModelReference?.location ?? "No Location")
+            updateMultipleItems(itemName: item.itemID, newAmount: (itemModelReference?.amountInStock ?? 0) - item.currentDifference, itemTotal: itemModelReference?.amountTotal ?? 0, itemHistory: itemModelReference?.amountHistory ?? [], person: ("\(person.firstName) \(person.lastName)"), isFavourite: itemModelReference?.isFavourite ?? false, notes: itemModelReference?.notes ?? "", category: itemModelReference?.category.rawValue ?? "Other", location: itemModelReference?.location ?? "No Location", unassignedAmount: itemModelReference!.amountUnassigned)
         }
         
         fetchItems()

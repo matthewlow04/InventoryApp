@@ -224,6 +224,7 @@ class DataManager: ObservableObject{
     }
     
     func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String, unassignedAmount: Int? = 0, calledByAddItem: Bool? = false){
+        
         if let currentUser = Auth.auth().currentUser{
            
             let userID = currentUser.uid
@@ -277,8 +278,6 @@ class DataManager: ObservableObject{
                     createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
                 }
                 newHistory.append(newAmount)
-                print("appended")
-                
             }
             var unassigned = unassignedAmount
             
@@ -299,6 +298,7 @@ class DataManager: ObservableObject{
                     print(error.localizedDescription)
                 }
             }
+        
             fetchItems()
             fetchAlertHistory()
             fetchInventoryHistory()
@@ -682,11 +682,13 @@ class DataManager: ObservableObject{
     }
     
     func addItemToPerson(person: inout Person, itemID: String, quantity: Int) {
+        print(itemID)
         let newItem = AssignedItem(firstName: person.firstName,
                                    lastName: person.lastName,
                                    itemID: itemID,
                                    quantity: quantity)
         guard let item = getItemByName(name: itemID) else {
+            print("Item not found")
             return
         }
         updateItem(itemName: itemID, newAmount: item.amountInStock-quantity, itemTotal: item.amountTotal, itemHistory: item.amountHistory, person: ("\(person.firstName) \(person.lastName)"), isFavourite: item.isFavourite, notes: item.notes, category: item.category.rawValue, location: item.location, unassignedAmount: item.amountUnassigned)

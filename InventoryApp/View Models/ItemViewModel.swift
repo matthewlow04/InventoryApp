@@ -35,7 +35,7 @@ class ItemViewModel: ObservableObject{
     
     func getOpacity(stock: Double, total: Double) -> Double{
         let percent = (stock/total)*100
-        if(percent == 100 || (66 < percent && percent < 67 ) || (33 < percent && percent < 34)){
+        if(percent == 100 || (65 < percent && percent < 67 ) || (32 < percent && percent < 34) || (98 < percent && percent < 100 )){
             return 1
         }
         let opacity = Int(percent) % 33

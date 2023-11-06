@@ -76,18 +76,22 @@ struct PeopleItemView: View{
                 .bold()
                 .font(Font.system(size: 20))
             ScrollView{
-                ForEach(apvm.dataManager.inventory.filter{$0.amountInStock > 0}.indices, id: \.self){ index in
-                    let item = apvm.dataManager.inventory[index]
-                    VStack(alignment: .leading){
-                        Text(item.name)
-                        HStack{
-                            Slider(value: ($apvm.currentAmount[index]), in: 0...Double(item.amountInStock), step:1)
-                            Text("\(Int(apvm.currentAmount[index]))/\(item.amountInStock)")
+                ScrollView {
+                    ForEach(apvm.dataManager.inventory.filter { $0.amountInStock > 0 }, id: \.self) { item in
+                        VStack(alignment: .leading) {
+                            Text(item.name)
+                            HStack {
+                                if item.amountInStock > 0 {
+                                    Slider(value: $apvm.currentAmount[apvm.dataManager.inventory.firstIndex(of: item)!], in: 0...Double(item.amountInStock), step: 1)
+                                }
+
+                                Text("\(Int(apvm.currentAmount[apvm.dataManager.inventory.firstIndex(of: item)!]))/\(item.amountInStock)")
+                            }
+                            Divider()
                         }
-                        Divider()
-                      
                     }
                 }
+
             }
             
             HStack{
@@ -107,6 +111,9 @@ struct PeopleItemView: View{
            
         }
         .padding(20)
+        .onDisappear{
+            dismiss()
+        }
     }
     
     

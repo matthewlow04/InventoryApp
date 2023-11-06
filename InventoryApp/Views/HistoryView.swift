@@ -67,7 +67,10 @@ struct HistoryView: View {
                     }
                     .confirmationDialog("Actions", isPresented: $showingActionSheet) {
                         Button("Undo Change"){
-                        
+                            
+                            let itemInstance = dataManager.getItemByName(name: item.itemName)
+                            
+                            
                            
 //                            let itemInstance = dataManager.getItemByName(name: item.itemName)
 //                            
@@ -96,6 +99,184 @@ struct HistoryView: View {
 
                         }
                         Button("Duplicate Change"){
+                            
+                            let itemInstance = dataManager.getItemByName(name: selectedHistoryItem!.itemName)
+                            
+                            print(itemInstance!.name)
+                            print(selectedHistoryItem!.amount)
+                            
+                            //Person Exists
+                            if(selectedHistoryItem!.person != "No Person"){
+                                guard var person = dataManager.getPersonByName(name: selectedHistoryItem!.person) else{
+                                    print("This person no longer exists")
+                                    return
+                                }
+                                let index = dataManager.getIndexInPersonInventory(name: selectedHistoryItem!.itemName, person: person) ?? -1
+                                print(index)
+                                
+                                //if an item is taken away check if the person has enough inventory to perform this action
+                                
+                                //item subtracted from inventory to person
+                                if(!selectedHistoryItem!.addedItem){
+                                   
+                                    //if it wasn't newly added
+                                    if(!selectedHistoryItem!.newStock){
+                                        
+                                        
+                                        //check if there's enough inventory to give to person
+                                        if(itemInstance!.amountInStock - selectedHistoryItem!.amount < 0){
+                                            print("Not enough in inventory to duplicate this change")
+                                            return
+                                        }
+                                        
+                                        //update item
+                                        
+                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName, 
+                                                               newAmount: itemInstance!.amountInStock - selectedHistoryItem!.amount,
+                                                               itemTotal: itemInstance!.amountTotal,
+                                                               itemHistory: itemInstance!.amountHistory,
+                                                               person: person.firstName + " " + person.lastName,
+                                                               isFavourite: itemInstance!.isFavourite,
+                                                               notes: itemInstance!.notes,
+                                                               category: itemInstance!.category.rawValue,
+                                                               location: itemInstance!.location
+                                                               
+                                        )
+                                        
+                                        //update person inventory
+                                        if(index != -1){
+                                            person.inventory[index].quantity =  person.inventory[index].quantity + selectedHistoryItem!.amount
+                                            dataManager.updatePerson(selectedPerson: person)
+                                        }
+                                        else{
+                                        
+                                            dataManager.addItemToPerson(person: &person, itemID: selectedHistoryItem!.itemName, quantity: selectedHistoryItem!.amount)
+                                        }
+                    
+                                       
+                                        
+                                    }
+                                    //if that was a newly added item(can't happen as of right now)
+                                    
+                                    else{
+                                        print("Error!")
+                                    }
+                                        
+                                    
+                                   
+                                    
+                                }
+                                //item added to inventory from person
+                                else{
+                                    
+                                    //check if person has in inventory
+                                    if(index == -1){
+                                        print("Person no longer has this item")
+                                        return
+                                        
+                                    }
+                                    
+                                    // check if person has enough inventory
+                                    if(person.inventory[index].quantity - selectedHistoryItem!.amount < 0){
+                                        print("Person doesn't have enough of this item to duplicate this change")
+                                        return
+                                    }
+                                    
+                                  
+                                    
+                                    if(itemInstance!.amountInStock + selectedHistoryItem!.amount > itemInstance!.amountTotal){
+                                        print("You are returning more items to inventory than exist in circulation")
+                                    }
+                                    
+                                    //update item
+                                    
+                                    dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
+                                                           newAmount: itemInstance!.amountInStock + selectedHistoryItem!.amount,
+                                                           itemTotal: itemInstance!.amountTotal,
+                                                           itemHistory: itemInstance!.amountHistory,
+                                                           person: person.firstName + " " + person.lastName,
+                                                           isFavourite: itemInstance!.isFavourite,
+                                                           notes: itemInstance!.notes,
+                                                           category: itemInstance!.category.rawValue,
+                                                           location: itemInstance!.location)
+                                    
+                                    //update person inventory
+                                    
+                                    person.inventory[index].quantity =  person.inventory[index].quantity - selectedHistoryItem!.amount
+                                    dataManager.updatePerson(selectedPerson: person)
+                                  
+                                }
+                                
+                            }
+                            //Person does not exist
+                            else{
+                                //item is subtracted from inventory
+                                if(!selectedHistoryItem!.addedItem){
+                                    
+                                    //if not enough inventory return
+                                    if(itemInstance!.amountInStock - selectedHistoryItem!.amount < 0){
+                                        print("Not enough in inventory to duplicate this change")
+                                        return
+                                    }
+                                    //else update
+                                    else{
+                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
+                                                               newAmount: itemInstance!.amountInStock - selectedHistoryItem!.amount,
+                                                               itemTotal: itemInstance!.amountTotal,
+                                                               itemHistory: itemInstance!.amountHistory,
+                                                               isFavourite: itemInstance!.isFavourite,
+                                                               notes: itemInstance!.notes,
+                                                               category: itemInstance!.category.rawValue,
+                                                               location: itemInstance!.location,
+                                                               unassignedAmount: itemInstance!.amountUnassigned
+                                        )
+                                    }
+                                 
+                                                                    }
+                                
+                                //item is added back to inventory
+                                else{
+                                    
+                                    if(!selectedHistoryItem!.newStock){
+                                        
+                                        //if more inventory overflow return
+                                        if(itemInstance!.amountInStock + selectedHistoryItem!.amount > itemInstance!.amountTotal){
+                                            print("You are returning more items to inventory than exist in circulation")
+                                            return
+                                        }
+                                        
+                                        //else update
+                                       
+                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
+                                                               newAmount: itemInstance!.amountInStock + selectedHistoryItem!.amount,
+                                                               itemTotal: itemInstance!.amountTotal,
+                                                               itemHistory: itemInstance!.amountHistory,
+                                                               isFavourite: itemInstance!.isFavourite,
+                                                               notes: itemInstance!.notes,
+                                                               category: itemInstance!.category.rawValue,
+                                                               location: itemInstance!.location,
+                                                               unassignedAmount: itemInstance!.amountUnassigned
+                                                               
+                                        )
+                                        
+                                    }
+                                    
+                                    //item is new stock
+                                    
+                                    else{
+                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
+                                                               newAmount: itemInstance!.amountInStock + selectedHistoryItem!.amount,
+                                                               itemTotal: itemInstance!.amountTotal + selectedHistoryItem!.amount,
+                                                               itemHistory: itemInstance!.amountHistory,
+                                                               isFavourite: itemInstance!.isFavourite,
+                                                               notes: itemInstance!.notes,
+                                                               category: itemInstance!.category.rawValue,
+                                                               location: itemInstance!.location,
+                                                               calledByAddItem: true
+                                        )
+                                    }
+                                }
+                            }
                           
 //                            let itemInstance = dataManager.getItemByName(name: selectedHistoryItem!.itemName)
 //                            if(selectedHistoryItem!.person != "No Person"){

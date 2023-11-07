@@ -11,6 +11,7 @@ struct HistoryView: View {
     @State var helpAlertShowing = false
     @State var searchText = ""
     @State var showingActionSheet = false
+    @State var showingConfirmation = false
     @State var selectedHistoryItem: History?
     var filteredHistory: [History] {
         if searchText.isEmpty {
@@ -70,40 +71,173 @@ struct HistoryView: View {
                             
                             let itemInstance = dataManager.getItemByName(name: item.itemName)
                             
+                            //if there's a person
+                            if(selectedHistoryItem!.person != "No Person"){
+                                guard var person = dataManager.getPersonByName(name: selectedHistoryItem!.person) else{
+                                    print("This person no longer exists")
+                                    return
+                                }
+                                let index = dataManager.getIndexInPersonInventory(name: selectedHistoryItem!.itemName, person: person) ?? -1
+                                
+                                //undo item is taken from inventory
+                                if(!selectedHistoryItem!.addedItem){
+                                    
+                                    //if item not in person inventory anymore
+                                    if(index == -1){
+                                        print("Undo failed. This person no longer has this item")
+                                        return
+                                    }
+                                    
+                                    //person doesn't have enough items
+                                    if(selectedHistoryItem!.amount > person.inventory[index].quantity){
+                                        print("Person doesn't have enough items to undo")
+                                        return
+                                    }
+                                    
+                                    // undo causes too many items
+                                    if(selectedHistoryItem!.amount + itemInstance!.amountInStock > itemInstance!.amountTotal){
+                                        print("You can't undo because there will be more items in stock than in circulation")
+                                        return
+                                    }
+                                    
+                                    dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
+                                                           newAmount: itemInstance!.amountInStock + selectedHistoryItem!.amount,
+                                                           itemTotal: itemInstance!.amountTotal,
+                                                           itemHistory: itemInstance!.amountHistory,
+                                                           person: person.firstName + " " + person.lastName,
+                                                           isFavourite: itemInstance!.isFavourite,
+                                                           notes: itemInstance!.notes,
+                                                           category: itemInstance!.category.rawValue,
+                                                           location: itemInstance!.location)
+                                    
+                                    //update person inventory
+                                    
+                                    person.inventory[index].quantity =  person.inventory[index].quantity - selectedHistoryItem!.amount
+                                    dataManager.updatePerson(selectedPerson: person)
+                                }
+                                
+                                //undo item is given back to inventory
+                                else{
+                                    if(itemInstance!.amountInStock - selectedHistoryItem!.amount < 0){
+                                        print("Not enough in inventory to undo")
+                                        return
+                                    }
+                                    
+                                    //if the history was a new item add
+                                    if(selectedHistoryItem!.newStock){
+                                        if(itemInstance!.amountTotal - selectedHistoryItem!.amount < 0){
+                                            print("Not enough in stock to undo")
+                                            return
+                                        }
+                                       
+                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
+                                                               newAmount: itemInstance!.amountInStock - selectedHistoryItem!.amount,
+                                                               itemTotal: itemInstance!.amountTotal - selectedHistoryItem!.amount,
+                                                               itemHistory: itemInstance!.amountHistory,
+                                                               person: person.firstName + " " + person.lastName,
+                                                               isFavourite: itemInstance!.isFavourite,
+                                                               notes: itemInstance!.notes,
+                                                               category: itemInstance!.category.rawValue,
+                                                               location: itemInstance!.location
+                                                               
+                                        )
+                                    }
+                                    
+                                    //if it wasn't a new addition of stock
+                                    else{
+                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
+                                                               newAmount: itemInstance!.amountInStock - selectedHistoryItem!.amount,
+                                                               itemTotal: itemInstance!.amountTotal,
+                                                               itemHistory: itemInstance!.amountHistory,
+                                                               person: person.firstName + " " + person.lastName,
+                                                               isFavourite: itemInstance!.isFavourite,
+                                                               notes: itemInstance!.notes,
+                                                               category: itemInstance!.category.rawValue,
+                                                               location: itemInstance!.location
+                                                               
+                                        )
+                                    }
+                                   
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                            
+                                            if let index = dataManager.getIndexInPersonInventory(name: selectedHistoryItem!.itemName, person: person) {
+                                                // Item found in person's inventory, update quantity
+                                                person.inventory[index].quantity =  person.inventory[index].quantity + selectedHistoryItem!.amount
+                                                dataManager.updatePerson(selectedPerson: person)
+                                            } else {
+                                                // Item not found, add it to the person's inventory
+                                                dataManager.addItemToPerson(person: &person, itemID: selectedHistoryItem!.itemName, quantity: selectedHistoryItem!.amount)
+                                            }
+                                    }
+                                    
+                                }
+                            }
                             
-                           
-//                            let itemInstance = dataManager.getItemByName(name: item.itemName)
-//                            
-//                            if(selectedHistoryItem!.person != "No Person"){
-//                                guard var person = dataManager.getPersonByName(name: selectedHistoryItem!.person) else{
-//                                    return
-//                                }
-//                                guard let index = dataManager.getIndexInPersonInventory(name: selectedHistoryItem!.itemName, person: person) else {
-//                                    print("This person no longer has this item in their inventory")
-//                                    return
-//                                }
-//                            }else{
-//                                if(selectedHistoryItem!.addedItem && !selectedHistoryItem!.newStock){
-//                                    
-//                                }
-//                                else if(!selectedHistoryItem!.addedItem){
-//                                    
-//                                }
-//                                dataManager.deleteHistory(id: item.id)
-//                                dataManager.updateItem(itemName: selectedHistoryItem!.itemName, newAmount: selectedHistoryItem!.addedItem ? itemInstance!.amountInStock - selectedHistoryItem!.amount : itemInstance!.amountInStock + selectedHistoryItem!.amount, itemTotal: selectedHistoryItem!.newStock ? itemInstance!.amountTotal - selectedHistoryItem!.amount : itemInstance!.amountTotal, itemHistory: itemInstance?.amountHistory ?? [], isFavourite: itemInstance!.isFavourite, notes: itemInstance!.notes, category: (itemInstance?.category.rawValue)!, updateHistory: false)
-//                                dataManager.hasLoadedHistoryData = false
-//                            }
-//                            
-                            
-                           
+                            //no person
+                            else{
+                                //undo add from inventory
+                                if(selectedHistoryItem!.addedItem){
+                                    if(selectedHistoryItem!.amount > itemInstance!.amountInStock){
+                                        print("Not enough items in inventory to undo")
+                                        return
+                                    }
+                                    
+                                    //new stock
+                                    if(selectedHistoryItem!.newStock){
+                                        if(selectedHistoryItem!.amount > itemInstance!.amountTotal){
+                                            print("Not enough items in total to undo")
+                                            return
+                                        }
+                                        
+                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
+                                                               newAmount: itemInstance!.amountInStock - selectedHistoryItem!.amount,
+                                                               itemTotal: itemInstance!.amountTotal - selectedHistoryItem!.amount,
+                                                               itemHistory: itemInstance!.amountHistory,
+                                                               isFavourite: itemInstance!.isFavourite,
+                                                               notes: itemInstance!.notes,
+                                                               category: itemInstance!.category.rawValue,
+                                                               location: itemInstance!.location,
+                                                               unassignedAmount: itemInstance!.amountUnassigned
+                                        )
+                                        
+                                    }
+                                    //not new stock
+                                    else{
+                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
+                                                               newAmount: itemInstance!.amountInStock - selectedHistoryItem!.amount,
+                                                               itemTotal: itemInstance!.amountTotal,
+                                                               itemHistory: itemInstance!.amountHistory,
+                                                               isFavourite: itemInstance!.isFavourite,
+                                                               notes: itemInstance!.notes,
+                                                               category: itemInstance!.category.rawValue,
+                                                               location: itemInstance!.location,
+                                                               unassignedAmount: itemInstance!.amountUnassigned
+                                        )
+                                    }
+                                }
+                                //undo subtract from inventory
+                                else{
+                                    if(itemInstance!.amountInStock + selectedHistoryItem!.amount > itemInstance!.amountTotal){
+                                        print("Not enough items in circulation to undo")
+                                        return
+                                    }
+                                    dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
+                                                           newAmount: itemInstance!.amountInStock + selectedHistoryItem!.amount,
+                                                           itemTotal: itemInstance!.amountTotal,
+                                                           itemHistory: itemInstance!.amountHistory,
+                                                           isFavourite: itemInstance!.isFavourite,
+                                                           notes: itemInstance!.notes,
+                                                           category: itemInstance!.category.rawValue,
+                                                           location: itemInstance!.location,
+                                                           unassignedAmount: itemInstance!.amountUnassigned
+                                    )
+                                }
+                            }
 
                         }
                         Button("Duplicate Change"){
                             
                             let itemInstance = dataManager.getItemByName(name: selectedHistoryItem!.itemName)
-                            
-                            print(itemInstance!.name)
-                            print(selectedHistoryItem!.amount)
                             
                             //Person Exists
                             if(selectedHistoryItem!.person != "No Person"){
@@ -144,17 +278,19 @@ struct HistoryView: View {
                                         )
                                         
                                         //update person inventory
-                                        if(index != -1){
-                                            person.inventory[index].quantity =  person.inventory[index].quantity + selectedHistoryItem!.amount
-                                            dataManager.updatePerson(selectedPerson: person)
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                            
+                                            if(index != -1){
+                                                person.inventory[index].quantity =  person.inventory[index].quantity + selectedHistoryItem!.amount
+                                                dataManager.updatePerson(selectedPerson: person)
+                                            }
+                                            else{
+                                            
+                                                dataManager.addItemToPerson(person: &person, itemID: selectedHistoryItem!.itemName, quantity: selectedHistoryItem!.amount)
+                                            }
+                        
                                         }
-                                        else{
-                                        
-                                            dataManager.addItemToPerson(person: &person, itemID: selectedHistoryItem!.itemName, quantity: selectedHistoryItem!.amount)
-                                        }
-                    
                                        
-                                        
                                     }
                                     //if that was a newly added item(can't happen as of right now)
                                     
@@ -162,9 +298,6 @@ struct HistoryView: View {
                                         print("Error!")
                                     }
                                         
-                                    
-                                   
-                                    
                                 }
                                 //item added to inventory from person
                                 else{
@@ -277,75 +410,6 @@ struct HistoryView: View {
                                     }
                                 }
                             }
-                          
-//                            let itemInstance = dataManager.getItemByName(name: selectedHistoryItem!.itemName)
-//                            if(selectedHistoryItem!.person != "No Person"){
-//                                guard var person = dataManager.getPersonByName(name: selectedHistoryItem!.person) else{
-//                                    return
-//                                }
-//                                guard let index = dataManager.getIndexInPersonInventory(name: selectedHistoryItem!.itemName, person: person) else {
-//                                    print("This person no longer has this item in their inventory")
-//                                    return
-//                                }
-//                                
-//                                if(selectedHistoryItem!.addedItem && !selectedHistoryItem!.newStock){
-//                                    if(person.inventory[index].quantity - selectedHistoryItem!.amount < 0){
-//                                        print("The selected person doesn't have enough in their inventory to perform this action")
-//                                        return
-//                                    }
-//                                    if((itemInstance!.amountInStock + selectedHistoryItem!.amount) > itemInstance!.amountTotal){
-//                                        print("You can't add more items into stock than exists in total")
-//                                    }
-//                                    else{
-//                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName, newAmount: itemInstance!.amountInStock + selectedHistoryItem!.amount, itemTotal: selectedHistoryItem!.newStock ? itemInstance!.amountTotal + selectedHistoryItem!.amount : itemInstance!.amountTotal, itemHistory: itemInstance?.amountHistory ?? [], person: selectedHistoryItem?.person, isFavourite: itemInstance!.isFavourite, notes: itemInstance!.notes, category: (itemInstance?.category.rawValue)!)
-//                                        dataManager.hasLoadedHistoryData = false
-//                                        
-//                                      
-//                                        person.inventory[index].quantity = (person.inventory[index].quantity - selectedHistoryItem!.amount)
-//                                        dataManager.updatePerson(selectedPerson: person)
-//                                        dataManager.saveItemChangesPerson(items: &person.inventory, person: person)
-//                                    }
-//                                }else if(!selectedHistoryItem!.addedItem){
-//                                    
-//                                    if(itemInstance!.amountInStock - selectedHistoryItem!.amount < 0){
-//                                        print("You don't have enough in stock to perform this action")
-//                                        
-//                                    }
-//                                    else{
-//                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName, newAmount: itemInstance!.amountInStock - item.amount, itemTotal: selectedHistoryItem!.newStock ? itemInstance!.amountTotal + selectedHistoryItem!.amount : itemInstance!.amountTotal, itemHistory: itemInstance?.amountHistory ?? [], person: selectedHistoryItem!.person, isFavourite: itemInstance!.isFavourite, notes: itemInstance!.notes, category: (itemInstance?.category.rawValue)!)
-//                                        dataManager.hasLoadedHistoryData = false
-//                                        
-//                                        person.inventory[index].quantity = (person.inventory[index].quantity + selectedHistoryItem!.amount )
-//                                        dataManager.updatePerson(selectedPerson: person)
-//                                        dataManager.saveItemChangesPerson(items: &person.inventory, person: person)
-//                                    }
-//                                    
-//                                }
-//                               
-//                            }
-//                            else{
-//                                if(selectedHistoryItem!.addedItem && !selectedHistoryItem!.newStock){
-//                                    if((itemInstance!.amountInStock + selectedHistoryItem!.amount) > itemInstance!.amountTotal){
-//                                        print("You can't add more items into stock than exists in total")
-//                                    }
-//                                    else{
-//                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName, newAmount: itemInstance!.amountInStock + selectedHistoryItem!.amount, itemTotal: selectedHistoryItem!.newStock ? itemInstance!.amountTotal + selectedHistoryItem!.amount : itemInstance!.amountTotal, itemHistory: itemInstance?.amountHistory ?? [], person: selectedHistoryItem?.person, isFavourite: itemInstance!.isFavourite, notes: itemInstance!.notes, category: (itemInstance?.category.rawValue)!)
-//                                        dataManager.hasLoadedHistoryData = false
-//                                    }
-//                                }else if(!selectedHistoryItem!.addedItem){
-//                                    if(itemInstance!.amountInStock - selectedHistoryItem!.amount < 0){
-//                                        print("You don't have enough in stock to perform this action")
-//                                    }
-//                                    else{
-//                                        dataManager.updateItem(itemName: selectedHistoryItem!.itemName, newAmount: itemInstance!.amountInStock - item.amount, itemTotal: selectedHistoryItem!.newStock ? itemInstance!.amountTotal + selectedHistoryItem!.amount : itemInstance!.amountTotal, itemHistory: itemInstance?.amountHistory ?? [], person: selectedHistoryItem!.person, isFavourite: itemInstance!.isFavourite, notes: itemInstance!.notes, category: (itemInstance?.category.rawValue)!)
-//                                        dataManager.hasLoadedHistoryData = false
-//                                    }
-//                                    
-//                                }
-//         
-//                            }
-//                            
-                           
                         }
                     }
                     .foregroundStyle(Color.black)
@@ -358,11 +422,27 @@ struct HistoryView: View {
                 }
                 .searchable(text: $searchText)
                 .navigationTitle("Inventory History")
-                .navigationBarItems(trailing: Button(action: {
-                               helpAlertShowing = true
-                            }) {
-                                Image(systemName: "questionmark.circle")
-                            })
+                .toolbar{
+                    ToolbarItemGroup(placement: .topBarLeading) {
+                        Button(action: {
+                           helpAlertShowing = true
+                        }) {
+                            Image(systemName: "questionmark.circle")
+                        }
+                    }
+                    
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button("Clear All History"){
+                            showingConfirmation = true
+                        }
+                        .confirmationDialog("Are you sure?", isPresented: $showingConfirmation) {
+                            Button("Delete all inventory history?", role: .destructive) {
+                                dataManager.deleteAllHistory()
+                            }
+                        }
+                    }
+                    
+                }
             }
             
             

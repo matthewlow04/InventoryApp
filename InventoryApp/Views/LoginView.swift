@@ -61,8 +61,12 @@ struct LoginView: View {
             })
         }
         .onTapGesture {
-            UIApplication.shared.windows.first?.rootViewController?.view.endEditing(true)
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                let relevantWindow = windowScene.windows.first {
+                relevantWindow.rootViewController?.view.endEditing(true)
+            }
         }
+
        
     }
     
@@ -110,8 +114,12 @@ struct LoginView: View {
                 }
             })
             .onTapGesture {
-                UIApplication.shared.windows.first?.rootViewController?.view.endEditing(true)
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                    let relevantWindow = windowScene.windows.first {
+                    relevantWindow.rootViewController?.view.endEditing(true)
+                }
             }
+
             
         }.ignoresSafeArea(.keyboard)
     }

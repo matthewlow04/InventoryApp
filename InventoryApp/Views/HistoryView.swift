@@ -235,6 +235,7 @@ struct HistoryView: View {
                             }
 
                         }
+//                        .disabled(true)
                         Button("Duplicate Change"){
                             
                             let itemInstance = dataManager.getItemByName(name: selectedHistoryItem!.itemName)
@@ -411,6 +412,7 @@ struct HistoryView: View {
                                 }
                             }
                         }
+//                        .disabled(true)
                     }
                     .foregroundStyle(Color.black)
 

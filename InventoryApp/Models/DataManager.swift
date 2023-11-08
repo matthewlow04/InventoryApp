@@ -293,7 +293,7 @@ class DataManager: ObservableObject{
                 total = itemTotal
             }
             
-            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes, "location": location, "unassigned": unassigned]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes, "location": location, "unassigned": unassigned!]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -378,7 +378,7 @@ class DataManager: ObservableObject{
                 unassigned = unassignedAmount! - difference
             }
          
-            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes, "location": location, "unassigned": unassigned]){ error in
+            ref.updateData(["amountInStock":newAmount, "amountTotal":total, "amountHistory": newHistory, "isFavourite": isFavourite, "dateUpdated": Timestamp(date: Date.now), "category": category, "notes": notes, "location": location, "unassigned": unassigned!]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }

@@ -53,5 +53,11 @@ class ItemViewModel: ObservableObject{
         return total
     }
     
+    func makeValidLink( url: inout String){
+        if(!url.contains("http")){
+            url = "https://" + url
+        }
+    }
+    
 }
  

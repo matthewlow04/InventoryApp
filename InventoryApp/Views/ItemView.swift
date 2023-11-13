@@ -12,7 +12,6 @@ struct ItemView: View {
     @EnvironmentObject var dataManager: DataManager
     @ObservedObject var ivm = ItemViewModel()
     @State var selectedItem: Item
-//    @State private var amountInStock: Double
     @State var isPresentingConfirm = false
     @State var isShowingAlert = false
     @State var isShowingCat = false
@@ -21,6 +20,7 @@ struct ItemView: View {
     @State var editedLocation = ""
     @State var currentlyEditing = false
     @State var selectedCategory: Item.Category?
+    @State var enteredLink: String = ""
     
     @Environment(\.dismiss) var dismiss
 
@@ -88,6 +88,7 @@ struct ItemView: View {
                         
                         if currentlyEditing {
                             TextField("Edit Notes", text: $editedNotes)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
                         } else {
                             if(selectedItem.notes != ""){
                                 Text(selectedItem.notes)
@@ -168,6 +169,7 @@ struct ItemView: View {
                             VStack{
                                 if currentlyEditing {
                                     TextField("Edit Location", text: $editedLocation)
+                                        .textFieldStyle(RoundedBorderTextFieldStyle())
                                 }else{
                                     if(selectedItem.location != ""){
                                         Text(selectedItem.location)
@@ -213,14 +215,69 @@ struct ItemView: View {
                       
                     }
                     
+                }
+                
+                Section(header: Text("Order Link")){
+                    if(selectedItem.link == ""){
+                        HStack{
+                            TextField("Enter Order Link", text: $enteredLink)
+                                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                                        .autocapitalization(.none)
+                                        .disableAutocorrection(true)
+                                        .frame(maxWidth: .infinity)
+                            Spacer()
+                            Button("Add") {
+                                if(enteredLink.isValidURL){
+                                    ivm.makeValidLink(url: &enteredLink)
+                                    selectedItem.link = enteredLink
+                                    print(selectedItem)
+                                    dataManager.addLink(itemName: selectedItem.name, url: selectedItem.link)
+                                    enteredLink = ""
+                                }else{
+                                    alertMessage = "Invalid URL or unable to open the URL"
+                                    isShowingAlert = true
+                                }
+                               
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+                   
+                        }
+                      
+                    }else{
+                        HStack{
+                            Text("Order Link")
+                               .foregroundStyle(.blue)
+                               .underline()
+                               .onTapGesture {
+                                   ivm.makeValidLink(url: &selectedItem.link)
+                                   if let url = URL(string: selectedItem.link), UIApplication.shared.canOpenURL(url) {
+                                       UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                                   } else {
+                                       alertMessage = "Invalid URL or unable to open the URL"
+                                       isShowingAlert = true
+                                   }
+                               }
+                            Spacer()
+                            Button("Remove Link"){
+                                selectedItem.link = ""
+                                dataManager.addLink(itemName: selectedItem.name, url: "")
+                            }
+                            .foregroundStyle(Color.red)
+                            .buttonStyle(BorderlessButtonStyle())
+                   
+                            
+                        }
+                        
+                    }
+                }
+                
+                Section{
                     VStack(alignment: .leading){
                         Text("Date Created: \(formattedDate(date: selectedItem.dateCreated))")
                         Text("Last Updated: \(timeSince(date: selectedItem.dateUpdated))")
                     }
                     .foregroundStyle(Color.gray)
-                    
                 }
-                
 
                 Section {
                     deleteButton

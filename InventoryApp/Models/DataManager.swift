@@ -56,8 +56,9 @@ class DataManager: ObservableObject{
                               let dateUpdated = data["dateUpdated"] as? Timestamp ?? Timestamp(date: Date.now)
                               let location = data["location"] as? String ?? "No Location"
                               let unassigned = data["unassigned"] as? Int ?? 1000
+                              let url = data["link"] as? String ?? ""
                             
-                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory, isFavourite: isFav, dateCreated: dateCreated.dateValue(), dateUpdated:  dateUpdated.dateValue(), location: location, amountUnassigned: unassigned)
+                              let item = Item(name: name, notes: notes, amountTotal: amountTotal, amountInStock: amountInStock, category: Item.Category(rawValue: category) ?? Item.Category.office, amountHistory: amountHistory, isFavourite: isFav, dateCreated: dateCreated.dateValue(), dateUpdated:  dateUpdated.dateValue(), location: location, amountUnassigned: unassigned, link: url)
                               self.inventory.append(item)
                             
                           }
@@ -308,6 +309,23 @@ class DataManager: ObservableObject{
        
        
     }
+    
+    func addLink(itemName: String, url: String){
+        if let currentUser = Auth.auth().currentUser{
+            
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let fullPath = "Users/\(userID)/Items/\(itemName)"
+            let ref = db.document(fullPath)
+            
+            ref.updateData(["link": url]){ error in
+                print("Error setting link")
+            }
+            
+            fetchItems()
+        }
+    }
+    
     
     func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String, unassignedAmount: Int? = 0){
         if let currentUser = Auth.auth().currentUser{

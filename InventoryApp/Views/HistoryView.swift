@@ -12,7 +12,9 @@ struct HistoryView: View {
     @State var searchText = ""
     @State var showingActionSheet = false
     @State var showingConfirmation = false
+    @State var showingErrorAlert = false
     @State var selectedHistoryItem: History?
+    @State var errorMessage = "Unknown Error"
     var filteredHistory: [History] {
         if searchText.isEmpty {
             return dataManager.inventoryHistory
@@ -41,7 +43,6 @@ struct HistoryView: View {
                     Button {
                         selectedHistoryItem = item
                         showingActionSheet = true
-//                        print("\(item) FROM HERE")
                     } label: {
                         HStack{
                             VStack(alignment: .leading, spacing: 10){
@@ -66,6 +67,7 @@ struct HistoryView: View {
                        
                         
                     }
+                    
                     .confirmationDialog("Actions", isPresented: $showingActionSheet) {
                         Button("Undo Change"){
                             
@@ -74,7 +76,7 @@ struct HistoryView: View {
                             //if there's a person
                             if(selectedHistoryItem!.person != "No Person"){
                                 guard var person = dataManager.getPersonByName(name: selectedHistoryItem!.person) else{
-                                    print("This person no longer exists")
+                                    showError("This person no longer exists")
                                     return
                                 }
                                 let index = dataManager.getIndexInPersonInventory(name: selectedHistoryItem!.itemName, person: person) ?? -1
@@ -84,19 +86,19 @@ struct HistoryView: View {
                                     
                                     //if item not in person inventory anymore
                                     if(index == -1){
-                                        print("Undo failed. This person no longer has this item")
+                                        showError("Undo failed. This person no longer has this item")
                                         return
                                     }
                                     
                                     //person doesn't have enough items
                                     if(selectedHistoryItem!.amount > person.inventory[index].quantity){
-                                        print("Person doesn't have enough items to undo")
+                                        showError("Person doesn't have enough items to undo")
                                         return
                                     }
                                     
                                     // undo causes too many items
                                     if(selectedHistoryItem!.amount + itemInstance!.amountInStock > itemInstance!.amountTotal){
-                                        print("You can't undo because there will be more items in stock than in circulation")
+                                        showError("You can't undo because there will be more items in stock than in circulation")
                                         return
                                     }
                                     
@@ -119,14 +121,14 @@ struct HistoryView: View {
                                 //undo item is given back to inventory
                                 else{
                                     if(itemInstance!.amountInStock - selectedHistoryItem!.amount < 0){
-                                        print("Not enough in inventory to undo")
+                                        showError("Not enough in inventory to undo")
                                         return
                                     }
                                     
                                     //if the history was a new item add
                                     if(selectedHistoryItem!.newStock){
                                         if(itemInstance!.amountTotal - selectedHistoryItem!.amount < 0){
-                                            print("Not enough in stock to undo")
+                                            showError("Not enough in stock to undo")
                                             return
                                         }
                                        
@@ -178,14 +180,14 @@ struct HistoryView: View {
                                 //undo add from inventory
                                 if(selectedHistoryItem!.addedItem){
                                     if(selectedHistoryItem!.amount > itemInstance!.amountInStock){
-                                        print("Not enough items in inventory to undo")
+                                        showError("Not enough items in inventory to undo")
                                         return
                                     }
                                     
                                     //new stock
                                     if(selectedHistoryItem!.newStock){
                                         if(selectedHistoryItem!.amount > itemInstance!.amountTotal){
-                                            print("Not enough items in total to undo")
+                                            showError("Not enough items in total to undo")
                                             return
                                         }
                                         
@@ -218,7 +220,7 @@ struct HistoryView: View {
                                 //undo subtract from inventory
                                 else{
                                     if(itemInstance!.amountInStock + selectedHistoryItem!.amount > itemInstance!.amountTotal){
-                                        print("Not enough items in circulation to undo")
+                                        showError("Not enough items in circulation to undo")
                                         return
                                     }
                                     dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
@@ -243,11 +245,10 @@ struct HistoryView: View {
                             //Person Exists
                             if(selectedHistoryItem!.person != "No Person"){
                                 guard var person = dataManager.getPersonByName(name: selectedHistoryItem!.person) else{
-                                    print("This person no longer exists")
+                                    showError("This person no longer exists")
                                     return
                                 }
                                 let index = dataManager.getIndexInPersonInventory(name: selectedHistoryItem!.itemName, person: person) ?? -1
-                                print(index)
                                 
                                 //if an item is taken away check if the person has enough inventory to perform this action
                                 
@@ -260,7 +261,7 @@ struct HistoryView: View {
                                         
                                         //check if there's enough inventory to give to person
                                         if(itemInstance!.amountInStock - selectedHistoryItem!.amount < 0){
-                                            print("Not enough in inventory to duplicate this change")
+                                            showError("Not enough in inventory to duplicate this change")
                                             return
                                         }
                                         
@@ -296,7 +297,7 @@ struct HistoryView: View {
                                     //if that was a newly added item(can't happen as of right now)
                                     
                                     else{
-                                        print("Error!")
+                                        showError("Error!")
                                     }
                                         
                                 }
@@ -305,21 +306,21 @@ struct HistoryView: View {
                                     
                                     //check if person has in inventory
                                     if(index == -1){
-                                        print("Person no longer has this item")
+                                        showError("Person no longer has this item")
                                         return
                                         
                                     }
                                     
                                     // check if person has enough inventory
                                     if(person.inventory[index].quantity - selectedHistoryItem!.amount < 0){
-                                        print("Person doesn't have enough of this item to duplicate this change")
+                                        showError("Person doesn't have enough of this item to duplicate this change")
                                         return
                                     }
                                     
                                   
                                     
                                     if(itemInstance!.amountInStock + selectedHistoryItem!.amount > itemInstance!.amountTotal){
-                                        print("You are returning more items to inventory than exist in circulation")
+                                        showError("You are returning more items to inventory than exist in circulation")
                                     }
                                     
                                     //update item
@@ -349,7 +350,7 @@ struct HistoryView: View {
                                     
                                     //if not enough inventory return
                                     if(itemInstance!.amountInStock - selectedHistoryItem!.amount < 0){
-                                        print("Not enough in inventory to duplicate this change")
+                                        showError("Not enough in inventory to duplicate this change")
                                         return
                                     }
                                     //else update
@@ -375,7 +376,7 @@ struct HistoryView: View {
                                         
                                         //if more inventory overflow return
                                         if(itemInstance!.amountInStock + selectedHistoryItem!.amount > itemInstance!.amountTotal){
-                                            print("You are returning more items to inventory than exist in circulation")
+                                            showError("You are returning more items to inventory than exist in circulation")
                                             return
                                         }
                                         
@@ -422,6 +423,9 @@ struct HistoryView: View {
                 .alert("The arrow right means the person is receiving items from inventory, the arrow left means the items are going back to inventory", isPresented: $helpAlertShowing){
                     Button("OK", role: .cancel){}
                 }
+                .alert(errorMessage, isPresented: $showingErrorAlert){
+                    Button("OK", role: .cancel){}
+                }
                 .searchable(text: $searchText)
                 .navigationTitle("Inventory History")
                 .toolbar{
@@ -461,5 +465,10 @@ struct HistoryView: View {
         }else{
             return hist.addedItem ? "arrow.left" : "arrow.right"
         }
+    }
+    
+    func showError(_ message: String){
+        errorMessage = message
+        showingErrorAlert = true
     }
 }

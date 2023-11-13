@@ -25,6 +25,6 @@ func timeSince(date: Date) -> String {
 
 func formattedDate(date: Date) -> String {
     let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "MMM d, yyyy" // Customize the date format as needed
+    dateFormatter.dateFormat = "MMM d, yyyy"
     return dateFormatter.string(from: date)
 }

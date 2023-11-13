@@ -10,7 +10,6 @@ import SwiftUI
 struct BackgroundView: View {
     var isLogin:Bool
     var body: some View {
-        
         VStack{
             if(isLogin){
                 Text("Welcome")
@@ -35,17 +34,11 @@ struct BackgroundView: View {
                         .cornerRadius(20)
                     Spacer()
                         .frame(maxWidth:.infinity)
-                    
-                        
-              
                 }.opacity(0.6)
                     .padding(.top)
                     .frame(maxWidth: .infinity)
-               
             }
-
             VStack(alignment: .leading, spacing: 50){
-                
                 Spacer()
                     .frame(maxWidth: .infinity)
                 Rectangle()
@@ -60,16 +53,8 @@ struct BackgroundView: View {
                     .foregroundColor(CustomColor.aquamarine)
                     .frame(width: 200, height: 25)
                     .cornerRadius(20)
-                    
-          
             }.opacity(0.6)
         }
-       
     }
 }
 
-struct BackgroundView_Previews: PreviewProvider {
-    static var previews: some View {
-        BackgroundView(isLogin: false)
-    }
-}

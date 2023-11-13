@@ -414,13 +414,7 @@ struct ItemView: View {
                 return
             }
         }
-        
         dataManager.addLocation(editedLocation)
     }
 }
 
-//struct ItemView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ItemView(selectedItem: Item(name: "Pencil", notes: "This is a pencil", amountTotal: 20, amountInStock: 10, category: Item.Category.stationairy, amountHistory: [10], isFavourite: true, dateCreated: Date.now, dateUpdated: Date.now))
-//    }
-//}

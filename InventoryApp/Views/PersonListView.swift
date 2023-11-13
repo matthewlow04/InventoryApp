@@ -98,8 +98,3 @@ struct PersonListView: View {
     
 }
 
-struct PersonListView_Previews: PreviewProvider {
-    static var previews: some View {
-        PersonListView()
-    }
-}

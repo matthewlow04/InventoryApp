@@ -297,9 +297,3 @@ struct PersonView: View {
    
     
 }
-
-struct PersonView_Previews: PreviewProvider {
-    static var previews: some View {
-        PersonView(selectedPerson: Person(firstName: "Matthew", lastName: "Low", inventory: []))
-    }
-}

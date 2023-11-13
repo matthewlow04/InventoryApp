@@ -38,12 +38,3 @@ struct InventoryPageItemView: View {
      
     }
 }
-
-
-
-
-//struct InventoryPageItemView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        InventoryPageItemView(slices: [(2,.orange),(3,.gray)])
-//    }
-//}

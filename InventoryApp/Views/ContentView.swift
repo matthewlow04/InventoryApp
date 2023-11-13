@@ -18,7 +18,7 @@ struct ContentView: View {
                     Label("Inventory", systemImage: "archivebox")
                 }
                 .onAppear {
-                            dataManager.currentNavigationView = .inventory
+                    dataManager.currentNavigationView = .inventory
                 }
             AddItemView(dataManager: dataManager)
                 .environmentObject(dataManager)
@@ -26,28 +26,28 @@ struct ContentView: View {
                     Label("Add New Item", systemImage: "plus")
                 }
                 .onAppear {
-                            dataManager.currentNavigationView = .other
+                    dataManager.currentNavigationView = .other
                 }
             PersonListView()
                 .tabItem{
                     Label("People", systemImage: "person")
                 }
                 .onAppear {
-                            dataManager.currentNavigationView = .other
+                    dataManager.currentNavigationView = .other
                 }
             HistoryView()
                 .tabItem{
                     Label("Inventory History", systemImage: "books.vertical")
                 }
                 .onAppear {
-                            dataManager.currentNavigationView = .other
+                    dataManager.currentNavigationView = .other
                 }
             AlertView()
                 .tabItem{
                     Label("Alerts", systemImage: "bell")
                 }
                 .onAppear {
-                            dataManager.currentNavigationView = .other
+                    dataManager.currentNavigationView = .other
                 }
                 .badge(dataManager.alerts.count)
             

@@ -40,7 +40,6 @@ class LoginViewModel: ObservableObject{
         Auth.auth().signIn(withEmail: userEmail, password: userPassword) { [self] result, error in
             if let error = error {
                 print(error)
-//                print("Login Error: \(error.localizedDescription)")
                 errorMessage = "Login failed: \(error.localizedDescription)"
                 errorShowing = true
             }

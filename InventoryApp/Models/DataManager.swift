@@ -419,7 +419,7 @@ class DataManager: ObservableObject{
                 }
                 
             }
-    
+     
             for history in inventoryHistory{
                 if(history.itemName == itemName){
 //                    print("Match - UUID: \(history.id)")
@@ -431,9 +431,19 @@ class DataManager: ObservableObject{
                 updatePersonItemDeletion(selectedPerson: person, itemName: itemName)
             }
             
+            let alertId = UUID()
+            let newPath = "Users/\(userID)/Alert/\(alertId)"
+            
+            let newRef = db.document(newPath)
+            newRef.setData(["name": "Item Deleted", "date": Timestamp(date: Date.now), "severity": "low", "message": ("Item named '\(itemName)' deleted"), "seen": false, "id" : alertId.uuidString]){ error in
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+            }
+            
             fetchInventoryHistory()
             fetchPeopleData()
-            print("Fetch from delete")
+            fetchAlertHistory()
             fetchItems()
         }
     }

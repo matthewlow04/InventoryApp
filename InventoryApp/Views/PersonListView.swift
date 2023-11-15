@@ -68,7 +68,7 @@ struct PersonListView: View {
         List(filteredPeople, id: \.self){ person in
             NavigationLink(destination: PersonView(selectedPerson: person)){
                 HStack{
-                    VStack{
+                    VStack(alignment:.leading){
                         Text(person.firstName+" "+person.lastName)
                             .bold()
                         Text("# of Items: \(person.inventory.count)")

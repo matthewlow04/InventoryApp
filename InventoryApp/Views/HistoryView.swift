@@ -110,9 +110,10 @@ struct HistoryView: View {
                                                            isFavourite: itemInstance!.isFavourite,
                                                            notes: itemInstance!.notes,
                                                            category: itemInstance!.category.rawValue,
-                                                           location: itemInstance!.location)
+                                                           location: itemInstance!.location, 
+                                                           calledByUndo: true)
                                     
-                                    //update person inventory
+//                                    update person inventory
                                     
                                     person.inventory[index].quantity =  person.inventory[index].quantity - selectedHistoryItem!.amount
                                     dataManager.updatePerson(selectedPerson: person)
@@ -140,7 +141,8 @@ struct HistoryView: View {
                                                                isFavourite: itemInstance!.isFavourite,
                                                                notes: itemInstance!.notes,
                                                                category: itemInstance!.category.rawValue,
-                                                               location: itemInstance!.location
+                                                               location: itemInstance!.location,
+                                                               calledByUndo: true
                                                                
                                         )
                                     }
@@ -155,7 +157,8 @@ struct HistoryView: View {
                                                                isFavourite: itemInstance!.isFavourite,
                                                                notes: itemInstance!.notes,
                                                                category: itemInstance!.category.rawValue,
-                                                               location: itemInstance!.location
+                                                               location: itemInstance!.location,
+                                                               calledByUndo: true
                                                                
                                         )
                                     }
@@ -172,7 +175,9 @@ struct HistoryView: View {
                                             }
                                     }
                                     
+                                    
                                 }
+                                
                             }
                             
                             //no person
@@ -199,7 +204,8 @@ struct HistoryView: View {
                                                                notes: itemInstance!.notes,
                                                                category: itemInstance!.category.rawValue,
                                                                location: itemInstance!.location,
-                                                               unassignedAmount: itemInstance!.amountUnassigned
+                                                               unassignedAmount: itemInstance!.amountUnassigned,
+                                                               calledByUndo: true
                                         )
                                         
                                     }
@@ -213,7 +219,8 @@ struct HistoryView: View {
                                                                notes: itemInstance!.notes,
                                                                category: itemInstance!.category.rawValue,
                                                                location: itemInstance!.location,
-                                                               unassignedAmount: itemInstance!.amountUnassigned
+                                                               unassignedAmount: itemInstance!.amountUnassigned,
+                                                               calledByUndo: true
                                         )
                                     }
                                 }
@@ -231,10 +238,12 @@ struct HistoryView: View {
                                                            notes: itemInstance!.notes,
                                                            category: itemInstance!.category.rawValue,
                                                            location: itemInstance!.location,
-                                                           unassignedAmount: itemInstance!.amountUnassigned
+                                                           unassignedAmount: itemInstance!.amountUnassigned,
+                                                           calledByUndo: true
                                     )
                                 }
                             }
+                            dataManager.deleteHistory(id: selectedHistoryItem!.id)
 
                         }
 //                        .disabled(true)
@@ -280,14 +289,17 @@ struct HistoryView: View {
                                         )
                                         
                                         //update person inventory
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                
                                             
                                             if(index != -1){
+                                                print(selectedHistoryItem!.amount)
+                                                print(person.inventory[index].quantity)
                                                 person.inventory[index].quantity =  person.inventory[index].quantity + selectedHistoryItem!.amount
+                                                print(person.inventory)
                                                 dataManager.updatePerson(selectedPerson: person)
                                             }
                                             else{
-                                            
                                                 dataManager.addItemToPerson(person: &person, itemID: selectedHistoryItem!.itemName, quantity: selectedHistoryItem!.amount)
                                             }
                         

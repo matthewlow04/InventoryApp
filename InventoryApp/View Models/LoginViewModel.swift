@@ -17,9 +17,6 @@ class LoginViewModel: ObservableObject{
     @Published var accountCreated = false
     @Published var showingSheet = false
     
-    init(){
-        print("Login init")
-    }
     
     func register(userEmail: String, userPassword: String) {
             Auth.auth().createUser(withEmail: userEmail, password: userPassword) { [self] result, error in
@@ -39,7 +36,6 @@ class LoginViewModel: ObservableObject{
     func login(userEmail: String, userPassword: String) {
         Auth.auth().signIn(withEmail: userEmail, password: userPassword) { [self] result, error in
             if let error = error {
-                print(error)
                 errorMessage = "Login failed: \(error.localizedDescription)"
                 errorShowing = true
             }

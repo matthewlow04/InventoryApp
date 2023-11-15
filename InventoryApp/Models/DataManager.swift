@@ -171,7 +171,7 @@ class DataManager: ObservableObject{
                     self.people.append(person)
                 }
             }
-//            print("People fetched")
+            print("People fetched")
             self.hasLoadedPeopleData = true
         }
     }
@@ -224,7 +224,7 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String, unassignedAmount: Int? = 0, calledByAddItem: Bool? = false){
+    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String, unassignedAmount: Int? = 0, calledByAddItem: Bool? = false, calledByUndo: Bool? = false){
         
         if let currentUser = Auth.auth().currentUser{
            
@@ -276,7 +276,10 @@ class DataManager: ObservableObject{
             
             if(newAmount != oldAmount){
                 if(updateHistory!){
-                    createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
+                    if(!calledByUndo!){
+                        createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
+                    }
+                   
                 }
                 newHistory.append(newAmount)
             }
@@ -303,7 +306,7 @@ class DataManager: ObservableObject{
             fetchItems()
             fetchAlertHistory()
             fetchInventoryHistory()
-            print("Fetched from update")
+//            print("Fetched from update")
            
         }
        

@@ -224,7 +224,7 @@ class DataManager: ObservableObject{
   
     }
     
-    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String, unassignedAmount: Int? = 0, calledByAddItem: Bool? = false, calledByUndo: Bool? = false){
+    func updateItem(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String, unassignedAmount: Int? = 0, calledByAddItem: Bool? = false, calledByUndo: Bool? = false, skipFetch: Bool = false){
         
         if let currentUser = Auth.auth().currentUser{
            
@@ -302,10 +302,12 @@ class DataManager: ObservableObject{
                     print(error.localizedDescription)
                 }
             }
-        
-            fetchItems()
-            fetchAlertHistory()
-            fetchInventoryHistory()
+            
+            if(!skipFetch){
+                fetchItems()
+                fetchAlertHistory()
+                fetchInventoryHistory()
+            }
 //            print("Fetched from update")
            
         }
@@ -425,7 +427,6 @@ class DataManager: ObservableObject{
      
             for history in inventoryHistory{
                 if(history.itemName == itemName){
-//                    print("Match - UUID: \(history.id)")
                     deleteHistory(id: ("\(history.id)"))
                 }
             }

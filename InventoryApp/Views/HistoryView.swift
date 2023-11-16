@@ -111,7 +111,10 @@ struct HistoryView: View {
                                                            notes: itemInstance!.notes,
                                                            category: itemInstance!.category.rawValue,
                                                            location: itemInstance!.location, 
-                                                           calledByUndo: true)
+                                                           unassignedAmount: itemInstance!.amountUnassigned,
+                                                           calledByUndo: true,
+                                                           skipFetch: true
+                                    )
                                     
 //                                    update person inventory
                                     
@@ -142,7 +145,9 @@ struct HistoryView: View {
                                                                notes: itemInstance!.notes,
                                                                category: itemInstance!.category.rawValue,
                                                                location: itemInstance!.location,
-                                                               calledByUndo: true
+                                                               unassignedAmount: itemInstance!.amountUnassigned,
+                                                               calledByUndo: true,
+                                                               skipFetch: true
                                                                
                                         )
                                     }
@@ -158,25 +163,32 @@ struct HistoryView: View {
                                                                notes: itemInstance!.notes,
                                                                category: itemInstance!.category.rawValue,
                                                                location: itemInstance!.location,
-                                                               calledByUndo: true
+                                                               unassignedAmount: itemInstance!.amountUnassigned,
+                                                               calledByUndo: true,
+                                                               skipFetch: true
                                                                
                                         )
                                     }
                                    
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                  
                                             
-                                            if let index = dataManager.getIndexInPersonInventory(name: selectedHistoryItem!.itemName, person: person) {
-                                                // Item found in person's inventory, update quantity
-                                                person.inventory[index].quantity =  person.inventory[index].quantity + selectedHistoryItem!.amount
-                                                dataManager.updatePerson(selectedPerson: person)
-                                            } else {
-                                                // Item not found, add it to the person's inventory
-                                                dataManager.addItemToPerson(person: &person, itemID: selectedHistoryItem!.itemName, quantity: selectedHistoryItem!.amount)
-                                            }
+                                    if let index = dataManager.getIndexInPersonInventory(name: selectedHistoryItem!.itemName, person: person) {
+                                        // Item found in person's inventory, update quantity
+                                        person.inventory[index].quantity =  person.inventory[index].quantity + selectedHistoryItem!.amount
+                                        dataManager.updatePerson(selectedPerson: person)
+                                    } else {
+                                        // Item not found, add it to the person's inventory
+                                        dataManager.addItemToPerson(person: &person, itemID: selectedHistoryItem!.itemName, quantity: selectedHistoryItem!.amount)
                                     }
                                     
                                     
+                                    
                                 }
+                                
+                                dataManager.fetchItems()
+                                dataManager.fetchPeopleData()
+                                dataManager.fetchInventoryHistory()
+                                dataManager.fetchAlertHistory()
                                 
                             }
                             
@@ -284,26 +296,26 @@ struct HistoryView: View {
                                                                isFavourite: itemInstance!.isFavourite,
                                                                notes: itemInstance!.notes,
                                                                category: itemInstance!.category.rawValue,
-                                                               location: itemInstance!.location
+                                                               location: itemInstance!.location,
+                                                               unassignedAmount: itemInstance!.amountUnassigned,
+                                                               skipFetch: true
                                                                
                                         )
                                         
                                         //update person inventory
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                
                                             
-                                            if(index != -1){
-                                                print(selectedHistoryItem!.amount)
-                                                print(person.inventory[index].quantity)
-                                                person.inventory[index].quantity =  person.inventory[index].quantity + selectedHistoryItem!.amount
-                                                print(person.inventory)
-                                                dataManager.updatePerson(selectedPerson: person)
-                                            }
-                                            else{
-                                                dataManager.addItemToPerson(person: &person, itemID: selectedHistoryItem!.itemName, quantity: selectedHistoryItem!.amount)
-                                            }
-                        
+                                        if(index != -1){
+                                            print(selectedHistoryItem!.amount)
+                                            print(person.inventory[index].quantity) //issue here
+                                            person.inventory[index].quantity =  person.inventory[index].quantity + selectedHistoryItem!.amount
+                                            print(person.inventory)
+                                            dataManager.updatePerson(selectedPerson: person)
                                         }
+                                        else{
+                                            dataManager.addItemToPerson(person: &person, itemID: selectedHistoryItem!.itemName, quantity: selectedHistoryItem!.amount)
+                                        }
+                        
+                                        
                                        
                                     }
                                     //if that was a newly added item(can't happen as of right now)
@@ -345,7 +357,10 @@ struct HistoryView: View {
                                                            isFavourite: itemInstance!.isFavourite,
                                                            notes: itemInstance!.notes,
                                                            category: itemInstance!.category.rawValue,
-                                                           location: itemInstance!.location)
+                                                           location: itemInstance!.location,
+                                                           unassignedAmount: itemInstance!.amountUnassigned,
+                                                           skipFetch: true
+                                    )
                                     
                                     //update person inventory
                                     
@@ -353,6 +368,11 @@ struct HistoryView: View {
                                     dataManager.updatePerson(selectedPerson: person)
                                   
                                 }
+                                
+                                dataManager.fetchItems()
+                                dataManager.fetchPeopleData()
+                                dataManager.fetchInventoryHistory()
+                                dataManager.fetchAlertHistory()
                                 
                             }
                             //Person does not exist

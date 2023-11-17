@@ -49,6 +49,7 @@ struct ItemView: View {
                             selectedItem.isFavourite.toggle()
                         }
                         .padding(.leading, -50)
+                        .contentTransition(.symbolEffect(.replace))
                 }
 
                 Text("\(Int(selectedItem.amountInStock)) in stock / \(selectedItem.amountTotal) in total")
@@ -334,6 +335,7 @@ struct ItemView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .multilineTextAlignment(.center)
                 
+                
                 Button("Confirm"){
                     if(addAmount.isEmpty){
                         showingPopover = false
@@ -348,14 +350,19 @@ struct ItemView: View {
                 }
                 Spacer()
             }
-            .frame(width: 100, height: 100)
+            .frame(width: showingPopover ? 100 : 0, height: showingPopover ? 100 : 0)
             .padding()
             .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.accentColor.opacity(0.5), lineWidth: 1)
-                    )
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.accentColor.opacity(0.5), lineWidth: 1)
+            )
             .background(Color.white)
             .opacity(showingPopover ? 1 : 0)
+            .animation(
+                Animation
+                    .smooth,
+                value: UUID()
+            )
         }
         
 

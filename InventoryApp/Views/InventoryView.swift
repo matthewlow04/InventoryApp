@@ -89,6 +89,7 @@ struct InventoryView: View {
                                     .resizable()
                                     .frame(width: 25, height: 25)
                                     .foregroundStyle(Color.accentColor)
+                                    .contentTransition(.symbolEffect(.replace))
                             }
                         }
                         ToolbarItem(placement: .topBarTrailing){
@@ -122,6 +123,7 @@ struct InventoryView: View {
                                     .resizable()
                                     .frame(width: 25, height: 25)
                                     .foregroundStyle(Color.accentColor)
+                                    .contentTransition(.symbolEffect(.replace))
                             }
                            
                         }

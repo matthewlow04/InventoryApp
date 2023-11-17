@@ -15,6 +15,7 @@ struct HistoryView: View {
     @State var showingErrorAlert = false
     @State var selectedHistoryItem: History?
     @State var errorMessage = "Unknown Error"
+    @State var isLoadingScreen = false
     var filteredHistory: [History] {
         if searchText.isEmpty {
             return dataManager.inventoryHistory
@@ -27,7 +28,7 @@ struct HistoryView: View {
 
     var body: some View {
         NavigationStack{
-            if(!$dataManager.hasLoadedHistoryData.wrappedValue){
+            if(!$dataManager.hasLoadedHistoryData.wrappedValue || isLoadingScreen){
                 ProgressView()
                     .navigationTitle("Inventory History")
             }
@@ -48,7 +49,15 @@ struct HistoryView: View {
                             VStack(alignment: .leading, spacing: 10){
                                 Text(item.itemName)
                                     .bold()
-                                Text("\(item.addedItemString(item.addedItem)) \(item.amount)")
+                                if(item.newStock){
+                                    Text("\(item.addedItemString(item.addedItem)) \(item.amount) (New Stock)")
+                                }else if(item.createdItem){
+                                    Text("\(item.addedItemString(item.addedItem)) \(item.amount) (Item Created)")
+                                }
+                                else{
+                                    Text("\(item.addedItemString(item.addedItem)) \(item.amount)")
+                                }
+                                
                             }
                             Spacer()
                             VStack(alignment: .trailing){
@@ -64,13 +73,15 @@ struct HistoryView: View {
 
                            
                         }
+                        
                        
                         
                     }
+                    .disabled(true)
                     
                     .confirmationDialog("Actions", isPresented: $showingActionSheet) {
                         Button("Undo Change"){
-                            
+                          
                             let itemInstance = dataManager.getItemByName(name: item.itemName)
                             
                             //if there's a person
@@ -184,12 +195,16 @@ struct HistoryView: View {
                                     
                                     
                                 }
-                                
+                                isLoadingScreen = true
                                 dataManager.fetchItems()
                                 dataManager.fetchPeopleData()
                                 dataManager.fetchInventoryHistory()
                                 dataManager.fetchAlertHistory()
                                 
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+
+                                    isLoadingScreen = false
+                                }
                             }
                             
                             //no person
@@ -215,12 +230,16 @@ struct HistoryView: View {
                                                                isFavourite: itemInstance!.isFavourite,
                                                                notes: itemInstance!.notes,
                                                                category: itemInstance!.category.rawValue,
+                                                               newStock: true,
                                                                location: itemInstance!.location,
                                                                unassignedAmount: itemInstance!.amountUnassigned,
+                                                               calledByAddItem: true,
                                                                calledByUndo: true
                                         )
                                         
                                     }
+                                    
+                                    
                                     //not new stock
                                     else{
                                         dataManager.updateItem(itemName: selectedHistoryItem!.itemName,
@@ -254,13 +273,19 @@ struct HistoryView: View {
                                                            calledByUndo: true
                                     )
                                 }
+                                isLoadingScreen = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+
+                                    isLoadingScreen = false
+                                }
+
                             }
                             dataManager.deleteHistory(id: selectedHistoryItem!.id)
 
                         }
 //                        .disabled(true)
                         Button("Duplicate Change"){
-                            
+                          
                             let itemInstance = dataManager.getItemByName(name: selectedHistoryItem!.itemName)
                             
                             //Person Exists
@@ -369,10 +394,18 @@ struct HistoryView: View {
                                   
                                 }
                                 
+                                isLoadingScreen = true
                                 dataManager.fetchItems()
                                 dataManager.fetchPeopleData()
                                 dataManager.fetchInventoryHistory()
                                 dataManager.fetchAlertHistory()
+                                
+                            
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+
+                                    isLoadingScreen = false
+                                }
+
                                 
                             }
                             //Person does not exist
@@ -438,11 +471,20 @@ struct HistoryView: View {
                                                                isFavourite: itemInstance!.isFavourite,
                                                                notes: itemInstance!.notes,
                                                                category: itemInstance!.category.rawValue,
+                                                               newStock: true,
                                                                location: itemInstance!.location,
                                                                calledByAddItem: true
                                         )
                                     }
+                                    
+                                    
                                 }
+                                isLoadingScreen = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+
+                                    isLoadingScreen = false
+                                }
+
                             }
                         }
 //                        .disabled(true)

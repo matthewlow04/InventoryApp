@@ -94,8 +94,9 @@ class DataManager: ObservableObject{
                           let person = data["person"] as? String ?? "No Person"
                           let id = data["id"] as? String ?? "Error"
                           let newStock = data["newStock"] as? Bool ?? false
+                          let createdItem = data["createdItem"] as? Bool ?? false
                         
-                          let historyItem = History(id: id, itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount), person: person, newStock: newStock)
+                          let historyItem = History(id: id, itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount), person: person, newStock: newStock, createdItem: createdItem)
                           self.inventoryHistory.append(historyItem)
                         
                       }
@@ -219,6 +220,10 @@ class DataManager: ObservableObject{
                 }
                 
             }
+            
+            createHistory(name: itemName, amount: Int(itemAmount)!, added: true, id: UUID().uuidString, person: "No Person", newStock: false, createdItem: true)
+            
+            
         }
        
   
@@ -311,8 +316,25 @@ class DataManager: ObservableObject{
 //            print("Fetched from update")
            
         }
+        
+        
        
        
+    }
+    func updateUnassigned(itemName: String, unassigned: Int){
+        if let currentUser = Auth.auth().currentUser{
+            
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let fullPath = "Users/\(userID)/Items/\(itemName)"
+            let ref = db.document(fullPath)
+            
+            ref.updateData(["unassigned": unassigned]){ error in
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+            }
+        }
     }
     
     func addLink(itemName: String, url: String){
@@ -470,20 +492,23 @@ class DataManager: ObservableObject{
         return person.inventory.firstIndex {$0.itemID.lowercased() == name.lowercased()}
     }
     
-    func createHistory(name: String, amount: Int, added: Bool, id: String, person: String, newStock: Bool){
+    func createHistory(name: String, amount: Int, added: Bool, id: String, person: String, newStock: Bool, createdItem: Bool? = false){
+        if(amount == 0){
+            return
+        }
         if let currentUser = Auth.auth().currentUser{
             let userID = currentUser.uid
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/History/\(id)"
             let ref = db.document(fullPath)
 //            print(fullPath)
-            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person, "id": id, "newStock": newStock]){ error in
+            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person, "id": id, "newStock": newStock, "createdItem": createdItem]){ error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
             }
         }
-        let newHistory = History(id: id, itemName: name, date: Date.now, addedItem: added, amount: abs(amount), person: person, newStock: newStock)
+        let newHistory = History(id: id, itemName: name, date: Date.now, addedItem: added, amount: abs(amount), person: person, newStock: newStock, createdItem: createdItem!)
         inventoryHistory.append(newHistory)
     }
     

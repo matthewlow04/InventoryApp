@@ -55,12 +55,14 @@ struct AddPersonView: View {
                         
                     }
                 }
-            }.alert(apvm.alertMessage, isPresented: $apvm.showingAlert){
-                Button("OK", role: .cancel){
-                    
-                }
+            }
+            .navigationTitle(Text("Add Person"))
+            .foregroundStyle(CustomColor.textBlue)
+            .alert(apvm.alertMessage, isPresented: $apvm.showingAlert){
+                Button("OK", role: .cancel){}
             }
         }
+            
         
     }
 }

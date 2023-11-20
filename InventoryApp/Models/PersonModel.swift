@@ -11,6 +11,7 @@ struct Person:Hashable{
     var firstName: String
     var lastName: String
     var inventory: [AssignedItem]
+    var isFavourite: Bool
 }
 
 struct AssignedItem:Hashable{

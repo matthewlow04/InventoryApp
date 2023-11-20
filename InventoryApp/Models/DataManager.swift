@@ -156,7 +156,7 @@ class DataManager: ObservableObject{
                     let firstName = data["firstName"] as? String ?? ""
                     let lastName = data["lastName"] as? String ?? ""
                     let inventoryData = data["inventory"] as? [[String: Any]] ?? []
-                    
+                    let isFav = data["isFavourite"] as? Bool ?? false
                     var inventory:[AssignedItem] = []
                     for itemData in inventoryData {
                         let assignedFirstName = itemData["firstName"] as? String ?? ""
@@ -168,7 +168,9 @@ class DataManager: ObservableObject{
                         inventory.append(assignedItem)
                     }
                     
-                    let person = Person(firstName: firstName, lastName: lastName,inventory: inventory)
+                    
+                    
+                    let person = Person(firstName: firstName, lastName: lastName,inventory: inventory, isFavourite: isFav)
                     self.people.append(person)
                 }
             }
@@ -627,7 +629,9 @@ class DataManager: ObservableObject{
                         "itemID": item.itemID,
                         "quantity": item.quantity
                     ] as [String : Any]
-                }
+                    
+                },
+                "isFavourite": false
             ]
             ref.setData(data){ error in
                 if let error = error{
@@ -635,6 +639,30 @@ class DataManager: ObservableObject{
                 }
             }
             
+        }
+    }
+    func toggleFavorite(for person: Person) {
+        if let index = people.firstIndex(where: { $0.firstName+$0.lastName == person.firstName+person.lastName }) {
+            people[index].isFavourite.toggle()
+            updateFavouritePerson(selectedPerson: person, isFav: people[index].isFavourite)
+        }
+    }
+    func updateFavouritePerson(selectedPerson: Person, isFav: Bool){
+        if let currentUser = Auth.auth().currentUser {
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let id = selectedPerson.firstName + selectedPerson.lastName
+            let newPath = "Users/\(userID)/People/\(id)"
+            let ref = db.document(newPath)
+
+            let data: [String: Any] = [
+                "isFavourite": isFav
+            ]
+            ref.updateData(data) { error in
+                if let error = error {
+                    print(error.localizedDescription)
+                }
+            }
         }
     }
     func updatePerson(selectedPerson: Person) {

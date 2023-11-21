@@ -36,6 +36,13 @@ struct AddPersonView: View {
                 }
                 
                 Section{
+                    HStack{
+                        Text("Title:")
+                        TextField("Title", text: $apvm.title)
+                    }
+                }
+                
+                Section{
                     NavigationLink("Add Items", destination: PeopleItemView(apvm: apvm))
                 }
 
@@ -44,7 +51,7 @@ struct AddPersonView: View {
                     Button("Add new person"){
                         if apvm.checkValid() == true{
                             let personInventory = apvm.getItemsToAdd()
-                            dataManager.addPerson(firstName: apvm.firstName, lastName: apvm.lastName, inventory: personInventory)
+                            dataManager.addPerson(firstName: apvm.firstName, lastName: apvm.lastName, title: apvm.title, inventory: personInventory)
                             dataManager.fetchPeopleData()
                             dataManager.fetchItems()
                             apvm.alertMessage = "Person added"

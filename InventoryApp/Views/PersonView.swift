@@ -18,7 +18,9 @@ struct PersonView: View {
     @State var selectedItem = ""
     @State var itemAmount = 0.0
     @State var tapImage = false
+    @State var showingPopover = false
     @State var alertMessage = ""
+    @State var newTitle = ""
     @State var isPresentingConfirm = false
     @Environment(\.presentationMode) var presentationMode
     var itemNames: [String] {
@@ -30,119 +32,172 @@ struct PersonView: View {
     }
 
     var body: some View {
-       
-       VStack{
-           ZStack(alignment: .bottomTrailing){
-               CircleImage()
-                   .offset(y: tapImage ? -50 : 0)
-                   .scaleEffect(tapImage ? 1.5 : 1.0)
-                   .onTapGesture {
-                       withAnimation(.spring(response:0.5, dampingFraction: 0.8, blendDuration: 0.4)){
-                           tapImage.toggle()
-                       }
-                   }
-               Image(systemName: "plus")
-                   .foregroundColor(.white)
-                   .frame(width: 50, height: 50)
-                   .background(Color.blue)
-                   .clipShape(Circle())
-                   .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                   .offset(x: -10, y: 10)
-                   .scaleEffect(tapImage ? 0 : 1.0)
-           }
-       }
-
-        HStack{
-            VStack(alignment: .leading){
-                Text((selectedPerson.firstName+" "+selectedPerson.lastName))
-                     .font(.title)
-                
-                Text("Insert person title")
-             }
-            Spacer()
-        }
-      
-       .alert(alertMessage, isPresented: $showingAlert, actions: {
-           Button("OK", role: .cancel){}
-       })
-       .alert("There is no more of that item left in stock", isPresented: $showingStockAlert, actions: {
-           Button("OK", role: .cancel){}
-       })
-       .padding()
-            .foregroundColor(CustomColor.textBlue)
-            .toolbar{
-                Button("Save"){
-                    dataManager.updatePerson(selectedPerson: selectedPerson)
-                    dataManager.saveItemChangesPerson(items: &selectedPerson.inventory, person: selectedPerson)
-                    dataManager.fetchPeopleData()
-                    
-                    alertMessage = "Changes to person saved"
-                    showingAlert = true
-
-//                    dismiss()
-                    presentationMode.wrappedValue.dismiss()
-                }
-            }
-            .sheet(isPresented: $showingSheet){
-                SheetView
-            }
-            .onDisappear{
-                dismiss()
-//                dataManager.fetchItems()
-            }
-          
-        ScrollView{
-            Text("Inventory").foregroundColor(Color.gray)
-            ForEach(selectedPerson.inventory.indices, id: \.self) { index in
-                let item = selectedPerson.inventory[index]
-
-                HStack {
-                    Text(item.itemID)
-                    Spacer()
-                    MinusButton(action: {
-                        if selectedPerson.inventory[index].quantity > 0 {
-                            selectedPerson.inventory[index].quantity -= 1
-                            selectedPerson.inventory[index].currentDifference -= 1
-                        }
-                       
-                        print(selectedPerson.inventory[index].quantity)
-                    })
-                    Text("\(item.quantity)")
-                    AddButton(action: {
-                        let item = dataManager.getItemByName(name: selectedPerson.inventory[index].itemID)
-                        
-                        if(selectedPerson.inventory[index].currentDifference >= item!.amountInStock){
-                            showingStockAlert = true
-                        }else{
-                            selectedPerson.inventory[index].quantity += 1
-                            selectedPerson.inventory[index].currentDifference += 1
-                            print(selectedPerson.inventory[index].quantity)
-                        }
-                      
-                    })
-                }
-                
-               
-            }.padding(.horizontal, 50)
-            
-        }
-        HStack{
-            deleteButton
-                .buttonStyle(DeleteButtonStyle())
-                .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm){
-                    Button("Delete \(selectedPerson.firstName) \(selectedPerson.lastName)?", role: .destructive){
-                        
-                        dataManager.deletePerson(selectedPerson: selectedPerson)
-                        dismiss()
+        ZStack{
+            VStack{
+                VStack{
+                    ZStack(alignment: .bottomTrailing){
+                        CircleImage()
+                            .offset(y: tapImage ? -50 : 0)
+                            .scaleEffect(tapImage ? 1.5 : 1.0)
+                            .onTapGesture {
+                                withAnimation(.spring(response:0.5, dampingFraction: 0.8, blendDuration: 0.4)){
+                                    tapImage.toggle()
+                                }
+                            }
+                        Image(systemName: "plus")
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(Color.blue)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                            .offset(x: -10, y: 10)
+                            .scaleEffect(tapImage ? 0 : 1.0)
                     }
                 }
-            Spacer()
-            addItemButton
-                .buttonStyle(AddButtonStyle())
+                
+                HStack{
+                    VStack(alignment: .leading){
+                        Text((selectedPerson.firstName+" "+selectedPerson.lastName))
+                            .font(.title)
+                        if(selectedPerson.title.isEmpty){
+                            Text("Insert person title")
+                                .onTapGesture {
+                                    newTitle = selectedPerson.title
+                                    showingPopover = true
+                                }
+                        }else{
+                            Text(selectedPerson.title)
+                                .onTapGesture {
+                                    newTitle = selectedPerson.title
+                                    showingPopover = true
+                                }
+                        }
+                        
+                    }
+                    Spacer()
+                }
+                
+                .alert(alertMessage, isPresented: $showingAlert, actions: {
+                    Button("OK", role: .cancel){}
+                })
+                .alert("There is no more of that item left in stock", isPresented: $showingStockAlert, actions: {
+                    Button("OK", role: .cancel){}
+                })
+                .padding()
+                .foregroundColor(CustomColor.textBlue)
+                .toolbar{
+                    Button("Save"){
+                        dataManager.updatePerson(selectedPerson: selectedPerson)
+                        dataManager.saveItemChangesPerson(items: &selectedPerson.inventory, person: selectedPerson)
+                        dataManager.fetchPeopleData()
+                        
+                        alertMessage = "Changes to person saved"
+                        showingAlert = true
+                        
+                        //                    dismiss()
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
+                .sheet(isPresented: $showingSheet){
+                    SheetView
+                }
+                .onDisappear{
+                    dismiss()
+                    //                dataManager.fetchItems()
+                }
+                
+                ScrollView{
+                    Text("Inventory").foregroundColor(Color.gray)
+                    ForEach(selectedPerson.inventory.indices, id: \.self) { index in
+                        let item = selectedPerson.inventory[index]
+                        
+                        HStack {
+                            Text(item.itemID)
+                            Spacer()
+                            MinusButton(action: {
+                                if selectedPerson.inventory[index].quantity > 0 {
+                                    selectedPerson.inventory[index].quantity -= 1
+                                    selectedPerson.inventory[index].currentDifference -= 1
+                                }
+                                
+                                print(selectedPerson.inventory[index].quantity)
+                            })
+                            Text("\(item.quantity)")
+                            AddButton(action: {
+                                let item = dataManager.getItemByName(name: selectedPerson.inventory[index].itemID)
+                                
+                                if(selectedPerson.inventory[index].currentDifference >= item!.amountInStock){
+                                    showingStockAlert = true
+                                }else{
+                                    selectedPerson.inventory[index].quantity += 1
+                                    selectedPerson.inventory[index].currentDifference += 1
+                                    print(selectedPerson.inventory[index].quantity)
+                                }
+                                
+                            })
+                        }
+                        
+                        
+                    }.padding(.horizontal, 50)
+                    
+                }
+                HStack{
+                    deleteButton
+                        .buttonStyle(DeleteButtonStyle())
+                        .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm){
+                            Button("Delete \(selectedPerson.firstName) \(selectedPerson.lastName)?", role: .destructive){
+                                
+                                dataManager.deletePerson(selectedPerson: selectedPerson)
+                                dismiss()
+                            }
+                        }
+                    Spacer()
+                    addItemButton
+                        .buttonStyle(AddButtonStyle())
+                    
+                    
+                }
+                .padding(30)
+            }
+            VStack{
+                HStack{
+                    Spacer()
+                    Button("x"){
+                        showingPopover = false
+                    }
+                }
+              
+               
+                TextField("Title", text: $newTitle)
+                    .keyboardType(.numberPad)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .multilineTextAlignment(.center)
+                
+                
+                Button("Confirm"){
+                    dataManager.updatePersonTitle(selectedPerson: &selectedPerson, title: newTitle)
+                    showingPopover = false
+                }
+                Spacer()
+            }
+            .frame(width: showingPopover ? 100 : 0, height: showingPopover ? 100 : 0)
+            .padding()
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.accentColor.opacity(0.5), lineWidth: 1)
+            )
+            .background(Color.white)
+            .opacity(showingPopover ? 1 : 0)
+            .animation(
+                Animation
+                    .smooth,
+                value: UUID()
+            )
             
             
         }
-        .padding(30)
+       
+       
         
             
         

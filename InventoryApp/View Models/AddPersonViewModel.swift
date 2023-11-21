@@ -16,6 +16,7 @@ class AddPersonViewModel: ObservableObject{
     @Published var lastName = ""
     @Published var quantity = ""
     @Published var itemName = ""
+    @Published var title = ""
     @Published var showingItems = false
     @Published var showingAlert = false
     @Published var alertMessage = ""

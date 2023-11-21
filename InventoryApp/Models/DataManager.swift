@@ -157,6 +157,7 @@ class DataManager: ObservableObject{
                     let lastName = data["lastName"] as? String ?? ""
                     let inventoryData = data["inventory"] as? [[String: Any]] ?? []
                     let isFav = data["isFavourite"] as? Bool ?? false
+                    let title = data["title"] as? String ?? ""
                     var inventory:[AssignedItem] = []
                     for itemData in inventoryData {
                         let assignedFirstName = itemData["firstName"] as? String ?? ""
@@ -170,7 +171,7 @@ class DataManager: ObservableObject{
                     
                     
                     
-                    let person = Person(firstName: firstName, lastName: lastName,inventory: inventory, isFavourite: isFav)
+                    let person = Person(firstName: firstName, lastName: lastName, title: title, inventory: inventory, isFavourite: isFav)
                     self.people.append(person)
                 }
             }
@@ -612,7 +613,7 @@ class DataManager: ObservableObject{
         
     }
     
-    func addPerson(firstName: String, lastName: String, inventory: [AssignedItem]){
+    func addPerson(firstName: String, lastName: String, title: String, inventory: [AssignedItem]){
         if let currentUser = Auth.auth().currentUser{
             let userID = currentUser.uid
             let db = Firestore.firestore()
@@ -631,7 +632,8 @@ class DataManager: ObservableObject{
                     ] as [String : Any]
                     
                 },
-                "isFavourite": false
+                "isFavourite": false,
+                "title": title
             ]
             ref.setData(data){ error in
                 if let error = error{
@@ -665,6 +667,28 @@ class DataManager: ObservableObject{
             }
         }
     }
+    func updatePersonTitle( selectedPerson: inout Person, title: String){
+        if let currentUser = Auth.auth().currentUser {
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            let id = selectedPerson.firstName + selectedPerson.lastName
+            let newPath = "Users/\(userID)/People/\(id)"
+            let ref = db.document(newPath)
+
+            let data: [String: Any] = [
+                "title": title
+            ]
+            
+            
+            ref.updateData(data) { error in
+                if let error = error {
+                    print(error.localizedDescription)
+                }
+            }
+            
+            selectedPerson.title = title
+        }
+    }
     func updatePerson(selectedPerson: Person) {
         if let currentUser = Auth.auth().currentUser {
             let userID = currentUser.uid
@@ -681,10 +705,11 @@ class DataManager: ObservableObject{
                         "itemID": item.itemID,
                         "quantity": item.quantity
                     ] as [String : Any]
-                }
+                },
+                "title": selectedPerson.title
             ]
 
-            ref.setData(data) { error in
+            ref.updateData(data) { error in
                 if let error = error {
                     print(error.localizedDescription)
                 }
@@ -711,7 +736,7 @@ class DataManager: ObservableObject{
                 }
             ]
 
-            ref.setData(data) { error in
+            ref.updateData(data) { error in
                 if let error = error {
                     print(error.localizedDescription)
                 }

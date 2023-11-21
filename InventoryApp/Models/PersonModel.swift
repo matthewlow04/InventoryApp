@@ -10,6 +10,7 @@ import Foundation
 struct Person:Hashable{
     var firstName: String
     var lastName: String
+    var title: String
     var inventory: [AssignedItem]
     var isFavourite: Bool
 }

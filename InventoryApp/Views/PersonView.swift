@@ -34,26 +34,26 @@ struct PersonView: View {
     var body: some View {
         ZStack{
             VStack{
-                VStack{
-                    ZStack(alignment: .bottomTrailing){
-                        CircleImage()
-                            .offset(y: tapImage ? -50 : 0)
-                            .scaleEffect(tapImage ? 1.5 : 1.0)
-                            .onTapGesture {
-                                withAnimation(.spring(response:0.5, dampingFraction: 0.8, blendDuration: 0.4)){
-                                    tapImage.toggle()
-                                }
-                            }
-                        Image(systemName: "plus")
-                            .foregroundColor(.white)
-                            .frame(width: 50, height: 50)
-                            .background(Color.blue)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                            .offset(x: -10, y: 10)
-                            .scaleEffect(tapImage ? 0 : 1.0)
-                    }
-                }
+//                VStack{
+//                    ZStack(alignment: .bottomTrailing){
+//                        CircleImage()
+//                            .offset(y: tapImage ? -50 : 0)
+//                            .scaleEffect(tapImage ? 1.5 : 1.0)
+//                            .onTapGesture {
+//                                withAnimation(.spring(response:0.5, dampingFraction: 0.8, blendDuration: 0.4)){
+//                                    tapImage.toggle()
+//                                }
+//                            }
+//                        Image(systemName: "plus")
+//                            .foregroundColor(.white)
+//                            .frame(width: 50, height: 50)
+//                            .background(Color.blue)
+//                            .clipShape(Circle())
+//                            .overlay(Circle().stroke(Color.white, lineWidth: 2))
+//                            .offset(x: -10, y: 10)
+//                            .scaleEffect(tapImage ? 0 : 1.0)
+//                    }
+//                }
                 
                 HStack{
                     VStack(alignment: .leading){

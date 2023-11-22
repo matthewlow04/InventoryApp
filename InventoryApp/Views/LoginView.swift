@@ -10,8 +10,7 @@ import Firebase
 
 struct LoginView: View {    
     
-    @State private var email = ""
-    @State private var password = ""
+
    
     @EnvironmentObject var lvm: LoginViewModel
     @EnvironmentObject var dataManager: DataManager
@@ -29,12 +28,12 @@ struct LoginView: View {
         ZStack{
             BackgroundView(isLogin: true)
             VStack(spacing: 20){
-                TextField("Email", text: $email)
+                TextField("Email", text: $lvm.email)
                 Rectangle()
                     .frame(width: 300, height: 1)
                     .foregroundColor(CustomColor.aquamarine)
                     .padding(.bottom)
-                SecureField("Password", text: $password)
+                SecureField("Password", text: $lvm.password)
                 Rectangle()
                     .frame(width: 300, height: 1)
                     .foregroundColor(CustomColor.aquamarine)
@@ -78,7 +77,7 @@ struct LoginView: View {
                 Image("generis-logo-color")
                     .padding(.bottom,-50)
                   
-                TextField("Email", text: $email)
+                TextField("Email", text: $lvm.email)
                     .padding(.horizontal)
                     .background(Color.white.opacity(0.7))
                     .cornerRadius(10)
@@ -88,7 +87,7 @@ struct LoginView: View {
                     .foregroundColor(CustomColor.aquamarine)
                     .padding(.bottom)
                 
-                SecureField("Password", text: $password)
+                SecureField("Password", text: $lvm.password)
                     .padding(.horizontal)
                     .background(Color.white.opacity(0.7))
                     .cornerRadius(10)
@@ -128,7 +127,7 @@ struct LoginView: View {
     var loginButton: some View{
         Button("Login"){
             withAnimation(.bouncy){
-                lvm.login(userEmail: email, userPassword: password)
+                lvm.login(userEmail: lvm.email, userPassword: lvm.password)
             }
           
         }
@@ -141,7 +140,7 @@ struct LoginView: View {
     }
     var createAccountButton: some View{
         Button("Create Account"){
-            lvm.register(userEmail: email, userPassword: password)
+            lvm.register(userEmail: lvm.email, userPassword: lvm.password)
             
         }
     }

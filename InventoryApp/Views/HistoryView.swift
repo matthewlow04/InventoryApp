@@ -283,7 +283,8 @@ struct HistoryView: View {
                             dataManager.deleteHistory(id: selectedHistoryItem!.id)
 
                         }
-//                        .disabled(true)
+                        .disabled((selectedHistoryItem?.createdItem ?? true) ? true : false)
+
                         Button("Duplicate Change"){
                           
                             let itemInstance = dataManager.getItemByName(name: selectedHistoryItem!.itemName)
@@ -487,7 +488,7 @@ struct HistoryView: View {
 
                             }
                         }
-//                        .disabled(true)
+                        .disabled(true)
                     }
                     .foregroundStyle(Color.black)
 

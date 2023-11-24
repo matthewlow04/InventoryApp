@@ -49,7 +49,13 @@ struct AddPersonView: View {
                 
                 Section{
                     Button("Add new person"){
-                        if apvm.checkValid() == true{
+                        if apvm.checkPersonExists(){
+                            apvm.alertMessage = "\(apvm.firstName) \(apvm.lastName) already exists!"
+                            apvm.showingAlert = true
+                            return
+                        }
+                        
+                        if apvm.checkValid(){
                             let personInventory = apvm.getItemsToAdd()
                             dataManager.addPerson(firstName: apvm.firstName, lastName: apvm.lastName, title: apvm.title, inventory: personInventory)
                             dataManager.fetchPeopleData()

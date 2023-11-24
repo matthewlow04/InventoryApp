@@ -56,6 +56,13 @@ class AddPersonViewModel: ObservableObject{
         }
     }
     
+    func checkPersonExists() -> Bool{
+        if(dataManager.people.contains{$0.firstName.lowercased() == firstName.lowercased() && $0.lastName.lowercased() == lastName.lowercased()}){
+            return true
+        }
+        return false
+    }
+    
     func getItemsToAdd() -> [AssignedItem]{
         let selectedItems = currentAmount.enumerated()
                 .filter { $0.element > 0 }

@@ -60,17 +60,18 @@ struct PersonView: View {
                         Text((selectedPerson.firstName+" "+selectedPerson.lastName))
                             .font(.title)
                         if(selectedPerson.title.isEmpty){
-                            Text("Insert person title")
-                                .onTapGesture {
-                                    newTitle = selectedPerson.title
-                                    showingPopover = true
-                                }
+                            Button("Insert person title"){
+                                newTitle = selectedPerson.title
+                                showingPopover = true
+                            }
                         }else{
-                            Text(selectedPerson.title)
-                                .onTapGesture {
-                                    newTitle = selectedPerson.title
-                                    showingPopover = true
-                                }
+                            Button(selectedPerson.title){
+                                newTitle = selectedPerson.title
+                                showingPopover = true
+                            }
+                               
+                                   
+                                
                         }
                         
                     }
@@ -112,7 +113,7 @@ struct PersonView: View {
                         let item = selectedPerson.inventory[index]
                         
                         HStack {
-                            Text(item.itemID)
+                            Text(item.itemID).lineLimit(1)
                             Spacer()
                             MinusButton(action: {
                                 if selectedPerson.inventory[index].quantity > 0 {

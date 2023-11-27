@@ -161,6 +161,7 @@ struct ItemView: View {
                                     Text("\(ivm.getAmountAssignedToPeople(people: dataManager.people, item: selectedItem))")
                                         .foregroundStyle(Color.accentColor)
                                         .bold()
+                                        .padding(.horizontal, 5)
                                 }
                                     .padding(.bottom, 10)
                                 Divider()
@@ -172,6 +173,7 @@ struct ItemView: View {
                                     Text("\(selectedItem.amountUnassigned)")
                                         .foregroundStyle(Color.accentColor)
                                         .bold()
+                                        .padding(.horizontal, 5)
                                 }
              
                             }

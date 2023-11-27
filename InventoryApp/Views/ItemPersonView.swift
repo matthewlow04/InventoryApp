@@ -23,6 +23,7 @@ struct ItemPersonView: View {
                 Text("\(person.inventory[dataManager.getIndexInPersonInventory(name: itemID, person: person)!].quantity)")
                     .foregroundStyle(Color.accentColor)
                     .bold()
+                    .padding(.horizontal, 5)
             }.frame(height: 75)
         }
     }

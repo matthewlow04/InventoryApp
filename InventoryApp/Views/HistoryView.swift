@@ -77,9 +77,19 @@ struct HistoryView: View {
                        
                         
                     }
-                    .disabled(true)
+                    .disabled(false)
                     
                     .confirmationDialog("Actions", isPresented: $showingActionSheet) {
+                        Button("Delete History"){
+                            isLoadingScreen = true
+                            dataManager.deleteHistory(id: selectedHistoryItem!.id)
+                            dataManager.fetchInventoryHistory()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+
+                                isLoadingScreen = false
+                            }
+                        }
+                        
                         Button("Undo Change"){
                           
                             let itemInstance = dataManager.getItemByName(name: item.itemName)
@@ -283,7 +293,8 @@ struct HistoryView: View {
                             dataManager.deleteHistory(id: selectedHistoryItem!.id)
 
                         }
-                        .disabled((selectedHistoryItem?.createdItem ?? true) ? true : false)
+                        .disabled(true)
+//                        .disabled((selectedHistoryItem?.createdItem ?? true) ? true : false)
 
                         Button("Duplicate Change"){
                           

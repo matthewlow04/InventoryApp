@@ -9,6 +9,7 @@ import SwiftUI
 
 struct InventoryView: View {
     @EnvironmentObject var dataManager: DataManager
+    @EnvironmentObject var lvm: LoginViewModel
     @ObservedObject var ivm = ItemViewModel()
     @State private var searchText = ""
     @State var isCategories = false
@@ -114,7 +115,7 @@ struct InventoryView: View {
                             Button(action: {
                                 withAnimation(){
                                     viewAnimation = true
-                                    isCategories.toggle()
+                                    
                                 }completion:{
                                     viewAnimation = false
                                 }
@@ -126,6 +127,22 @@ struct InventoryView: View {
                                     .contentTransition(.symbolEffect(.replace))
                             }
                            
+                        }
+                        ToolbarItem(placement: .topBarLeading){
+                            Button(action: {
+                                withAnimation(){
+                                    viewAnimation = true
+                                    lvm.isLoggedIn = false
+                                }completion:{
+                                    viewAnimation = false
+                                }
+                            }) {
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                    .foregroundStyle(Color.accentColor)
+                                    .contentTransition(.symbolEffect(.replace))
+                            }
                         }
                     }
                     
@@ -193,8 +210,3 @@ struct InventoryView: View {
 //    }
 //}
 
-struct InventoryView_Previews: PreviewProvider {
-    static var previews: some View {
-        InventoryView()
-    }
-}

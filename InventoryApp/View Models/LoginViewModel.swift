@@ -14,16 +14,17 @@ class LoginViewModel: ObservableObject{
     @Published var signUpAlert = false
     @Published var username = ""
     @Published var password = ""
+    @Published var resetEmail = ""
     @Published var email = ""
     @Published var isLoggedIn = false
     @Published var accountCreated = false
     @Published var showingSheet = false
+    @Published var showingPopover = false
     
     
     func register(userEmail: String, userPassword: String) {
             Auth.auth().createUser(withEmail: userEmail, password: userPassword) { [self] result, error in
                 if let error = error {
-                    print("Register Error: \(error.localizedDescription)")
                     errorMessage = "Registration failed: \(error.localizedDescription)"
                     errorShowing = true
                 }
@@ -33,7 +34,7 @@ class LoginViewModel: ObservableObject{
                     username = result.user.email!
                 }
             }
-        }
+    }
 
     func login(userEmail: String, userPassword: String) {
         Auth.auth().signIn(withEmail: userEmail, password: userPassword) { [self] result, error in
@@ -47,6 +48,25 @@ class LoginViewModel: ObservableObject{
             }
         }
     }
+    
+    func resetPassword(userEmail: String){
+        Auth.auth().sendPasswordReset(withEmail: userEmail) { [self] error in
+            if let error = error {
+                errorMessage = "Error sending password reset email: \(error.localizedDescription)"
+                errorShowing = true
+            } else {
+                errorMessage = "Password reset email sent successfully"
+                errorShowing = true
+            }
+        }
+    }
+    func isValidEmail(email: String) -> Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        return emailPredicate.evaluate(with: email)
+    }
+   
     
     private func handleAuthError(_ error: NSError) {
         if error.domain == AuthErrorDomain {

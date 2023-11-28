@@ -45,6 +45,8 @@ struct LoginView: View {
                     .cornerRadius(10)
                 signUpButton
                     .bold()
+                resetPasswordButton
+                    .bold()
             }
 
             .frame(width:300)
@@ -53,6 +55,53 @@ struct LoginView: View {
             .sheet(isPresented: $lvm.showingSheet){
                 SheetView
             }
+            
+            VStack{
+                HStack{
+                    Spacer()
+                    Button("x"){
+                        lvm.showingPopover = false
+                    }
+                }
+              
+               
+                TextField("Email", text: $lvm.resetEmail)
+                    .keyboardType(.numberPad)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .multilineTextAlignment(.center)
+                
+                
+                Button("Reset Password") {
+                    if lvm.resetEmail.isEmpty {
+                        lvm.showingPopover = false
+                        return
+                    }
+
+                    if !lvm.isValidEmail(email: lvm.resetEmail) {
+                        lvm.errorMessage = "Invalid email"
+                        lvm.errorShowing = true
+                        lvm.showingPopover = false
+                        return
+                    }
+                    
+                    lvm.resetPassword(userEmail: lvm.resetEmail)
+                    lvm.showingPopover = false
+                }
+                Spacer()
+            }
+            .frame(width: lvm.showingPopover ? 250 : 0, height: lvm.showingPopover ? 100 : 0)
+            .padding()
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.accentColor.opacity(0.5), lineWidth: 1)
+            )
+            .background(Color.white)
+            .opacity(lvm.showingPopover ? 1 : 0)
+            .animation(
+                Animation
+                    .smooth,
+                value: UUID()
+            )
             .alert(lvm.errorMessage, isPresented: $lvm.errorShowing, actions: {
                 Button("OK", role: .cancel){
                     
@@ -138,6 +187,13 @@ struct LoginView: View {
             lvm.showingSheet = true
         }
     }
+    
+    var resetPasswordButton: some View{
+        Button("Forgot Password"){
+            lvm.showingPopover = true
+        }
+    }
+    
     var createAccountButton: some View{
         Button("Create Account"){
             lvm.register(userEmail: lvm.email, userPassword: lvm.password)

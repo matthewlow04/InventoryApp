@@ -170,7 +170,6 @@ struct PersonView: View {
               
                
                 TextField("Title", text: $newTitle)
-                    .keyboardType(.numberPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .multilineTextAlignment(.center)
                 

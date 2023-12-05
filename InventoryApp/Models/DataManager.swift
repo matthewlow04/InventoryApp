@@ -316,7 +316,6 @@ class DataManager: ObservableObject{
                 fetchAlertHistory()
                 fetchInventoryHistory()
             }
-//            print("Fetched from update")
            
         }
         
@@ -504,8 +503,7 @@ class DataManager: ObservableObject{
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/History/\(id)"
             let ref = db.document(fullPath)
-//            print(fullPath)
-            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person, "id": id, "newStock": newStock, "createdItem": createdItem]){ error in
+            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person, "id": id, "newStock": newStock, "createdItem": createdItem ?? false]) { error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
@@ -520,7 +518,6 @@ class DataManager: ObservableObject{
             let userID = currentUser.uid
             let db = Firestore.firestore()
             let newPath = "Users/\(userID)/History/\(id)"
-//            print(newPath)
             let ref = db.document(newPath)
             
             ref.delete(){ error in

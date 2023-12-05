@@ -115,7 +115,7 @@ struct InventoryView: View {
                             Button(action: {
                                 withAnimation(){
                                     viewAnimation = true
-                                    
+                                    isCategories.toggle()
                                 }completion:{
                                     viewAnimation = false
                                 }
@@ -164,14 +164,13 @@ struct InventoryView: View {
                    !(currentNavigationView == .itemView) {
                         sortOption = 0
                     }
+                searchText = ""
             }
             
         }
     }
     
     func sortArray() {
-//        print("sort array called, option: \(sortOption)")
-        
         switch sortOption {
         case 0:
             dataManager.inventory.sort { sortDescending ? ($0.name > $1.name) : ($0.name < $1.name)  }
@@ -191,7 +190,6 @@ struct InventoryView: View {
                 else{
                     return ratio1 < ratio2
                 }
-              
             }
         default:
             break

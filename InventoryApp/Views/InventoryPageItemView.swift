@@ -23,7 +23,7 @@ struct InventoryPageItemView: View {
                 SectorMark(angle: .value("In Use", total-stock), innerRadius: .ratio(0.6))
                     .foregroundStyle(Color.gray)
             }
-            .frame(width: 150, height: 150)
+            .frame(width: 175, height: 175)
             VStack {
                 Text(name)
                     .lineLimit(2)

@@ -17,6 +17,7 @@ struct ContentView: View {
                 .tabItem{
                     Label("Inventory", systemImage: "archivebox")
                 }
+                .navigationBarHidden(true)
                 .onAppear {
                     dataManager.currentNavigationView = .inventory
                 }
@@ -52,6 +53,7 @@ struct ContentView: View {
                 .badge(dataManager.alerts.count)
             
         }
+
     }
 }
 

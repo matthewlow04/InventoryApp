@@ -21,6 +21,7 @@ struct InventoryAppApp: App {
             LoginView()
                 .environmentObject(dataManager)
                 .environmentObject(lvm)
+                .font(Font.system(size: 16, weight: .medium, design: .rounded))
         }
     }
 }

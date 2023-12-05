@@ -35,6 +35,7 @@ struct AddItemView: View {
                     HStack{
                         Text("Amount: ")
                         TextField("Number of items", text: $avm.numberInStock)
+                            .keyboardType(.numberPad)
                     }
                 }
                 
@@ -52,7 +53,7 @@ struct AddItemView: View {
                             Text("Location: ")
                             TextField("Location ", text: $avm.location)
                         }
-                        .padding(.bottom, 10)
+                        .padding(.bottom, 10) 
                         if(avm.showingLocations == false){
                             VStack(alignment: .leading){
                                 Button("Use Previous Location"){

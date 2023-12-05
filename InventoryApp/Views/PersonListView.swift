@@ -43,14 +43,11 @@ struct PersonListView: View {
             if(!$dataManager.hasLoadedPeopleData.wrappedValue ){
                 ProgressView()
                     .navigationTitle("People")
-            }
-            else if(dataManager.people.isEmpty){
+            }else if(dataManager.people.isEmpty){
                NoPeople
             }else{
                LoadedView
             }
-           
-   
         }
         .onAppear{
             dataManager.hasLoadedPeopleData = false
@@ -83,7 +80,7 @@ struct PersonListView: View {
         List(filteredPeople, id: \.self){ person in
             NavigationLink(destination: PersonView(selectedPerson: person)){
                 HStack{
-                    VStack(alignment:.leading){
+                    VStack(alignment:.leading, spacing: 5){
                         Text(person.firstName+" "+person.lastName)
                             .bold()
                         Text("# of Items: \(person.inventory.count)")

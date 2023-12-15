@@ -94,9 +94,10 @@ class DataManager: ObservableObject{
                           let person = data["person"] as? String ?? "No Person"
                           let id = data["id"] as? String ?? "Error"
                           let newStock = data["newStock"] as? Bool ?? false
+                          let deleteStock = data["deleteStock"] as? Bool ?? false
                           let createdItem = data["createdItem"] as? Bool ?? false
                         
-                          let historyItem = History(id: id, itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount), person: person, newStock: newStock, createdItem: createdItem)
+                          let historyItem = History(id: id, itemName: name, date: date.dateValue(), addedItem: added, amount: abs(amount), person: person, newStock: newStock, deleteStock: deleteStock, createdItem: createdItem)
                           self.inventoryHistory.append(historyItem)
                         
                       }
@@ -224,7 +225,7 @@ class DataManager: ObservableObject{
                 
             }
             
-            createHistory(name: itemName, amount: Int(itemAmount)!, added: true, id: UUID().uuidString, person: "No Person", newStock: false, createdItem: true)
+            createHistory(name: itemName, amount: Int(itemAmount)!, added: true, id: UUID().uuidString, person: "No Person", newStock: false, createdItem: true, deleteStock: false)
             
             
         }
@@ -285,7 +286,7 @@ class DataManager: ObservableObject{
             if(newAmount != oldAmount){
                 if(updateHistory!){
                     if(!calledByUndo!){
-                        createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
+                        createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!, deleteStock: false)
                     }
                    
                 }
@@ -406,7 +407,7 @@ class DataManager: ObservableObject{
             }
             if(newAmount != oldAmount){
                 if(updateHistory!){
-                    createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!)
+                    createHistory(name: itemName, amount: difference, added: added, id: UUID().uuidString, person: person!, newStock: newStock!, deleteStock: false)
                 }
                 newHistory.append(newAmount)
          
@@ -494,7 +495,7 @@ class DataManager: ObservableObject{
         return person.inventory.firstIndex {$0.itemID.lowercased() == name.lowercased()}
     }
     
-    func createHistory(name: String, amount: Int, added: Bool, id: String, person: String, newStock: Bool, createdItem: Bool? = false){
+    func createHistory(name: String, amount: Int, added: Bool, id: String, person: String, newStock: Bool, createdItem: Bool? = false, deleteStock: Bool){
         if(amount == 0){
             return
         }
@@ -503,13 +504,13 @@ class DataManager: ObservableObject{
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/History/\(id)"
             let ref = db.document(fullPath)
-            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person, "id": id, "newStock": newStock, "createdItem": createdItem ?? false]) { error in
+            ref.setData(["name": name, "date": Timestamp(date: Date.now), "added": added, "amount": abs(amount), "person": person, "id": id, "newStock": newStock, "deleteStock": deleteStock, "createdItem": createdItem ?? false]) { error in
                 if let error = error{
                     print(error.localizedDescription)
                 }
             }
         }
-        let newHistory = History(id: id, itemName: name, date: Date.now, addedItem: added, amount: abs(amount), person: person, newStock: newStock, createdItem: createdItem!)
+        let newHistory = History(id: id, itemName: name, date: Date.now, addedItem: added, amount: abs(amount), person: person, newStock: newStock, deleteStock: deleteStock, createdItem: createdItem!)
         inventoryHistory.append(newHistory)
     }
     

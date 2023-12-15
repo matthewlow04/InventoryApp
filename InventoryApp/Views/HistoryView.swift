@@ -51,8 +51,10 @@ struct HistoryView: View {
                                     .bold()
                                 if(item.newStock){
                                     Text("\(item.addedItemString(item.addedItem)) \(item.amount) (New Stock)")
-                                }else if(item.createdItem){
+                                }else if(item.createdItem && !item.deleteStock){
                                     Text("\(item.addedItemString(item.addedItem)) \(item.amount) (Item Created)")
+                                }else if(item.deleteStock){
+                                    Text("\(item.addedItemString(item.addedItem)) \(item.amount) (Deleted Stock)")
                                 }
                                 else{
                                     Text("\(item.addedItemString(item.addedItem)) \(item.amount)")

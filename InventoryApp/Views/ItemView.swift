@@ -25,6 +25,7 @@ struct ItemView: View {
     @State var addAmount = ""
     @State var amountAddedTotal = 0
     @State var sliderChangeAmount = 0
+    @State var addStock = true
     
     @Environment(\.dismiss) var dismiss
 
@@ -151,7 +152,7 @@ struct ItemView: View {
                                         }
                                     }
                                     
-                                }.frame(height: 150).padding(.bottom, 10)
+                                }.frame(height: 200).padding(.bottom, 10)
                                 Divider()
                                     .padding(.bottom, 10)
                                 
@@ -306,7 +307,7 @@ struct ItemView: View {
                                     alertMessage = "Item deleted"
                                     isShowingAlert = true
                                     dismiss()
-                                }
+                                        }
                             }
                     }
                 }
@@ -327,6 +328,7 @@ struct ItemView: View {
                 HStack{
                     Spacer()
                     Button("x"){
+                        addAmount = ""
                         showingPopover = false
                     }
                 }
@@ -341,13 +343,36 @@ struct ItemView: View {
                 Button("Confirm"){
                     if(addAmount.isEmpty){
                         showingPopover = false
+                        addAmount = ""
                         return
                     }
                     
-                    let addAmt = Int(addAmount)
-                    selectedItem.amountInStock  = addAmt! + selectedItem.amountInStock
-                    selectedItem.amountTotal = addAmt! + selectedItem.amountTotal
-                    amountAddedTotal = amountAddedTotal + addAmt!
+                    guard let addAmt = Int(addAmount) else {
+                        showingPopover = false
+                        alertMessage = "Invalid input for amount"
+                        isShowingAlert = true
+                        addAmount = ""
+                        return
+                    }
+                    
+                    
+                    if(addStock == true){
+                        selectedItem.amountInStock  = addAmt + selectedItem.amountInStock
+                        selectedItem.amountTotal = addAmt + selectedItem.amountTotal
+                        amountAddedTotal = amountAddedTotal + addAmt
+                    }else{
+                        if(addAmt > selectedItem.amountInStock){
+                            showingPopover = false
+                            alertMessage = "Can't remove delete more stock than exists"
+                            isShowingAlert = true
+                            
+                        }else{
+                            selectedItem.amountInStock  = selectedItem.amountInStock - addAmt
+                            selectedItem.amountTotal = selectedItem.amountTotal - addAmt
+                            amountAddedTotal = amountAddedTotal - addAmt
+                        }
+                    }
+                    addAmount = ""
                     showingPopover = false
                 }
                 Spacer()
@@ -371,6 +396,11 @@ struct ItemView: View {
         .toolbar{
             ToolbarItemGroup{
                 Button("Add Stock"){
+                    addStock = true
+                    showingPopover.toggle()
+                }
+                Button("Remove Stock"){
+                    addStock = false
                     showingPopover.toggle()
                 }
                 
@@ -379,26 +409,48 @@ struct ItemView: View {
                     let oldAmount = dataManager.getItemByName(name: selectedItem.name)?.amountInStock
                     if(selectedItem.amountUnassigned - (selectedItem.amountInStock - amountAddedTotal - oldAmount!) < 0){
                         alertMessage = "You can't return assigned items through here"
-                        selectedItem.amountInStock = oldAmount!
+                        selectedItem.amountInStock = oldAmount! + amountAddedTotal
                         isShowingAlert = true
                         return
                     }
                     alertMessage = "Item Saved"
-                    if(amountAddedTotal > 0){
+                    if(amountAddedTotal != 0){
+                        
                         dataManager.updateItem(itemName: selectedItem.name, newAmount: Int(selectedItem.amountInStock), itemTotal: selectedItem.amountTotal, itemHistory: selectedItem.amountHistory, isFavourite: selectedItem.isFavourite, notes: (editedNotes != "") ? editedNotes : selectedItem.notes, category: selectedItem.category.rawValue, newStock: true, location: (editedLocation != "") ? editedLocation : selectedItem.location, unassignedAmount: selectedItem.amountUnassigned, calledByAddItem: true, calledByUndo: true)
                         
-                       
-                        //deals with any new item changes
-                        dataManager.createHistory(name: selectedItem.name, amount: amountAddedTotal, added: true, id: UUID().uuidString, person: "No Person", newStock: true)
-                        
-                        //deals with any stock amount changes
-                        
-                        dataManager.createHistory(name: selectedItem.name, amount: abs(selectedItem.amountInStock - amountAddedTotal - oldAmount!), added: selectedItem.amountInStock - amountAddedTotal - oldAmount! > 0, id: UUID().uuidString, person: "No Person", newStock: false)
-                        
-                        let unassigned = selectedItem.amountUnassigned + oldAmount! + amountAddedTotal - selectedItem.amountInStock
-                        dataManager.updateUnassigned(itemName: selectedItem.name, unassigned: unassigned)
+                        if(amountAddedTotal > 0){
+                            //deals with any new item changes
+                            dataManager.createHistory(name: selectedItem.name, amount: amountAddedTotal, added: true, id: UUID().uuidString, person: "No Person", newStock: true, deleteStock: false)
+                            
+                            //deals with any stock amount changes
+                            
+                            dataManager.createHistory(name: selectedItem.name, amount: abs(selectedItem.amountInStock - amountAddedTotal - oldAmount!), added: selectedItem.amountInStock - amountAddedTotal - oldAmount! > 0, id: UUID().uuidString, person: "No Person", newStock: false, deleteStock: false)
+                            
+                            let unassigned = selectedItem.amountUnassigned + oldAmount! + amountAddedTotal - selectedItem.amountInStock
+                            dataManager.updateUnassigned(itemName: selectedItem.name, unassigned: unassigned)
+                        }
 
-                    }else{
+                        else{
+                            
+                            //deals with any deletion changes
+                            dataManager.createHistory(name: selectedItem.name, amount: amountAddedTotal, added: false, id: UUID().uuidString, person: "No Person", newStock: false, deleteStock: true)
+        
+                            //deals with any stock amount changes
+                            
+                            dataManager.createHistory(name: selectedItem.name, amount: abs(selectedItem.amountInStock - amountAddedTotal - oldAmount!), added: selectedItem.amountInStock - amountAddedTotal - oldAmount! > 0, id: UUID().uuidString, person: "No Person", newStock: false, deleteStock: false)
+                            
+                            let unassigned = selectedItem.amountUnassigned + oldAmount! + amountAddedTotal - selectedItem.amountInStock
+                            dataManager.updateUnassigned(itemName: selectedItem.name, unassigned: unassigned)
+                        }
+                       
+                        
+                      
+
+                    }
+//                    else if(amountAddedTotal < 0){
+//                        dataManager.updateItem(itemName: selectedItem.name, newAmount: Int(selectedItem.amountInStock), itemTotal: selectedItem.amountTotal, itemHistory: selectedItem.amountHistory, isFavourite: selectedItem.isFavourite, notes: (editedNotes != "") ? editedNotes : selectedItem.notes, category: selectedItem.category.rawValue, location: (editedLocation != "") ? editedLocation : selectedItem.location, unassignedAmount: selectedItem.amountUnassigned)
+//                    }
+                    else{
                         dataManager.updateItem(itemName: selectedItem.name, newAmount: Int(selectedItem.amountInStock), itemTotal: selectedItem.amountTotal, itemHistory: selectedItem.amountHistory, isFavourite: selectedItem.isFavourite, notes: (editedNotes != "") ? editedNotes : selectedItem.notes, category: selectedItem.category.rawValue, location: (editedLocation != "") ? editedLocation : selectedItem.location, unassignedAmount: selectedItem.amountUnassigned)
                         
                     }

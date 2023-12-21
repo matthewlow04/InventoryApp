@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyCtsacKnfoVGMu7tqqpsBPnYYbdqhG6sNw</string>
+	<string>AIzaSyAckaQh1hCghhEkoyO-2X8IHfcuxvc_Qu8</string>
 	<key>GCM_SENDER_ID</key>
-	<string>738241450415</string>
+	<string>343532183692</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.MatthewLow.InventoryApp</string>
 	<key>PROJECT_ID</key>
-	<string>inventoryapp-ec9a2</string>
+	<string>inventoryapp-f645c</string>
 	<key>STORAGE_BUCKET</key>
-	<string>inventoryapp-ec9a2.appspot.com</string>
+	<string>inventoryapp-f645c.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:738241450415:ios:0caed846bd31fb43c9df5a</string>
+	<string>1:343532183692:ios:f5aad2568ffa5ecf411ba9</string>
 </dict>
 </plist>

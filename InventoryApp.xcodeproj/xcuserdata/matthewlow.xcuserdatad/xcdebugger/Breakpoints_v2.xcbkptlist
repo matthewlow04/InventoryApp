@@ -3,4 +3,22 @@
    uuid = "60A8ABA7-665F-4CE7-B33A-7B097F896F01"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "800DEECB-9697-4104-BA8C-5E4C1A1AEDEF"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/InventoryApp-bskuzapcwvmsppcqgywkjvvrtqpm/SourcePackages/checkouts/firebase-ios-sdk/FirebaseCore/Sources/FIRApp.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "913"
+            endingLineNumber = "913"
+            landmarkName = "+findMisnamedGoogleServiceInfoPlist"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

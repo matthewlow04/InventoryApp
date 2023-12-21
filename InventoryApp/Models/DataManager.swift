@@ -32,7 +32,7 @@ class DataManager: ObservableObject{
     func fetchItems(){
         inventory.removeAll()
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items"
             let ref = db.collection(fullPath)
@@ -74,7 +74,7 @@ class DataManager: ObservableObject{
     
     func fetchInventoryHistory(){
         inventoryHistory.removeAll()
-        let fullPath = "Users/\(Auth.auth().currentUser!.uid)/History"
+        let fullPath = "Users/\(Auth.auth().currentUser!.email!)/History"
         let db = Firestore.firestore()
         let ref = db.collection(fullPath)
         let refSorted = ref.order(by: "date", descending: true)
@@ -110,7 +110,7 @@ class DataManager: ObservableObject{
     
     func fetchAlertHistory(){
         alerts.removeAll()
-        let fullPath = "Users/\(Auth.auth().currentUser!.uid)/Alert"
+        let fullPath = "Users/\(Auth.auth().currentUser!.email!)/Alert"
         let db = Firestore.firestore()
         let ref = db.collection(fullPath)
         let refSorted = ref.order(by: "date", descending: true)
@@ -138,7 +138,7 @@ class DataManager: ObservableObject{
     
     func fetchPeopleData(){
         people.removeAll()
-        let fullPath = "Users/\(Auth.auth().currentUser!.uid)/People"
+        let fullPath = "Users/\(Auth.auth().currentUser!.email!)/People"
         let db = Firestore.firestore()
         let ref = db.collection(fullPath)
         
@@ -153,7 +153,6 @@ class DataManager: ObservableObject{
                 for document in snapshot.documents{
                    
                     let data = document.data()
-                   
                     let firstName = data["firstName"] as? String ?? ""
                     let lastName = data["lastName"] as? String ?? ""
                     let inventoryData = data["inventory"] as? [[String: Any]] ?? []
@@ -183,7 +182,7 @@ class DataManager: ObservableObject{
     
     func fetchLocations(){
         locations.removeAll()
-        let fullPath = "Users/\(Auth.auth().currentUser!.uid)/Locations"
+        let fullPath = "Users/\(Auth.auth().currentUser!.email!)/Locations"
         let db = Firestore.firestore()
         let ref = db.collection(fullPath)
         
@@ -213,7 +212,7 @@ class DataManager: ObservableObject{
     
     func addItem(itemName: String, itemNotes: String, itemAmount: String, category: String, location: String = "No Location"){
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
@@ -237,7 +236,7 @@ class DataManager: ObservableObject{
         
         if let currentUser = Auth.auth().currentUser{
            
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
@@ -327,7 +326,7 @@ class DataManager: ObservableObject{
     func updateUnassigned(itemName: String, unassigned: Int){
         if let currentUser = Auth.auth().currentUser{
             
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
@@ -343,7 +342,7 @@ class DataManager: ObservableObject{
     func addLink(itemName: String, url: String){
         if let currentUser = Auth.auth().currentUser{
             
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
@@ -360,7 +359,7 @@ class DataManager: ObservableObject{
     func updateMultipleItems(itemName: String, newAmount: Int, itemTotal: Int, itemHistory: [Int], person: String? = "No Person", isFavourite: Bool, notes: String, category: String, newStock: Bool? = false, updateHistory: Bool? = true, location: String, unassignedAmount: Int? = 0){
         if let currentUser = Auth.auth().currentUser{
            
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
@@ -439,7 +438,7 @@ class DataManager: ObservableObject{
     
     func deleteItem(itemName: String){
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Items/\(itemName)"
             let ref = db.document(fullPath)
@@ -500,7 +499,7 @@ class DataManager: ObservableObject{
             return
         }
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/History/\(id)"
             let ref = db.document(fullPath)
@@ -516,7 +515,7 @@ class DataManager: ObservableObject{
     
     func deleteHistory(id: String){
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let newPath = "Users/\(userID)/History/\(id)"
             let ref = db.document(newPath)
@@ -531,7 +530,7 @@ class DataManager: ObservableObject{
     
     func deleteAllHistory(){
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             
             let ref = db.collection("Users/\(userID)/History")
@@ -564,7 +563,7 @@ class DataManager: ObservableObject{
     
     func deleteAlert(alertID: String){
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let newPath = "Users/\(userID)/Alert/\(alertID)"
             let ref = db.document(newPath)
@@ -580,7 +579,7 @@ class DataManager: ObservableObject{
     
     func deleteAllAlerts(){
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             
             let ref = db.collection("Users/\(userID)/Alert")
@@ -613,7 +612,7 @@ class DataManager: ObservableObject{
     
     func addPerson(firstName: String, lastName: String, title: String, inventory: [AssignedItem]){
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let id = firstName + lastName
             let newPath = "Users/\(userID)/People/\(id)"
@@ -649,7 +648,7 @@ class DataManager: ObservableObject{
     }
     func updateFavouritePerson(selectedPerson: Person, isFav: Bool){
         if let currentUser = Auth.auth().currentUser {
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let id = selectedPerson.firstName + selectedPerson.lastName
             let newPath = "Users/\(userID)/People/\(id)"
@@ -667,7 +666,7 @@ class DataManager: ObservableObject{
     }
     func updatePersonTitle( selectedPerson: inout Person, title: String){
         if let currentUser = Auth.auth().currentUser {
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let id = selectedPerson.firstName + selectedPerson.lastName
             let newPath = "Users/\(userID)/People/\(id)"
@@ -689,7 +688,7 @@ class DataManager: ObservableObject{
     }
     func updatePerson(selectedPerson: Person) {
         if let currentUser = Auth.auth().currentUser {
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let id = selectedPerson.firstName + selectedPerson.lastName
             let newPath = "Users/\(userID)/People/\(id)"
@@ -717,7 +716,7 @@ class DataManager: ObservableObject{
     
     func updatePersonItemDeletion(selectedPerson: Person, itemName:String) {
         if let currentUser = Auth.auth().currentUser {
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let id = selectedPerson.firstName + selectedPerson.lastName
             let newPath = "Users/\(userID)/People/\(id)"
@@ -744,7 +743,7 @@ class DataManager: ObservableObject{
     
     func deletePerson(selectedPerson: Person){
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let id = selectedPerson.firstName + selectedPerson.lastName
             let name = "\(selectedPerson.firstName) \(selectedPerson.lastName)"
@@ -824,7 +823,7 @@ class DataManager: ObservableObject{
     
     func addLocation(_ location: String){
         if let currentUser = Auth.auth().currentUser{
-            let userID = currentUser.uid
+            let userID = currentUser.email!
             let db = Firestore.firestore()
             let fullPath = "Users/\(userID)/Locations/\(location)"
             let ref = db.document(fullPath)

@@ -26,13 +26,13 @@
 		A0C7DDFB2B02AFA8004A6C7E /* URLChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C7DDFA2B02AFA8004A6C7E /* URLChecker.swift */; };
 		A0C7DE032B04136E004A6C7E /* InventoryAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C7DE022B04136E004A6C7E /* InventoryAppTests.swift */; };
 		A0C7DE0A2B04148C004A6C7E /* UndoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C7DE092B04148C004A6C7E /* UndoTests.swift */; };
+		A0E0BEA52B3488DC00A85469 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0E0BEA42B3488DC00A85469 /* GoogleService-Info.plist */; };
 		A0EC991A2AB22E3100EE777B /* InventoryAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */; };
 		A0EC991C2AB22E3100EE777B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC991B2AB22E3100EE777B /* ContentView.swift */; };
 		A0EC991E2AB22E3200EE777B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0EC991D2AB22E3200EE777B /* Assets.xcassets */; };
 		A0EC99212AB22E3200EE777B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0EC99202AB22E3200EE777B /* Preview Assets.xcassets */; };
 		A0EC992A2AB2343800EE777B /* InventoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC99292AB2343800EE777B /* InventoryView.swift */; };
 		A0EC992C2AB2357A00EE777B /* ItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC992B2AB2357A00EE777B /* ItemModel.swift */; };
-		A0EC992E2AB238CA00EE777B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0EC992D2AB238C900EE777B /* GoogleService-Info.plist */; };
 		A0EC99302AB2459300EE777B /* InventoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC992F2AB2459300EE777B /* InventoryViewModel.swift */; };
 		A0EC99322AB2474100EE777B /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC99312AB2474100EE777B /* AddItemView.swift */; };
 		A0EC99342AB2491500EE777B /* AddItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EC99332AB2491500EE777B /* AddItemViewModel.swift */; };
@@ -88,6 +88,7 @@
 		A0C7DE002B04136E004A6C7E /* InventoryAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InventoryAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C7DE022B04136E004A6C7E /* InventoryAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAppTests.swift; sourceTree = "<group>"; };
 		A0C7DE092B04148C004A6C7E /* UndoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoTests.swift; sourceTree = "<group>"; };
+		A0E0BEA42B3488DC00A85469 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A0EC99162AB22E3100EE777B /* InventoryApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InventoryApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0EC99192AB22E3100EE777B /* InventoryAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAppApp.swift; sourceTree = "<group>"; };
 		A0EC991B2AB22E3100EE777B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -95,7 +96,6 @@
 		A0EC99202AB22E3200EE777B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A0EC99292AB2343800EE777B /* InventoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryView.swift; sourceTree = "<group>"; };
 		A0EC992B2AB2357A00EE777B /* ItemModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemModel.swift; sourceTree = "<group>"; };
-		A0EC992D2AB238C900EE777B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A0EC992F2AB2459300EE777B /* InventoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryViewModel.swift; sourceTree = "<group>"; };
 		A0EC99312AB2474100EE777B /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
 		A0EC99332AB2491500EE777B /* AddItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemViewModel.swift; sourceTree = "<group>"; };
@@ -185,7 +185,7 @@
 				A0EC99502AB37EF700EE777B /* Views */,
 				A0EC99522AB37F2E00EE777B /* View Models */,
 				A06BEF3D2AB4AFEB00D7A3AF /* Tools */,
-				A0EC992D2AB238C900EE777B /* GoogleService-Info.plist */,
+				A0E0BEA42B3488DC00A85469 /* GoogleService-Info.plist */,
 				A0EC991D2AB22E3200EE777B /* Assets.xcassets */,
 				A0EC991F2AB22E3200EE777B /* Preview Content */,
 			);
@@ -352,8 +352,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A0EC99212AB22E3200EE777B /* Preview Assets.xcassets in Resources */,
-				A0EC992E2AB238CA00EE777B /* GoogleService-Info.plist in Resources */,
 				A0EC991E2AB22E3200EE777B /* Assets.xcassets in Resources */,
+				A0E0BEA52B3488DC00A85469 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

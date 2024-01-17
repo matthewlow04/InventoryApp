@@ -1,0 +1,3 @@
+# SwiftStock
+
+SwiftStock is an inventory tracking app I designed and developed during my coop at Generis (the app is currently in-use to track the entire office stock). The front-end is built with SwiftUI and the back-end isbuilt with Firebase. This app is used to monitor the inventory levels for all the items in office which includes being able to track the flow of items amongst people as well. Firebase Authentication is used to verify logins and safely store user information. All user and inventory information is stored in the cloud using Firestore allowing for item synchronization between multiple devices. 
